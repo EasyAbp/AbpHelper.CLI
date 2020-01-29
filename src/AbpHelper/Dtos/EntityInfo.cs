@@ -7,12 +7,12 @@ namespace AbpHelper.Dtos
     {
         public string Namespace { get; }
         public string ClassName { get;  }
-        public string BaseType { get;  }
-        public ICollection<PropertyInfo> Properties { get; } = new Collection<PropertyInfo>();
+        public string? BaseType { get;  }
+        public IList<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
 
-        public EntityInfo(string ns, string className, string baseType)
+        public EntityInfo(string @namespace, string className, string baseType)
         {
-            Namespace = ns;
+            Namespace = @namespace;
             ClassName = className;
             BaseType = baseType;
         }
