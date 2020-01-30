@@ -18,12 +18,19 @@ namespace AbpHelper.Parsers
             Logger = NullLogger<EntityParser>.Instance;
         }
 
-        public Task<EntityInfo> Parse(string text)
+        public Task<EntityInfo> Parse(string sourceText)
         {
             try
             {
-                var tree = CSharpSyntaxTree.ParseText(text);
+                var tree = CSharpSyntaxTree.ParseText(sourceText);
                 var root = tree.GetCompilationUnitRoot();
+                if (root.ContainsDiagnostics)
+                {
+                    // source contains syntax error
+                    var ex = new ParseException(root.GetDiagnostics().Select(diag => diag.ToString()));
+                    throw ex;
+                }
+
                 string @namespace = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().Single();
                 string className = classDeclarationSyntax.Identifier.ToString();
@@ -33,16 +40,20 @@ namespace AbpHelper.Parsers
                     .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()));
 
                 var entityInfo = new EntityInfo(@namespace, className, baseType);
-                foreach (var propertyInfo in properties)
-                {
-                    entityInfo.Properties.Add(propertyInfo);
-                }
-                
+                entityInfo.Properties.AddRange(properties);
+
                 return Task.FromResult(entityInfo);
             }
             catch (Exception e)
             {
                 Logger.LogError(e, $"Parsing entity failed.");
+                if (e is ParseException pe)
+                {
+                    foreach (var error in pe.Errors)
+                    {
+                        Logger.LogError(error);
+                    }
+                }
                 throw;
             }
         }

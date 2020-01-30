@@ -4,6 +4,5 @@ namespace AbpHelper.Tests
 {
     public class AbpHelperTestBase : AbpIntegratedTest<AbpHelperTestModule>
     {
-        
     }
 }

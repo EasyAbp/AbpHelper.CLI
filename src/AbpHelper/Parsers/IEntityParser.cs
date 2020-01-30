@@ -6,6 +6,6 @@ namespace AbpHelper.Parsers
 {
     public interface IEntityParser : ITransientDependency
     {
-        Task<EntityInfo> Parse(string text);
+        Task<EntityInfo> Parse(string sourceText);
     }
 }

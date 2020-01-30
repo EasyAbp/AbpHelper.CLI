@@ -8,9 +8,9 @@ namespace AbpHelper.Dtos
         public string Namespace { get; }
         public string ClassName { get;  }
         public string? BaseType { get;  }
-        public IList<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
+        public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
 
-        public EntityInfo(string @namespace, string className, string baseType)
+        public EntityInfo(string @namespace, string className, string? baseType)
         {
             Namespace = @namespace;
             ClassName = className;

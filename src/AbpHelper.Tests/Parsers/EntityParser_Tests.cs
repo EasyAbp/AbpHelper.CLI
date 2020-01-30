@@ -1,12 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AbpHelper.Parsers;
 using Shouldly;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace AbpHelper.Tests.Parsers
 {
     public class EntityParser_Tests : AbpHelperTestBase
     {
+        private readonly ITestOutputHelper _output;
         private readonly IEntityParser _entityParser;
 
         #region Entity Code for Test
@@ -32,17 +35,20 @@ namespace AbpHelper.Tests.Parsers
 
         #endregion
 
-        public EntityParser_Tests()
+        public EntityParser_Tests(ITestOutputHelper output)
         {
+            _output = output;
             _entityParser = GetRequiredService<IEntityParser>();
         }
 
         [Fact]
-        public async Task Parse_Test()
+        public async Task Parse_OK()
         {
             // Arrange
+            string sourceCode = EntityCode;
+            
             // Act
-            var info = await _entityParser.Parse(EntityCode);
+            var info = await _entityParser.Parse(sourceCode);
 
             // Assert
             info.Namespace.ShouldBe("Acme.BookStore");
@@ -57,6 +63,20 @@ namespace AbpHelper.Tests.Parsers
             info.Properties[1].Name.ShouldBe("Type");
             info.Properties[2].Name.ShouldBe("PublishDate");
             info.Properties[3].Name.ShouldBe("Price");
+        }
+        
+        [Fact]
+        public async Task Parse_SyntaxError()
+        {
+            // Arrange
+            string sourceCode = "not valid c# code";
+            
+            // Act
+            var ex = await Assert.ThrowsAsync<ParseException>(() => _entityParser.Parse(sourceCode));
+            
+            // Arrange
+            ex.ShouldNotBeNull();
+            _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
         }
     }
 }
