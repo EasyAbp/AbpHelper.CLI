@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using AbpHelper.Dtos;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
@@ -7,9 +10,9 @@ using Volo.Abp;
 
 namespace AbpHelper
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -28,9 +31,43 @@ namespace AbpHelper
             {
                 application.Initialize();
 
+                await Execute(application.ServiceProvider);
+
                 Console.WriteLine("Press ENTER to stop application...");
                 Console.ReadLine();
             }
+        }
+
+        private static async Task Execute(IServiceProvider serviceProvider)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                {"BaseDirectory", @"C:\Users\wakuw\Desktop"},
+                {"SearchFileName", "BookStoreDbContextModelCreatingExtensions.cs"},
+                {"TemplateFile", "dummyTemplateFile"},
+                {"Model", new object()},
+                {
+                    "Modifications", new List<Modification>
+                    {
+                        new Deletion(16, 21),
+                        new Insertion(22, "CODE\r\n"),
+                        new Insertion(30, "// End of File", InsertPosition.After)
+                    }
+                }
+            };
+            /*
+            var steps = new IStep[]
+            {
+                new FileFinderStep(),
+                new TextGenerationStep(),
+                new FileModifierStep()
+            };
+
+            foreach (var step in steps)
+            {
+                await step.Run(parameters);
+            }
+            */
         }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace AbpHelper.Steps
 {
-    public interface IStep
+    public interface IStep<in TInput, TOutput>
     {
-        Task Execute();
+        Task<TOutput> Run(TInput input);
     }
 }
