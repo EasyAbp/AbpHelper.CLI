@@ -3,16 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AbpHelper.Models;
-using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
     public class ProjectInfoProviderStep : StepBase
     {
-        public ProjectInfoProviderStep(WorkflowContext context) : base(context)
-        {
-        }
-
         protected override Task RunStep()
         {
             var projectBaseDirectory = GetParameter<string>("ProjectBaseDirectory");

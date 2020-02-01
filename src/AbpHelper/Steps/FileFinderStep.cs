@@ -2,16 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AbpHelper.Models;
-using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
     public class FileFinderStep : StepBase
     {
-        public FileFinderStep(WorkflowContext context) : base(context)
-        {
-        }
-
         protected override Task RunStep()
         {
             var baseDirectory = GetParameter<ProjectInfo>("ProjectInfo").BaseDirectory;

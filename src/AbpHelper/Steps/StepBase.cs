@@ -9,35 +9,35 @@ namespace AbpHelper.Steps
 {
     public abstract class StepBase : IStep
     {
-        protected readonly WorkflowContext Context;
         protected readonly string StepName;
 
-        protected StepBase(WorkflowContext context)
+        protected StepBase()
         {
-            Context = context;
             Logger = NullLogger<StepBase>.Instance;
             StepName = GetType().Name;
         }
+
+        public WorkflowContext WorkflowContext { get; set; }
 
         public ILogger<StepBase> Logger { get; set; }
 
         public async Task Run()
         {
-            Logger.LogInformation($"{StepName} begins.");
+            Logger.LogDebug($"{StepName} begins.");
             await RunStep();
-            Logger.LogInformation($"{StepName} finished.");
+            Logger.LogDebug($"{StepName} finished.");
         }
 
         protected abstract Task RunStep();
 
         protected T GetParameter<T>(string key)
         {
-            return (T) Context.Parameters[key];
+            return (T) WorkflowContext.Parameters[key];
         }
 
         protected void SetParameter(string key, object value)
         {
-            Context.Parameters[key] = value;
+            WorkflowContext.Parameters[key] = value;
         }
 
         protected void LogInput(Expression<Func<object>> parameterExpression)
@@ -53,7 +53,7 @@ namespace AbpHelper.Steps
         private void LogParameter(Expression<Func<object>> parameterExpression, string parameterType)
         {
             var memberExpr = (MemberExpression) parameterExpression.Body;
-            Logger.LogInformation($"{StepName} {parameterType} [{memberExpr.Member.Name}]: {parameterExpression.Compile().Invoke()}");
+            Logger.LogDebug($"{StepName} {parameterType} [{memberExpr.Member.Name}]: {parameterExpression.Compile().Invoke()}");
         }
     }
 }

@@ -3,16 +3,11 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using AbpHelper.Models;
-using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
     public class FileModifierStep : StepBase
     {
-        public FileModifierStep(WorkflowContext context) : base(context)
-        {
-        }
-
         protected override Task RunStep()
         {
             var filePathName = GetParameter<string>("FilePathName");

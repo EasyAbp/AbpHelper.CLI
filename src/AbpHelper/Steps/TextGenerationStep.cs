@@ -1,14 +1,9 @@
 ﻿using System.Threading.Tasks;
-using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
     public class TextGenerationStep : StepBase
     {
-        public TextGenerationStep(WorkflowContext context) : base(context)
-        {
-        }
-
         protected override Task RunStep()
         {
             var templateFile = GetParameter<string>("TemplateFile");
