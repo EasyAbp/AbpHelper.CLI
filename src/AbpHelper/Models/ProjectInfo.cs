@@ -18,6 +18,11 @@
         public TemplateType TemplateType { get; }
         public UIFramework UIFramework { get; }
         public bool Tiered { get; }
+
+        public override string ToString()
+        {
+            return $"{nameof(BaseDirectory)}: {BaseDirectory}, {nameof(FullName)}: {FullName}, {nameof(Name)}: {Name}, {nameof(TemplateType)}: {TemplateType}, {nameof(UIFramework)}: {UIFramework}, {nameof(Tiered)}: {Tiered}";
+        }
     }
 
     public enum TemplateType

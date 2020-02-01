@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using AbpHelper.Models;
+using AbpHelper.Workflow;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;

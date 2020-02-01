@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using AbpHelper.Models;
+using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
@@ -12,10 +13,12 @@ namespace AbpHelper.Steps
         {
         }
 
-        public override Task Run()
+        protected override Task RunStep()
         {
             var filePathName = GetParameter<string>("FilePathName");
             var modifications = GetParameter<IList<Modification>>("Modifications");
+            LogInput(() => filePathName);
+            LogInput(() => modifications);
 
             var newFile = new StringBuilder();
             var lines = File.ReadAllLines(filePathName);

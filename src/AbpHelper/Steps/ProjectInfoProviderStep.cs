@@ -3,13 +3,21 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AbpHelper.Models;
+using AbpHelper.Workflow;
 
-namespace AbpHelper.Projects
+namespace AbpHelper.Steps
 {
-    public class ProjectInfoProvider : IProjectInfoProvider
+    public class ProjectInfoProviderStep : StepBase
     {
-        public Task<ProjectInfo> Get(string projectBaseDirectory)
+        public ProjectInfoProviderStep(WorkflowContext context) : base(context)
         {
+        }
+
+        protected override Task RunStep()
+        {
+            var projectBaseDirectory = GetParameter<string>("ProjectBaseDirectory");
+            LogInput(() => projectBaseDirectory);
+
             TemplateType templateType;
             if (Directory.EnumerateFiles(projectBaseDirectory, "*.DbMigrator.csproj", SearchOption.AllDirectories).Any())
                 templateType = TemplateType.Application;
@@ -37,7 +45,10 @@ namespace AbpHelper.Projects
             var tiered = false;
             if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(projectBaseDirectory, "*.IdentityServer.csproj").Any();
 
-            return Task.FromResult(new ProjectInfo(projectBaseDirectory, fullName, name, templateType, uiFramework, tiered));
+            var projectInfo = new ProjectInfo(projectBaseDirectory, fullName, name, templateType, uiFramework, tiered);
+            SetParameter("ProjectInfo", projectInfo);
+            LogOutput(() => projectInfo);
+            return Task.CompletedTask;
         }
     }
 }
