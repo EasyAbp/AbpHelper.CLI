@@ -11,13 +11,14 @@ namespace AbpHelper.Steps
     {
         protected readonly string StepName;
 
-        protected StepBase()
-        {
-            Logger = NullLogger<StepBase>.Instance;
-            StepName = GetType().Name;
-        }
+        protected WorkflowContext WorkflowContext;
 
-        public WorkflowContext WorkflowContext { get; set; }
+        protected StepBase(WorkflowContext workflowContext)
+        {
+            StepName = GetType().Name;
+            WorkflowContext = workflowContext;
+            Logger = NullLogger<StepBase>.Instance;
+        }
 
         public ILogger<StepBase> Logger { get; set; }
 
@@ -40,20 +41,21 @@ namespace AbpHelper.Steps
             WorkflowContext.Parameters[key] = value;
         }
 
-        protected void LogInput(Expression<Func<object>> parameterExpression)
+        protected void LogInput<TParameter>(Expression<Func<TParameter>> parameterExpression, object? customValue = null)
         {
-            LogParameter(parameterExpression, "input");
+            LogParameter("input", parameterExpression, customValue);
         }
 
-        protected void LogOutput(Expression<Func<object>> parameterExpression)
+        protected void LogOutput<TParameter>(Expression<Func<TParameter>> parameterExpression, object? customValue = null)
         {
-            LogParameter(parameterExpression, "output");
+            LogParameter("output", parameterExpression, customValue);
         }
 
-        private void LogParameter(Expression<Func<object>> parameterExpression, string parameterType)
+        private void LogParameter<TParameter>(string parameterType, Expression<Func<TParameter>> parameterExpression, object? customValue = null)
         {
             var memberExpr = (MemberExpression) parameterExpression.Body;
-            Logger.LogDebug($"{StepName} {parameterType} [{memberExpr.Member.Name}]: {parameterExpression.Compile().Invoke()}");
+            var value = customValue ?? parameterExpression.Compile().Invoke();
+            Logger.LogDebug($"{StepName} {parameterType} [{memberExpr.Member.Name}]: {value}");
         }
     }
 }

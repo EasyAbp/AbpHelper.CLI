@@ -1,9 +1,14 @@
 ﻿using System.Threading.Tasks;
+using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
     public class TextGenerationStep : StepBase
     {
+        public TextGenerationStep(WorkflowContext workflowContext) : base(workflowContext)
+        {
+        }
+
         protected override Task RunStep()
         {
             var templateFile = GetParameter<string>("TemplateFile");
@@ -14,7 +19,7 @@ namespace AbpHelper.Steps
             var text = "CODE";
 
             SetParameter("Text", text);
-            LogOutput(() => text);
+            LogOutput(() => text, $"Length: {text.Length}");
             return Task.CompletedTask;
         }
     }

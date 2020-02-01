@@ -3,17 +3,22 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using AbpHelper.Models;
+using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
     public class FileModifierStep : StepBase
     {
+        public FileModifierStep(WorkflowContext workflowContext) : base(workflowContext)
+        {
+        }
+
         protected override Task RunStep()
         {
             var filePathName = GetParameter<string>("FilePathName");
             var modifications = GetParameter<IList<Modification>>("Modifications");
             LogInput(() => filePathName);
-            LogInput(() => modifications);
+            LogInput(() => modifications, $"Modifications count: {modifications.Count}");
 
             var newFile = new StringBuilder();
             var lines = File.ReadAllLines(filePathName);
