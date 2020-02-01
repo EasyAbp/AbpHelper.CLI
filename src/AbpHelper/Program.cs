@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using AbpHelper.Dtos;
+using AbpHelper.Models;
+using AbpHelper.Steps;
+using AbpHelper.Workflow;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
@@ -40,34 +42,21 @@ namespace AbpHelper
 
         private static async Task Execute(IServiceProvider serviceProvider)
         {
-            var parameters = new Dictionary<string, object>
-            {
-                {"BaseDirectory", @"C:\Users\wakuw\Desktop"},
-                {"SearchFileName", "BookStoreDbContextModelCreatingExtensions.cs"},
-                {"TemplateFile", "dummyTemplateFile"},
-                {"Model", new object()},
+            var workflow = WorkflowBuilder.CreateBuilder(serviceProvider)
+                .AddStep<ProjectInfoProviderStep>().WithParameter("ProjectBaseDirectory", @"C:\Users\wakuw\Desktop\AbpApp\MyAbpRazorPages")
+                .AddStep<FileFinderStep>().WithParameter("SearchFileName", "*DbContextModelCreatingExtensions.cs")
+                .AddStep<TextGenerationStep>()
+                .WithParameter("TemplateFile", "dummyTemplateFile")
+                .WithParameter("Model", new object())
+                .AddStep<FileModifierStep>().WithParameter("Modifications", new List<Modification>
                 {
-                    "Modifications", new List<Modification>
-                    {
-                        new Deletion(16, 21),
-                        new Insertion(22, "CODE\r\n"),
-                        new Insertion(30, "// End of File", InsertPosition.After)
-                    }
-                }
-            };
-            /*
-            var steps = new IStep[]
-            {
-                new FileFinderStep(),
-                new TextGenerationStep(),
-                new FileModifierStep()
-            };
+                    new Deletion(16, 21),
+                    new Insertion(22, "CODE\r\n"),
+                    new Insertion(30, "// End of File", InsertPosition.After)
+                })
+                .Build();
 
-            foreach (var step in steps)
-            {
-                await step.Run(parameters);
-            }
-            */
+            await workflow.Run();
         }
     }
 }

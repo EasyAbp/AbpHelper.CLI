@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AbpHelper.Dtos
+namespace AbpHelper.Models
 {
     public class EntityInfo
     {

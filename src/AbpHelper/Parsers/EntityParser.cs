@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AbpHelper.Dtos;
+using AbpHelper.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
@@ -11,12 +11,12 @@ namespace AbpHelper.Parsers
 {
     public class EntityParser : IEntityParser
     {
-        public ILogger<EntityParser> Logger { get; set; }
-
         public EntityParser()
         {
             Logger = NullLogger<EntityParser>.Instance;
         }
+
+        public ILogger<EntityParser> Logger { get; set; }
 
         public Task<EntityInfo> Parse(string sourceText)
         {
@@ -31,9 +31,9 @@ namespace AbpHelper.Parsers
                     throw ex;
                 }
 
-                string @namespace = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().Single().Name.ToString();
+                var @namespace = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().Single();
-                string className = classDeclarationSyntax.Identifier.ToString();
+                var className = classDeclarationSyntax.Identifier.ToString();
                 var baseType = classDeclarationSyntax.BaseList?.Types[0].ToString();
 
                 var properties = root.DescendantNodes().OfType<PropertyDeclarationSyntax>()
@@ -46,14 +46,10 @@ namespace AbpHelper.Parsers
             }
             catch (Exception e)
             {
-                Logger.LogError(e, $"Parsing entity failed.");
+                Logger.LogError(e, "Parsing entity failed.");
                 if (e is ParseException pe)
-                {
                     foreach (var error in pe.Errors)
-                    {
                         Logger.LogError(error);
-                    }
-                }
                 throw;
             }
         }

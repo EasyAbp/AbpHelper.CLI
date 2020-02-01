@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using AbpHelper.Dtos;
+using AbpHelper.Models;
 using Volo.Abp.DependencyInjection;
 
 namespace AbpHelper.Parsers

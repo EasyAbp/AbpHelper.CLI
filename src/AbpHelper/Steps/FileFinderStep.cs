@@ -1,40 +1,25 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AbpHelper.Models;
 
 namespace AbpHelper.Steps
 {
-    public class FileFinderStep : IStep<FileFinderStepInput, FileFinderStepOutput>
+    public class FileFinderStep : StepBase
     {
-        public Task<FileFinderStepOutput> Run(FileFinderStepInput input)
+        public FileFinderStep(WorkflowContext context) : base(context)
         {
-            var baseDirectory = input.BaseDirectory;
-            var searchFileName = input.SearchFileName;
+        }
+
+        public override Task Run()
+        {
+            var baseDirectory = GetParameter<ProjectInfo>("ProjectInfo").BaseDirectory;
+            var searchFileName = GetParameter<string>("SearchFileName");
 
             var filePathName = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).Single();
-            return Task.FromResult(new FileFinderStepOutput(filePathName));
+            SetParameter("FilePathName", filePathName);
+
+            return Task.CompletedTask;
         }
-    }
-
-    public class FileFinderStepInput
-    {
-        public FileFinderStepInput(string baseDirectory, string searchFileName)
-        {
-            BaseDirectory = baseDirectory;
-            SearchFileName = searchFileName;
-        }
-
-        public string BaseDirectory { get; }
-        public string SearchFileName { get; }
-    }
-
-    public class FileFinderStepOutput
-    {
-        public FileFinderStepOutput(string filePathName)
-        {
-            FilePathName = filePathName;
-        }
-
-        public string FilePathName { get; }
     }
 }

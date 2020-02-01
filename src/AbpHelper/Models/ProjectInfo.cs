@@ -1,14 +1,7 @@
-﻿namespace AbpHelper.Dtos
+﻿namespace AbpHelper.Models
 {
     public class ProjectInfo
     {
-        public string BaseDirectory { get; }
-        public string FullName { get; }
-        public string Name { get; }
-        public TemplateType TemplateType { get; }
-        public UIFramework UIFramework { get; }
-        public bool Tiered { get; }
-
         public ProjectInfo(string baseDirectory, string fullName, string name, TemplateType templateType, UIFramework uiFramework, bool tiered)
         {
             BaseDirectory = baseDirectory;
@@ -18,18 +11,25 @@
             Tiered = tiered;
             FullName = fullName;
         }
+
+        public string BaseDirectory { get; }
+        public string FullName { get; }
+        public string Name { get; }
+        public TemplateType TemplateType { get; }
+        public UIFramework UIFramework { get; }
+        public bool Tiered { get; }
     }
 
     public enum TemplateType
     {
         Application,
-        Module,
+        Module
     }
 
     public enum UIFramework
     {
         None,
         RazorPages,
-        Angular,
+        Angular
     }
 }

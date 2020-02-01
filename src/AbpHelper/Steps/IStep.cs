@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
+using Volo.Abp.DependencyInjection;
 
 namespace AbpHelper.Steps
 {
-    public interface IStep<in TInput, TOutput>
+    public interface IStep : ITransientDependency
     {
-        Task<TOutput> Run(TInput input);
+        Task Run();
     }
 }

@@ -1,40 +1,23 @@
 ﻿using System.Threading.Tasks;
+using AbpHelper.Models;
 
 namespace AbpHelper.Steps
 {
-    public class TextGenerationStep : IStep<TextGenerationStepInput, TextGenerationStepOutput>
+    public class TextGenerationStep : StepBase
     {
-        public Task<TextGenerationStepOutput> Run(TextGenerationStepInput input)
+        public TextGenerationStep(WorkflowContext context) : base(context)
         {
-            var templateFile = input.TemplateFile;
-            var model = input.Model;
+        }
+
+        public override Task Run()
+        {
+            var templateFile = GetParameter<string>("TemplateFile");
+            var model = GetParameter<object>("Model");
             // TODO: Use template engine to generate text
             var text = "CODE";
 
-            return Task.FromResult(new TextGenerationStepOutput(text));
+            SetParameter("Text", text);
+            return Task.CompletedTask;
         }
-    }
-
-    public class TextGenerationStepInput
-    {
-        public TextGenerationStepInput(string templateFile, object model)
-        {
-            TemplateFile = templateFile;
-            Model = model;
-        }
-
-        public string TemplateFile { get; }
-
-        public object Model { get; }
-    }
-
-    public class TextGenerationStepOutput
-    {
-        public TextGenerationStepOutput(string text)
-        {
-            Text = text;
-        }
-
-        public string Text { get; }
     }
 }

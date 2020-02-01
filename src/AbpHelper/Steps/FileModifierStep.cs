@@ -2,16 +2,20 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using AbpHelper.Dtos;
+using AbpHelper.Models;
 
 namespace AbpHelper.Steps
 {
-    public class FileModifierStep : IStep<FileModifierStepInput, FileModifierStepOutput>
+    public class FileModifierStep : StepBase
     {
-        public Task<FileModifierStepOutput> Run(FileModifierStepInput input)
+        public FileModifierStep(WorkflowContext context) : base(context)
         {
-            var filePathName = input.FilePathName;
-            var modifications = input.Modifications;
+        }
+
+        public override Task Run()
+        {
+            var filePathName = GetParameter<string>("FilePathName");
+            var modifications = GetParameter<IList<Modification>>("Modifications");
 
             var newFile = new StringBuilder();
             var lines = File.ReadAllLines(filePathName);
@@ -61,23 +65,8 @@ namespace AbpHelper.Steps
             }
 
             File.WriteAllText(filePathName, newFile.ToString());
-            return Task.FromResult(new FileModifierStepOutput());
+
+            return Task.CompletedTask;
         }
-    }
-
-    public class FileModifierStepInput
-    {
-        public FileModifierStepInput(string filePathName, IList<Modification> modifications)
-        {
-            FilePathName = filePathName;
-            Modifications = modifications;
-        }
-
-        public string FilePathName { get; }
-        public IList<Modification> Modifications { get; }
-    }
-
-    public class FileModifierStepOutput
-    {
     }
 }
