@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AbpHelper.Extensions;
 using AbpHelper.Models;
 using AbpHelper.Steps;
+using AbpHelper.Steps.CSharp;
 using AbpHelper.Workflow;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,8 +39,7 @@ namespace AbpHelper
 
                 await Execute(application.ServiceProvider);
 
-                Console.WriteLine("Press ENTER to stop application...");
-                Console.ReadLine();
+                Console.WriteLine("Done.");
             }
         }
 
@@ -54,18 +55,25 @@ namespace AbpHelper
                 .AddStep<EntityParserStep>(
                     step => step.EntitySourceFile = step.GetParameter<string>("FilePathName")
                 )
+                .AddStep<TextGenerationStep>(
+                    step => step.TemplateFile = "EntityConfiguration",
+                    step => step.Model = new
+                    {
+                        EntityInfo = step.GetParameter<EntityInfo>("EntityInfo"),
+                        ProjectInfo = step.GetParameter<ProjectInfo>("ProjectInfo")
+                    })
                 .AddStep<FileFinderStep>(
                     step => step.BaseDirectory = step.GetParameter<string>("ProjectBaseDirectory"),
                     step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
                 )
-                .AddStep<TextGenerationStep>(
-                    step => step.TemplateFile = "dummyTemplateFile",
-                    step => step.Model = new object()
-                )
-                .AddStep<InsertionCreationStep>(
+                .AddStep<ModificationCreatorStep>(
                     step => step.SourceFile = step.GetParameter<string>("FilePathName"),
-                    step => step.StartLineFunc = root => root.DescendantNodes().OfType<MethodDeclarationSyntax>().First().GetLocation().GetLineSpan().EndLinePosition.Line,
-                    step => step.Content = step.GetParameter<string>("Text")
+                    step => step.ModificationBuilders = new List<ModificationBuilder>
+                    {
+                        new InsertionBuilder(root => 1, $"using {step.GetParameter<EntityInfo>("EntityInfo").Namespace};{Environment.NewLine}"),
+                        new InsertionBuilder(root => 4, $"using Volo.Abp.EntityFrameworkCore.Modeling;{Environment.NewLine}"),
+                        new InsertionBuilder(root => root.Descendants<MethodDeclarationSyntax>().First().GetEndLine(), step.GetParameter<string>("GeneratedText"))
+                    }
                 )
                 .AddStep<FileModifierStep>(
                     step => step.FilePathName = step.GetParameter<string>("FilePathName"),

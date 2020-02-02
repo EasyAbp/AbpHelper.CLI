@@ -19,6 +19,7 @@
         }
 
         public string Content { get; }
+
         public InsertPosition InsertPosition { get; }
     }
 
@@ -47,6 +48,7 @@
         }
 
         public int EndLine { get; }
+
         public string Content { get; }
     }
 }

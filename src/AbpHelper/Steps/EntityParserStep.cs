@@ -48,6 +48,7 @@ namespace AbpHelper.Steps
                 entityInfo.Properties.AddRange(properties);
 
                 SetParameter("EntityInfo", entityInfo);
+                LogOutput(() => entityInfo);
                 return Task.CompletedTask;
             }
             catch (Exception e)

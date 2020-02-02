@@ -1,0 +1,6 @@
+            builder.Entity<{{ EntityInfo.ClassName }}>(b =>
+            {
+                b.ToTable({{ ProjectInfo.Name }}Consts.DbTablePrefix + "{{ EntityInfo.ClassName }}s", {{ ProjectInfo.Name }}Consts.DbSchema);
+                b.ConfigureByConvention(); 
+                /* Configure more properties here */
+            });

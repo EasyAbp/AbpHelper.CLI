@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using AbpHelper.Workflow;
+using Scriban;
 
 namespace AbpHelper.Steps
 {
@@ -16,11 +19,15 @@ namespace AbpHelper.Steps
         {
             LogInput(() => TemplateFile);
             LogInput(() => Model);
-            // TODO: Use template engine to generate text
-            var text = "CODE";
 
-            SetParameter("Text", text);
+            var appDir = AppDomain.CurrentDomain.BaseDirectory!;
+            var templateFile = Path.Combine(appDir, "Templates", TemplateFile + ".sbntxt");
+            var templateText = File.ReadAllText(templateFile);
+            var template = Template.Parse(templateText);
+            var text = template.Render(Model, member => member.Name).Replace("\r\n", Environment.NewLine);
+
             LogOutput(() => text, $"Length: {text.Length}");
+            SetParameter("GeneratedText", text);
             return Task.CompletedTask;
         }
     }

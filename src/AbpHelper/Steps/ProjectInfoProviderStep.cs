@@ -31,7 +31,7 @@ namespace AbpHelper.Steps
             var domainCsprojFile = Directory.EnumerateFiles(ProjectBaseDirectory, "*.Domain.csproj", SearchOption.AllDirectories).FirstOrDefault();
             if (domainCsprojFile == null) throw new NotSupportedException($"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {ProjectBaseDirectory}");
 
-            var fileName = Path.GetFileNameWithoutExtension(domainCsprojFile);
+            var fileName = Path.GetFileName(domainCsprojFile);
             var fullName = fileName.RemovePostFix(".Domain.csproj");
             var name = fullName.Split('.').Last();
 
