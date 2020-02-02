@@ -49,6 +49,13 @@ namespace AbpHelper
                 .AddStep<ProjectInfoProviderStep>(step => step.ProjectBaseDirectory = step.GetParameter<string>("ProjectBaseDirectory"))
                 .AddStep<FileFinderStep>(
                     step => step.BaseDirectory = step.GetParameter<string>("ProjectBaseDirectory"),
+                    step => step.SearchFileName = "Book.cs"
+                )
+                .AddStep<EntityParserStep>(
+                    step => step.EntitySourceFile = step.GetParameter<string>("FilePathName")
+                )
+                .AddStep<FileFinderStep>(
+                    step => step.BaseDirectory = step.GetParameter<string>("ProjectBaseDirectory"),
                     step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
                 )
                 .AddStep<TextGenerationStep>(
