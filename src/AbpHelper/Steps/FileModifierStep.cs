@@ -7,28 +7,29 @@ using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
-    public class FileModifierStep : StepBase
+    public class FileModifierStep : Step
     {
         public FileModifierStep(WorkflowContext workflowContext) : base(workflowContext)
         {
         }
 
+        public string FilePathName { get; set; } = string.Empty;
+        public IList<Modification> Modifications { get; set; } = new List<Modification>();
+
         protected override Task RunStep()
         {
-            var filePathName = GetParameter<string>("FilePathName");
-            var modifications = GetParameter<IList<Modification>>("Modifications");
-            LogInput(() => filePathName);
-            LogInput(() => modifications, $"Modifications count: {modifications.Count}");
+            LogInput(() => FilePathName);
+            LogInput(() => Modifications, $"Modifications count: {Modifications.Count}");
 
             var newFile = new StringBuilder();
-            var lines = File.ReadAllLines(filePathName);
+            var lines = File.ReadAllLines(FilePathName);
             for (var line = 1; line <= lines.Length; line++)
             {
                 var appendLine = true;
                 var index = 0;
-                while (index < modifications.Count)
+                while (index < Modifications.Count)
                 {
-                    var modification = modifications[index];
+                    var modification = Modifications[index];
                     if (line == modification.StartLine)
                     {
                         if (modification is Insertion insertion)
@@ -56,7 +57,7 @@ namespace AbpHelper.Steps
                             line = replacement.EndLine + 1;
                         }
 
-                        modifications.RemoveAt(index);
+                        Modifications.RemoveAt(index);
                     }
                     else
                     {
@@ -67,7 +68,7 @@ namespace AbpHelper.Steps
                 if (appendLine && line <= lines.Length) newFile.AppendLine(lines[line - 1]);
             }
 
-            File.WriteAllText(filePathName, newFile.ToString());
+            File.WriteAllText(FilePathName, newFile.ToString());
 
             return Task.CompletedTask;
         }

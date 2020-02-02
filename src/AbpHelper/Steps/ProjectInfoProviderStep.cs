@@ -7,7 +7,7 @@ using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
-    public class ProjectInfoProviderStep : StepBase
+    public class ProjectInfoProviderStep : Step
     {
         public ProjectInfoProviderStep(WorkflowContext workflowContext) : base(workflowContext)
         {

@@ -3,18 +3,19 @@ using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
-    public class TextGenerationStep : StepBase
+    public class TextGenerationStep : Step
     {
         public TextGenerationStep(WorkflowContext workflowContext) : base(workflowContext)
         {
         }
 
+        public string TemplateFile { get; set; } = string.Empty;
+        public object Model { get; set; } = new object();
+
         protected override Task RunStep()
         {
-            var templateFile = GetParameter<string>("TemplateFile");
-            var model = GetParameter<object>("Model");
-            LogInput(() => templateFile);
-            LogInput(() => model);
+            LogInput(() => TemplateFile);
+            LogInput(() => Model);
             // TODO: Use template engine to generate text
             var text = "CODE";
 

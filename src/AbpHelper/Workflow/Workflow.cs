@@ -7,12 +7,12 @@ namespace AbpHelper.Workflow
 {
     public class Workflow
     {
-        public Workflow(IList<IStep> steps)
+        public Workflow(IList<Step> steps)
         {
-            Steps = new ReadOnlyCollection<IStep>(steps);
+            Steps = new ReadOnlyCollection<Step>(steps);
         }
 
-        public IReadOnlyList<IStep> Steps { get; }
+        public IReadOnlyList<Step> Steps { get; }
 
         public async Task Run()
         {

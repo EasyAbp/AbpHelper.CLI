@@ -14,26 +14,17 @@ namespace AbpHelper.Workflow
             _scope = serviceProvider.CreateScope();
         }
 
-        public IList<IStep> Steps { get; } = new List<IStep>();
+        public IList<Step> Steps { get; } = new List<Step>();
 
         public static WorkflowBuilder CreateBuilder(IServiceProvider serviceProvider)
         {
             return new WorkflowBuilder(serviceProvider);
         }
 
-        public WorkflowBuilder AddStep<TStep>(params Action<TStep>[] actions) where TStep : IStep
+        public WorkflowBuilder AddStep<TStep>(params Action<TStep>[] actions) where TStep : Step
         {
             var step = _scope.ServiceProvider.GetRequiredService<TStep>();
-            foreach (var action in actions) action(step);
-            Steps.Add(step);
-            return this;
-        }
-
-        public WorkflowBuilder AddStep<TStep>(params Action<TStep, WorkflowContext>[] actions) where TStep : IStep
-        {
-            var step = _scope.ServiceProvider.GetRequiredService<TStep>();
-            var context = _scope.ServiceProvider.GetRequiredService<WorkflowContext>();
-            foreach (var action in actions) action(step, context);
+            foreach (var action in actions) step.AddInputAction(action);
             Steps.Add(step);
             return this;
         }
@@ -42,6 +33,13 @@ namespace AbpHelper.Workflow
         {
             var workflow = new Workflow(Steps);
             return workflow;
+        }
+
+        public WorkflowBuilder WithParameter(string key, object value)
+        {
+            var context = _scope.ServiceProvider.GetRequiredService<WorkflowContext>();
+            context.SetParameter(key, value);
+            return this;
         }
     }
 }
