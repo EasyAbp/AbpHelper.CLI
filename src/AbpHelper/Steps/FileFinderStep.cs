@@ -12,14 +12,15 @@ namespace AbpHelper.Steps
         {
         }
 
+        public string SearchFileName { get; set; } = string.Empty;
+
         protected override Task RunStep()
         {
             var baseDirectory = GetParameter<ProjectInfo>("ProjectInfo").BaseDirectory;
-            var searchFileName = GetParameter<string>("SearchFileName");
             LogInput(() => baseDirectory);
-            LogInput(() => searchFileName);
+            LogInput(() => SearchFileName);
 
-            var filePathName = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).Single();
+            var filePathName = Directory.EnumerateFiles(baseDirectory, SearchFileName, SearchOption.AllDirectories).Single();
             SetParameter("FilePathName", filePathName);
             LogOutput(() => filePathName);
 

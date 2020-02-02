@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AbpHelper.Models;
 using AbpHelper.Steps;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,36 +8,39 @@ namespace AbpHelper.Workflow
     public class WorkflowBuilder
     {
         private readonly IServiceScope _scope;
-        private readonly IList<IStep> _steps = new List<IStep>();
 
         private WorkflowBuilder(IServiceProvider serviceProvider)
         {
             _scope = serviceProvider.CreateScope();
         }
 
+        public IList<IStep> Steps { get; } = new List<IStep>();
+
         public static WorkflowBuilder CreateBuilder(IServiceProvider serviceProvider)
         {
             return new WorkflowBuilder(serviceProvider);
         }
 
-        public WorkflowBuilder AddStep<TStep>() where TStep : IStep
+        public WorkflowBuilder AddStep<TStep>(params Action<TStep>[] actions) where TStep : IStep
         {
             var step = _scope.ServiceProvider.GetRequiredService<TStep>();
-            _steps.Add(step);
-
+            foreach (var action in actions) action(step);
+            Steps.Add(step);
             return this;
         }
 
-        public WorkflowBuilder WithParameter(string key, object value)
+        public WorkflowBuilder AddStep<TStep>(params Action<TStep, WorkflowContext>[] actions) where TStep : IStep
         {
+            var step = _scope.ServiceProvider.GetRequiredService<TStep>();
             var context = _scope.ServiceProvider.GetRequiredService<WorkflowContext>();
-            context.Parameters[key] = value;
+            foreach (var action in actions) action(step, context);
+            Steps.Add(step);
             return this;
         }
 
         public Workflow Build()
         {
-            var workflow = new Workflow(_steps);
+            var workflow = new Workflow(Steps);
             return workflow;
         }
     }
