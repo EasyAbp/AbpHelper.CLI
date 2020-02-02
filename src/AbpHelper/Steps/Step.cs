@@ -33,6 +33,11 @@ namespace AbpHelper.Steps
             Logger.LogDebug($"{StepName} finished.");
         }
 
+        public bool ContainsParameter(string key)
+        {
+            return _workflowContext.ContainsParameter(key);
+        }
+
         public T GetParameter<T>(string key)
         {
             return _workflowContext.GetParameter<T>(key);

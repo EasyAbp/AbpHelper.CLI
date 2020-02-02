@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AbpHelper.Models;
 using AbpHelper.Steps;
 using AbpHelper.Workflow;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
@@ -47,19 +49,21 @@ namespace AbpHelper
                 .AddStep<ProjectInfoProviderStep>(step => step.ProjectBaseDirectory = step.GetParameter<string>("ProjectBaseDirectory"))
                 .AddStep<FileFinderStep>(
                     step => step.BaseDirectory = step.GetParameter<string>("ProjectBaseDirectory"),
-                    step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs")
+                    step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
+                )
                 .AddStep<TextGenerationStep>(
                     step => step.TemplateFile = "dummyTemplateFile",
                     step => step.Model = new object()
                 )
+                .AddStep<InsertionCreationStep>(
+                    step => step.SourceFile = step.GetParameter<string>("FilePathName"),
+                    step => step.StartLineFunc = root => root.DescendantNodes().OfType<MethodDeclarationSyntax>().First().GetLocation().GetLineSpan().EndLinePosition.Line,
+                    step => step.Content = step.GetParameter<string>("Text")
+                )
                 .AddStep<FileModifierStep>(
                     step => step.FilePathName = step.GetParameter<string>("FilePathName"),
-                    step => step.Modifications = new List<Modification>
-                    {
-                        new Deletion(16, 21),
-                        new Insertion(22, "CODE\r\n"),
-                        new Insertion(30, "// End of File", InsertPosition.After)
-                    })
+                    step => step.Modifications = step.GetParameter<IList<Modification>>("Modifications")
+                )
                 .Build();
 
             await workflow.Run();

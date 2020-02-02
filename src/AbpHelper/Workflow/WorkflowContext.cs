@@ -11,6 +11,11 @@ namespace AbpHelper.Workflow
             _parameters = parameters;
         }
 
+        public bool ContainsParameter(string key)
+        {
+            return _parameters.ContainsKey(key);
+        }
+
         public T GetParameter<T>(string key)
         {
             return (T) _parameters[key];
