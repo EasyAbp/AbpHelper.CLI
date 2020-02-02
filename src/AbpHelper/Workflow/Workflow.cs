@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using AbpHelper.Steps;
 
@@ -6,16 +7,16 @@ namespace AbpHelper.Workflow
 {
     public class Workflow
     {
-        private readonly IList<IStep> _steps;
-
         public Workflow(IList<IStep> steps)
         {
-            _steps = steps;
+            Steps = new ReadOnlyCollection<IStep>(steps);
         }
+
+        public IReadOnlyList<IStep> Steps { get; }
 
         public async Task Run()
         {
-            foreach (var step in _steps) await step.Run();
+            foreach (var step in Steps) await step.Run();
         }
     }
 }
