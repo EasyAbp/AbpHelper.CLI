@@ -52,9 +52,7 @@ namespace AbpHelper
                     step => step.BaseDirectory = step.GetParameter<string>("ProjectBaseDirectory"),
                     step => step.SearchFileName = "Book.cs"
                 )
-                .AddStep<EntityParserStep>(
-                    step => step.EntitySourceFile = step.GetParameter<string>("FilePathName")
-                )
+                .AddStep<EntityParserStep>()
                 .AddStep<TextGenerationStep>(
                     step => step.TemplateFile = "EntityConfiguration",
                     step => step.Model = new
@@ -67,7 +65,6 @@ namespace AbpHelper
                     step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
                 )
                 .AddStep<ModificationCreatorStep>(
-                    step => step.SourceFile = step.GetParameter<string>("FilePathName"),
                     step => step.ModificationBuilders = new List<ModificationBuilder>
                     {
                         new InsertionBuilder(root => 1, $"using {step.GetParameter<EntityInfo>("EntityInfo").Namespace};{Environment.NewLine}"),
@@ -76,7 +73,6 @@ namespace AbpHelper
                     }
                 )
                 .AddStep<FileModifierStep>(
-                    step => step.FilePathName = step.GetParameter<string>("FilePathName"),
                     step => step.Modifications = step.GetParameter<IList<Modification>>("Modifications")
                 )
                 .Build();

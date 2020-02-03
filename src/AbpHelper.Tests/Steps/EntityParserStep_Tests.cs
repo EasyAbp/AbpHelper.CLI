@@ -60,7 +60,7 @@ namespace AbpHelper.Tests.Parsers
             await UsingEntityFile(EntityCode, async file =>
             {
                 // Arrange
-                _entityParserStep.EntitySourceFile = file;
+                _entityParserStep.SetParameter("FilePathName", file);
 
                 // Act
                 await _entityParserStep.Run();
@@ -88,7 +88,7 @@ namespace AbpHelper.Tests.Parsers
             await UsingEntityFile("invalid c# code", async file =>
             {
                 // Arrange
-                _entityParserStep.EntitySourceFile = file;
+                _entityParserStep.SetParameter("FilePathName", file);
 
                 // Act
                 var ex = await Assert.ThrowsAsync<ParseException>(() => _entityParserStep.Run());

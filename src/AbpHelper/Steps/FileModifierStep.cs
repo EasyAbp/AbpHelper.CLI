@@ -13,16 +13,16 @@ namespace AbpHelper.Steps
         {
         }
 
-        public string FilePathName { get; set; } = string.Empty;
         public IList<Modification> Modifications { get; set; } = new List<Modification>();
 
         protected override Task RunStep()
         {
-            LogInput(() => FilePathName);
+            var targetFile = GetParameter<string>("FilePathName");
+            LogInput(() => targetFile);
             LogInput(() => Modifications, $"Modifications count: {Modifications.Count}");
 
             var newFile = new StringBuilder();
-            var lines = File.ReadAllLines(FilePathName);
+            var lines = File.ReadAllLines(targetFile);
             for (var line = 1; line <= lines.Length; line++)
             {
                 var appendLine = true;
@@ -68,7 +68,7 @@ namespace AbpHelper.Steps
                 if (appendLine && line <= lines.Length) newFile.AppendLine(lines[line - 1]);
             }
 
-            File.WriteAllText(FilePathName, newFile.ToString());
+            File.WriteAllText(targetFile, newFile.ToString());
 
             return Task.CompletedTask;
         }

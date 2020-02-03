@@ -17,13 +17,12 @@ namespace AbpHelper.Steps
         {
         }
 
-        public string EntitySourceFile { get; set; } = string.Empty;
-
         protected override Task RunStep()
         {
-            LogInput(() => EntitySourceFile);
+            var entitySourceFile = GetParameter<string>("FilePathName");
+            LogInput(() => entitySourceFile);
 
-            var sourceText = File.ReadAllText(EntitySourceFile);
+            var sourceText = File.ReadAllText(entitySourceFile);
 
             try
             {

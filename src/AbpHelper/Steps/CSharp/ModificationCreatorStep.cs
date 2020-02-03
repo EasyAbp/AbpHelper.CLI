@@ -14,12 +14,12 @@ namespace AbpHelper.Steps.CSharp
         }
 
         public IList<ModificationBuilder> ModificationBuilders { get; set; } = new List<ModificationBuilder>();
-        public string SourceFile { get; set; } = string.Empty;
 
         protected override Task RunStep()
         {
-            LogInput(() => SourceFile);
-            var sourceText = File.ReadAllText(SourceFile);
+            var sourceFile = GetParameter<string>("FilePathName");
+            LogInput(() => sourceFile);
+            var sourceText = File.ReadAllText(sourceFile);
             var tree = CSharpSyntaxTree.ParseText(sourceText);
             var root = tree.GetCompilationUnitRoot();
 
