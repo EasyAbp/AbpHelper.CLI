@@ -20,5 +20,10 @@ namespace AbpHelper.Extensions
         {
             return node.DescendantNodes().OfType<T>();
         }
+
+        public static bool NotExist<T>(this SyntaxNode node, string text) where T : SyntaxNode
+        {
+            return node.Descendants<T>().All(child => child.ToFullString() != text);
+        }
     }
 }

@@ -65,13 +65,17 @@ namespace AbpHelper
                     step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
                 )
                 .AddStep<ModificationCreatorStep>(
-                    step => step.ModificationBuilders = new List<ModificationBuilder>
+                    step =>
                     {
-                        new InsertionBuilder(root => 1, $"using {step.GetParameter<EntityInfo>("EntityInfo").Namespace};{Environment.NewLine}"),
-                        new InsertionBuilder(root => 4, $"using Volo.Abp.EntityFrameworkCore.Modeling;{Environment.NewLine}"),
-                        new InsertionBuilder(root => root.Descendants<MethodDeclarationSyntax>().First().GetEndLine(), step.GetParameter<string>("GeneratedText"))
-                    }
-                )
+                        var usingEntity = $"using {step.GetParameter<EntityInfo>("EntityInfo").Namespace};{Environment.NewLine}";
+                        var usingModeling = $"using Volo.Abp.EntityFrameworkCore.Modeling;{Environment.NewLine}";
+                        step.ModificationBuilders = new List<ModificationBuilder>
+                        {
+                            new InsertionBuilder(root => 1, usingEntity, shouldModifier: root => root.NotExist<UsingDirectiveSyntax>(usingEntity)),
+                            new InsertionBuilder(root => 4, usingModeling, shouldModifier: root => root.NotExist<UsingDirectiveSyntax>(usingModeling)),
+                            new InsertionBuilder(root => root.Descendants<MethodDeclarationSyntax>().First().GetEndLine(), step.GetParameter<string>("GeneratedText"))
+                        };
+                    })
                 .AddStep<FileModifierStep>(
                     step => step.Modifications = step.GetParameter<IList<Modification>>("Modifications")
                 )

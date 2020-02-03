@@ -23,7 +23,10 @@ namespace AbpHelper.Steps.CSharp
             var tree = CSharpSyntaxTree.ParseText(sourceText);
             var root = tree.GetCompilationUnitRoot();
 
-            var modifications = ModificationBuilders.Select(builder => builder.Build(root)).ToList();
+            var modifications = ModificationBuilders
+                .Where(builder => builder.ShouldModifier(root))
+                .Select(builder => builder.Build(root))
+                .ToList();
             SetParameter("Modifications", modifications);
             LogOutput(() => modifications, $"Modifications count: {modifications.Count}");
 
