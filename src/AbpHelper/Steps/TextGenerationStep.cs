@@ -1,33 +1,24 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using AbpHelper.Workflow;
-using Scriban;
+﻿using System.Threading.Tasks;
+using AbpHelper.Generator;
 
 namespace AbpHelper.Steps
 {
     public class TextGenerationStep : Step
     {
-        public TextGenerationStep(WorkflowContext workflowContext) : base(workflowContext)
-        {
-        }
-
-        public string TemplateFile { get; set; } = string.Empty;
+        public string TemplateName { get; set; } = string.Empty;
         public object Model { get; set; } = new object();
+        public string GeneratedTextKey { get; set; } = "GeneratedText";
 
         protected override Task RunStep()
         {
-            LogInput(() => TemplateFile);
+            LogInput(() => TemplateName);
             LogInput(() => Model);
+            LogInput(() => GeneratedTextKey);
 
-            var appDir = AppDomain.CurrentDomain.BaseDirectory!;
-            var templateFile = Path.Combine(appDir, "Templates", TemplateFile + ".sbntxt");
-            var templateText = File.ReadAllText(templateFile);
-            var template = Template.Parse(templateText);
-            var text = template.Render(Model, member => member.Name).Replace("\r\n", Environment.NewLine);
+            var text = TextGenerator.Generate(TemplateName, Model);
 
             LogOutput(() => text, $"Length: {text.Length}");
-            SetParameter("GeneratedText", text);
+            SetParameter(GeneratedTextKey, text);
             return Task.CompletedTask;
         }
     }

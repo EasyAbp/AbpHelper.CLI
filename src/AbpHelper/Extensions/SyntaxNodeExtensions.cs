@@ -21,9 +21,9 @@ namespace AbpHelper.Extensions
             return node.DescendantNodes().OfType<T>();
         }
 
-        public static bool NotExist<T>(this SyntaxNode node, string text) where T : SyntaxNode
+        public static bool DescendantsNotContain<T>(this SyntaxNode node, string text) where T : SyntaxNode
         {
-            return node.Descendants<T>().All(child => child.ToFullString() != text);
+            return node.Descendants<T>().All(child => !child.ToFullString().Contains(text));
         }
     }
 }

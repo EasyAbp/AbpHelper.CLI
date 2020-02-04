@@ -3,16 +3,11 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using AbpHelper.Models;
-using AbpHelper.Workflow;
 
 namespace AbpHelper.Steps
 {
     public class FileModifierStep : Step
     {
-        public FileModifierStep(WorkflowContext workflowContext) : base(workflowContext)
-        {
-        }
-
         public IList<Modification> Modifications { get; set; } = new List<Modification>();
 
         protected override Task RunStep()

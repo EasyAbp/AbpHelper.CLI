@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AbpHelper.Models;
-using AbpHelper.Workflow;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
@@ -13,10 +12,6 @@ namespace AbpHelper.Steps
 {
     public class EntityParserStep : Step
     {
-        public EntityParserStep(WorkflowContext workflowContext) : base(workflowContext)
-        {
-        }
-
         protected override Task RunStep()
         {
             var entitySourceFile = GetParameter<string>("FilePathName");

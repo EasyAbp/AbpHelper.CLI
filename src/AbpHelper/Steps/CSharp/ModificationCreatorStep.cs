@@ -2,17 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AbpHelper.Workflow;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace AbpHelper.Steps.CSharp
 {
     public class ModificationCreatorStep : Step
     {
-        public ModificationCreatorStep(WorkflowContext workflowContext) : base(workflowContext)
-        {
-        }
-
         public IList<ModificationBuilder> ModificationBuilders { get; set; } = new List<ModificationBuilder>();
 
         protected override Task RunStep()

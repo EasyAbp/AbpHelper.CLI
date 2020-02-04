@@ -14,7 +14,7 @@ namespace AbpHelper.Workflow
             _scope = serviceProvider.CreateScope();
         }
 
-        public IList<Step> Steps { get; } = new List<Step>();
+        private IList<Step> Steps { get; } = new List<Step>();
 
         public static WorkflowBuilder CreateBuilder(IServiceProvider serviceProvider)
         {

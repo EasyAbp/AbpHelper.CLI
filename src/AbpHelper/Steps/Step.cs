@@ -12,16 +12,16 @@ namespace AbpHelper.Steps
     public abstract class Step : ITransientDependency
     {
         private readonly IList<Action<object>> _inputActions = new List<Action<object>>();
-
-        private readonly WorkflowContext _workflowContext;
         protected readonly string StepName;
 
-        protected Step(WorkflowContext workflowContext)
+        protected Step()
         {
             StepName = GetType().Name;
-            _workflowContext = workflowContext;
             Logger = NullLogger<Step>.Instance;
+            Context = new WorkflowContext(new Dictionary<string, object>());
         }
+
+        public WorkflowContext Context { get; set; }
 
         public ILogger<Step> Logger { get; set; }
 
@@ -35,17 +35,17 @@ namespace AbpHelper.Steps
 
         public bool ContainsParameter(string key)
         {
-            return _workflowContext.ContainsParameter(key);
+            return Context.ContainsParameter(key);
         }
 
         public T GetParameter<T>(string key)
         {
-            return _workflowContext.GetParameter<T>(key);
+            return Context.GetParameter<T>(key);
         }
 
         public void SetParameter(string key, object value)
         {
-            _workflowContext.SetParameter(key, value);
+            Context.SetParameter(key, value);
         }
 
         protected abstract Task RunStep();
