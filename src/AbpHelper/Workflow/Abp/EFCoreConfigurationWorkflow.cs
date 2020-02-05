@@ -35,9 +35,7 @@ namespace AbpHelper.Workflow.Abp
                                 )
                             };
                         })
-                    .AddStep<FileModifierStep>(
-                        step => step.Modifications = step.GetParameter<IList<Modification>>("Modifications")
-                    )
+                    .AddStep<FileModifierStep>()
                     /* Add entity configuration to DbContextModelCreatingExtensions */
                     .AddStep<FileFinderStep>(
                         step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
@@ -69,9 +67,7 @@ namespace AbpHelper.Workflow.Abp
                                 )
                             };
                         })
-                    .AddStep<FileModifierStep>(
-                        step => step.Modifications = step.GetParameter<IList<Modification>>("Modifications")
-                    )
+                    .AddStep<FileModifierStep>()
                 ;
         }
 

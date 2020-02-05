@@ -15,7 +15,9 @@ namespace AbpHelper.Steps
         {
             var targetFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
             LogInput(() => targetFile);
-            LogInput(() => Modifications, $"Modifications count: {Modifications.Count}");
+
+            var modifications = Modifications.IsNullOrEmpty() ? GetParameter<IList<Modification>>("Modifications") : Modifications;
+            LogInput(() => modifications, $"Modifications count: {modifications.Count}");
 
             var newFile = new StringBuilder();
             var lines = await System.IO.File.ReadAllLinesAsync(targetFile);
@@ -23,9 +25,9 @@ namespace AbpHelper.Steps
             {
                 var appendLine = true;
                 var index = 0;
-                while (index < Modifications.Count)
+                while (index < modifications.Count)
                 {
-                    var modification = Modifications[index];
+                    var modification = modifications[index];
                     if (line == modification.StartLine)
                     {
                         if (modification is Insertion insertion)
@@ -53,7 +55,7 @@ namespace AbpHelper.Steps
                             line = replacement.EndLine + 1;
                         }
 
-                        Modifications.RemoveAt(index);
+                        modifications.RemoveAt(index);
                     }
                     else
                     {
