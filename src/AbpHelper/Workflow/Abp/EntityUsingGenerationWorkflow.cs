@@ -9,7 +9,7 @@ namespace AbpHelper.Workflow.Abp
         {
             return builder
                     .AddStep<TextGenerationStep>(
-                        step => step.TemplateName = "Entity_Using",
+                        step => step.TemplateName = "UsingEntityNamespace",
                         step => step.Model = new {EntityInfo = step.GetParameter<EntityInfo>("EntityInfo")},
                         step => step.GeneratedTextKey = "EntityUsingText"
                     )
