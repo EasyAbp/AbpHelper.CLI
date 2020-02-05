@@ -1,6 +1,11 @@
-﻿using AbpHelper.Extensions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AbpHelper.Extensions;
+using AbpHelper.Generator;
 using AbpHelper.Models;
 using AbpHelper.Steps;
+using AbpHelper.Steps.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AbpHelper.Workflow.Abp
 {
@@ -22,6 +27,26 @@ namespace AbpHelper.Workflow.Abp
                             step.TargetDirectory = step.GetParameter<string>("BaseDirectory");
                         }
                     )
+                    .AddStep<FileFinderStep>(
+                        step => step.SearchFileName = "*ApplicationAutoMapperProfile.cs"
+                    )
+                    .AddStep<ModificationCreatorStep>(
+                        step =>
+                        {
+                            var entityInfo = step.Get<EntityInfo>();
+                            step.ModificationBuilders = new List<ModificationBuilder>
+                            {
+                                new InsertionBuilder(
+                                    root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),
+                                    TextGenerator.GenerateByTemplateName("CreateMap", new
+                                    {
+                                        Source = $"{entityInfo.ClassName}",
+                                        Destination = $"{entityInfo.ClassName}Dto"
+                                    })
+                                )
+                            };
+                        })
+                    .AddStep<FileModifierStep>()
                 ;
         }
     }
