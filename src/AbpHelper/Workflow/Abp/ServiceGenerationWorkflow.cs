@@ -40,8 +40,8 @@ namespace AbpHelper.Workflow.Abp
                                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),
                                     TextGenerator.GenerateByTemplateName("CreateMap", new
                                     {
-                                        Source = $"{entityInfo.ClassName}",
-                                        Destination = $"{entityInfo.ClassName}Dto"
+                                        Source = $"{entityInfo.Name}",
+                                        Destination = $"{entityInfo.Name}Dto"
                                     })
                                 )
                             };

@@ -1,0 +1,13 @@
+using System;
+using Volo.Abp.Application.Dtos;
+
+namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}.Dtos
+{
+    public class {{ EntityInfo.Name }}Dto : {{ EntityInfo.BaseType | string.replace "AggregateRoot" "Entity"}}Dto{{ if EntityInfo.PrimaryKey }}<{{ EntityInfo.PrimaryKey}}>{{ end }}
+    {
+        {{~ for prop in EntityInfo.Properties ~}}
+        public {{ prop.Type}} {{ prop.Name }} {get; set;}
+
+        {{~ end ~}}
+    }
+}

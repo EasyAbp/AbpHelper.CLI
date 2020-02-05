@@ -24,7 +24,7 @@ namespace AbpHelper.Workflow.Abp
                             var entityInfo = step.Get<EntityInfo>();
                             var migrationProjectFile = step.GetParameter<string>("MigrationProjectFile");
                             var webProjectFile = step.GetParameter<string>("WebProjectFile");
-                            step.Command = $"dotnet ef migrations add Added{entityInfo.ClassName} -p \"{migrationProjectFile}\" -s \"{webProjectFile}\"";
+                            step.Command = $"dotnet ef migrations add Added{entityInfo.Name} -p \"{migrationProjectFile}\" -s \"{webProjectFile}\"";
                         })
                     /* Update database */
                     .AddStep<RunCommandStep>(

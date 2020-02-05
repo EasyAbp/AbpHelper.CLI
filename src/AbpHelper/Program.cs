@@ -47,11 +47,9 @@ namespace AbpHelper
                     step => step.SearchFileName = "Book.cs"
                 )
                 .AddStep<EntityParserStep>()
-                /*
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
                 .AddMigrationAndUpdateDatabaseWorkflow()
-                */
                 .AddServiceGenerationWorkflow()
                 .Build();
 

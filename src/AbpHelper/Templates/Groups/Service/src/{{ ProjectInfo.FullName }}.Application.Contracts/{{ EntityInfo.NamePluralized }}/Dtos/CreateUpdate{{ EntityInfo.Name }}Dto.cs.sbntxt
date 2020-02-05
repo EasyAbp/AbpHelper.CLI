@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.ClassName }}s.Dtos
+namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}.Dtos
 {
-    public class CreateUpdate{{ EntityInfo.ClassName }}Dto
+    public class CreateUpdate{{ EntityInfo.Name }}Dto
     {
         {{~ for prop in EntityInfo.Properties ~}}
         public {{ prop.Type}} {{ prop.Name }} {get; set;}

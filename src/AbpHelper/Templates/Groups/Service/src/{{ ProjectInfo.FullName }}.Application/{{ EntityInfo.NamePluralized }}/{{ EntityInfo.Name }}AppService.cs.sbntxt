@@ -1,0 +1,19 @@
+using System;
+using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}.Dtos;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
+
+namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}
+{
+    public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto,
+            CreateUpdate{{ EntityInfo.Name }}Dto, CreateUpdate{{ EntityInfo.Name }}Dto>,
+        I{{ EntityInfo.Name }}AppService
+    {
+        public {{ EntityInfo.Name }}AppService(IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> repository)
+            : base(repository)
+        {
+
+        }
+    }
+}

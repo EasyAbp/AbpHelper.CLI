@@ -67,7 +67,8 @@ namespace Acme.BookStore
                 // Assert
                 var info = _entityParserStep.GetParameter<EntityInfo>("EntityInfo");
                 info.Namespace.ShouldBe("Acme.BookStore");
-                info.ClassName.ShouldBe("Book");
+                info.Name.ShouldBe("Book");
+                info.NamePluralized.ShouldBe("Books");
                 info.BaseType.ShouldBe("AuditedAggregateRoot");
                 info.PrimaryKey.ShouldBe("Guid");
                 info.Properties.Count.ShouldBe(4);
@@ -119,7 +120,8 @@ namespace Acme.BookStore
                 // Assert
                 var info = _entityParserStep.GetParameter<EntityInfo>("EntityInfo");
                 info.Namespace.ShouldBe("Acme.BookStore");
-                info.ClassName.ShouldBe("UserRole");
+                info.Name.ShouldBe("UserRole");
+                info.NamePluralized.ShouldBe("UserRoles");
                 info.BaseType.ShouldBe("Entity");
                 info.PrimaryKey.ShouldBeNull();
                 info.Properties.Count.ShouldBe(3);

@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
+using Humanizer;
 
 namespace AbpHelper.Models
 {
     public class EntityInfo
     {
-        public EntityInfo(string @namespace, string className, string? baseType, string? primaryKey)
+        public EntityInfo(string @namespace, string name, string? baseType, string? primaryKey)
         {
             Namespace = @namespace;
-            ClassName = className;
+            Name = name;
             BaseType = baseType;
             PrimaryKey = primaryKey;
         }
 
         public string Namespace { get; }
-        public string ClassName { get; }
+        public string Name { get; }
+        public string NamePluralized => Name.Pluralize();
         public string? BaseType { get; }
         public string? PrimaryKey { get; set; }
         public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
