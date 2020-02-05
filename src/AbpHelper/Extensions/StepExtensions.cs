@@ -6,7 +6,7 @@ namespace AbpHelper.Extensions
     {
         public static T Get<T>(this Step step)
         {
-            return step.GetParameter<T>(nameof(T));
+            return step.GetParameter<T>(typeof(T).Name);
         }
     }
 }

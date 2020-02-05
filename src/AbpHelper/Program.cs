@@ -49,6 +49,7 @@ namespace AbpHelper
                 .AddStep<EntityParserStep>()
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
+                .AddMigrationAndUpdateDatabaseWorkflow()
                 .Build();
 
             await workflow.Run();

@@ -7,6 +7,7 @@ namespace AbpHelper.Steps
     public class FileFinderStep : Step
     {
         public string SearchFileName { get; set; } = string.Empty;
+        public string ResultParameterName { get; set; } = "FilePathName";
 
         protected override Task RunStep()
         {
@@ -15,8 +16,8 @@ namespace AbpHelper.Steps
             LogInput(() => SearchFileName);
 
             var filePathName = Directory.EnumerateFiles(baseDirectory, SearchFileName, SearchOption.AllDirectories).Single();
-            SetParameter("FilePathName", filePathName);
-            LogOutput(() => filePathName);
+            SetParameter(ResultParameterName, filePathName);
+            LogOutput(() => filePathName, $"stored in [{ResultParameterName}]");
 
             return Task.CompletedTask;
         }
