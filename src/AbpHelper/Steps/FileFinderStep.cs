@@ -17,7 +17,7 @@ namespace AbpHelper.Steps
 
             var filePathName = Directory.EnumerateFiles(baseDirectory, SearchFileName, SearchOption.AllDirectories).Single();
             SetParameter(ResultParameterName, filePathName);
-            LogOutput(() => filePathName, $"stored in [{ResultParameterName}]");
+            LogOutput(() => filePathName, $"Found file: {filePathName}, stored in parameter: [{ResultParameterName}]");
 
             return Task.CompletedTask;
         }

@@ -69,7 +69,8 @@ namespace AbpHelper.Tests.Parsers
                 var info = _entityParserStep.GetParameter<EntityInfo>("EntityInfo");
                 info.Namespace.ShouldBe("Acme.BookStore");
                 info.ClassName.ShouldBe("Book");
-                info.BaseType.ShouldBe("AuditedAggregateRoot<Guid>");
+                info.BaseType.ShouldBe("AuditedAggregateRoot");
+                info.PrimaryKey.ShouldBe("Guid");
                 info.Properties.Count.ShouldBe(4);
                 info.Properties[0].Type.ShouldBe("string");
                 info.Properties[1].Type.ShouldBe("BookType");

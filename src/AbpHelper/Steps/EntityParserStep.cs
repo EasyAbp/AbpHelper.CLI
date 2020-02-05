@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AbpHelper.Extensions;
 using AbpHelper.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,12 +12,14 @@ namespace AbpHelper.Steps
 {
     public class EntityParserStep : Step
     {
-        protected override Task RunStep()
+        public string File { get; set; } = string.Empty;
+
+        protected override async Task RunStep()
         {
-            var entitySourceFile = GetParameter<string>("FilePathName");
+            var entitySourceFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
             LogInput(() => entitySourceFile);
 
-            var sourceText = File.ReadAllText(entitySourceFile);
+            var sourceText = await System.IO.File.ReadAllTextAsync(entitySourceFile);
 
             try
             {
@@ -30,20 +32,21 @@ namespace AbpHelper.Steps
                     throw ex;
                 }
 
-                var @namespace = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().Single().Name.ToString();
-                var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().Single();
+                var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
+                var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
                 var className = classDeclarationSyntax.Identifier.ToString();
-                var baseType = classDeclarationSyntax.BaseList?.Types[0].ToString();
+                var baseList = classDeclarationSyntax.BaseList;
+                var baseType = baseList?.Descendants<SimpleBaseTypeSyntax>().Single().Descendants<GenericNameSyntax>().Single().Identifier.ToString();
+                var primaryKey = baseList?.Descendants<TypeArgumentListSyntax>().Single().Arguments[0].ToString();
 
-                var properties = root.DescendantNodes().OfType<PropertyDeclarationSyntax>()
+                var properties = root.Descendants<PropertyDeclarationSyntax>()
                     .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()));
 
-                var entityInfo = new EntityInfo(@namespace, className, baseType);
+                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey);
                 entityInfo.Properties.AddRange(properties);
 
                 SetParameter("EntityInfo", entityInfo);
                 LogOutput(() => entityInfo);
-                return Task.CompletedTask;
             }
             catch (Exception e)
             {

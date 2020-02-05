@@ -12,13 +12,13 @@
 
     public class Insertion : Modification
     {
-        public Insertion(int startLine, string content, InsertPosition insertPosition = InsertPosition.Before) : base(startLine)
+        public Insertion(int startLine, string contents, InsertPosition insertPosition = InsertPosition.Before) : base(startLine)
         {
-            Content = content;
+            Contents = contents;
             InsertPosition = insertPosition;
         }
 
-        public string Content { get; }
+        public string Contents { get; }
 
         public InsertPosition InsertPosition { get; }
     }
@@ -41,14 +41,14 @@
 
     public class Replacement : Modification
     {
-        public Replacement(int startLine, int endLine, string content) : base(startLine)
+        public Replacement(int startLine, int endLine, string contents) : base(startLine)
         {
             EndLine = endLine;
-            Content = content;
+            Contents = contents;
         }
 
         public int EndLine { get; }
 
-        public string Content { get; }
+        public string Contents { get; }
     }
 }

@@ -20,18 +20,18 @@ namespace AbpHelper.Steps.CSharp
 
     public class InsertionBuilder : ModificationBuilder
     {
-        public InsertionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, string content, InsertPosition insertPosition = InsertPosition.Before, Func<CSharpSyntaxNode, bool>? shouldModifier = null) : base(startLineExpression, shouldModifier)
+        public InsertionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, string contents, InsertPosition insertPosition = InsertPosition.Before, Func<CSharpSyntaxNode, bool>? shouldModifier = null) : base(startLineExpression, shouldModifier)
         {
-            Content = content;
+            Contents = contents;
             InsertPosition = insertPosition;
         }
 
-        public string Content { get; }
+        public string Contents { get; }
         public InsertPosition InsertPosition { get; }
 
         public override Modification Build(CSharpSyntaxNode root)
         {
-            return new Insertion(StartLineExpression(root), Content, InsertPosition);
+            return new Insertion(StartLineExpression(root), Contents, InsertPosition);
         }
     }
 
@@ -52,18 +52,18 @@ namespace AbpHelper.Steps.CSharp
 
     public class ReplacementBuilder : ModificationBuilder
     {
-        public ReplacementBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, string content, Func<CSharpSyntaxNode, bool>? shouldModifier = null) : base(startLineExpression, shouldModifier)
+        public ReplacementBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, string contents, Func<CSharpSyntaxNode, bool>? shouldModifier = null) : base(startLineExpression, shouldModifier)
         {
-            Content = content;
+            Contents = contents;
             EndLineExpression = endLineExpression;
         }
 
         public Func<CSharpSyntaxNode, int> EndLineExpression { get; }
-        public string Content { get; }
+        public string Contents { get; }
 
         public override Modification Build(CSharpSyntaxNode root)
         {
-            return new Replacement(StartLineExpression(root), EndLineExpression(root), Content);
+            return new Replacement(StartLineExpression(root), EndLineExpression(root), Contents);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,13 +8,15 @@ namespace AbpHelper.Steps.CSharp
 {
     public class ModificationCreatorStep : Step
     {
+        public string File { get; set; } = string.Empty;
         public IList<ModificationBuilder> ModificationBuilders { get; set; } = new List<ModificationBuilder>();
 
-        protected override Task RunStep()
+        protected override async Task RunStep()
         {
-            var sourceFile = GetParameter<string>("FilePathName");
+            var sourceFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
             LogInput(() => sourceFile);
-            var sourceText = File.ReadAllText(sourceFile);
+
+            var sourceText = await System.IO.File.ReadAllTextAsync(sourceFile);
             var tree = CSharpSyntaxTree.ParseText(sourceText);
             var root = tree.GetCompilationUnitRoot();
 
@@ -24,8 +26,6 @@ namespace AbpHelper.Steps.CSharp
                 .ToList();
             SetParameter("Modifications", modifications);
             LogOutput(() => modifications, $"Modifications count: {modifications.Count}");
-
-            return Task.CompletedTask;
         }
     }
 }

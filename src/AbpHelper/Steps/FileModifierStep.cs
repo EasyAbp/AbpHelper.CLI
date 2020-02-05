@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using AbpHelper.Models;
@@ -8,16 +8,17 @@ namespace AbpHelper.Steps
 {
     public class FileModifierStep : Step
     {
+        public string File { get; set; } = string.Empty;
         public IList<Modification> Modifications { get; set; } = new List<Modification>();
 
-        protected override Task RunStep()
+        protected override async Task RunStep()
         {
-            var targetFile = GetParameter<string>("FilePathName");
+            var targetFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
             LogInput(() => targetFile);
             LogInput(() => Modifications, $"Modifications count: {Modifications.Count}");
 
             var newFile = new StringBuilder();
-            var lines = File.ReadAllLines(targetFile);
+            var lines = await System.IO.File.ReadAllLinesAsync(targetFile);
             for (var line = 1; line <= lines.Length; line++)
             {
                 var appendLine = true;
@@ -31,13 +32,13 @@ namespace AbpHelper.Steps
                         {
                             if (insertion.InsertPosition == InsertPosition.Before)
                             {
-                                newFile.Append(insertion.Content);
+                                newFile.Append(insertion.Contents);
                                 newFile.AppendLine(lines[line - 1]);
                             }
                             else
                             {
                                 newFile.AppendLine(lines[line - 1]);
-                                newFile.Append(insertion.Content);
+                                newFile.Append(insertion.Contents);
                             }
 
                             appendLine = false;
@@ -48,7 +49,7 @@ namespace AbpHelper.Steps
                         }
                         else if (modification is Replacement replacement)
                         {
-                            newFile.Append(replacement.Content);
+                            newFile.Append(replacement.Contents);
                             line = replacement.EndLine + 1;
                         }
 
@@ -63,9 +64,7 @@ namespace AbpHelper.Steps
                 if (appendLine && line <= lines.Length) newFile.AppendLine(lines[line - 1]);
             }
 
-            File.WriteAllText(targetFile, newFile.ToString());
-
-            return Task.CompletedTask;
+            await System.IO.File.WriteAllTextAsync(targetFile, newFile.ToString());
         }
     }
 }

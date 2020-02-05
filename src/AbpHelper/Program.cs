@@ -52,6 +52,7 @@ namespace AbpHelper
                 .AddMigrationAndUpdateDatabaseWorkflow()
                 .Build();
 
+            // TODO: handle exception
             await workflow.Run();
         }
     }
