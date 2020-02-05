@@ -36,8 +36,21 @@ namespace AbpHelper.Steps
                 var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
                 var className = classDeclarationSyntax.Identifier.ToString();
                 var baseList = classDeclarationSyntax.BaseList;
-                var baseType = baseList?.Descendants<SimpleBaseTypeSyntax>().Single().Descendants<GenericNameSyntax>().Single().Identifier.ToString();
-                var primaryKey = baseList?.Descendants<TypeArgumentListSyntax>().Single().Arguments[0].ToString();
+                var genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>().Single().Descendants<GenericNameSyntax>().FirstOrDefault();
+                string baseType;
+                string? primaryKey;
+                if (genericNameSyntax == null)
+                {
+                    // No generic parameter -> Entity with Composite Keys
+                    baseType = baseList.Descendants<SimpleBaseTypeSyntax>().Single().Type.ToString();
+                    primaryKey = null;
+                }
+                else
+                {
+                    // Normal entity
+                    baseType = genericNameSyntax.Identifier.ToString();
+                    primaryKey = genericNameSyntax.Descendants<TypeArgumentListSyntax>().Single().Arguments[0].ToString();
+                }
 
                 var properties = root.Descendants<PropertyDeclarationSyntax>()
                     .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()));

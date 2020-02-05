@@ -20,25 +20,6 @@ namespace AbpHelper.Tests.Parsers
         private readonly ITestOutputHelper _output;
         private readonly EntityParserStep _entityParserStep;
 
-        private const string EntityCode = @"
-                                           using System;
-                                           using Volo.Abp.Domain.Entities.Auditing;
-                                           
-                                           namespace Acme.BookStore
-                                           {
-                                               public class Book : AuditedAggregateRoot<Guid>
-                                               {
-                                                   public string Name { get; set; }
-                                           
-                                                   public BookType Type { get; set; }
-                                           
-                                                   public DateTime PublishDate { get; set; }
-                                           
-                                                   public float Price { get; set; }
-                                               }
-                                           }
-                                           ";
-
         private async Task UsingEntityFile(string code, Func<string, Task> action)
         {
             string file = null;
@@ -55,9 +36,27 @@ namespace AbpHelper.Tests.Parsers
         }
 
         [Fact]
-        public async Task Parse_OK()
+        public async Task Parse_Entity_With_PrimaryKey()
         {
-            await UsingEntityFile(EntityCode, async file =>
+            var code = @"
+using System;
+using Volo.Abp.Domain.Entities.Auditing;
+
+namespace Acme.BookStore
+{
+    public class Book : AuditedAggregateRoot<Guid>
+    {
+        public string Name { get; set; }
+   
+        public BookType Type { get; set; }
+   
+        public DateTime PublishDate { get; set; }
+   
+        public float Price { get; set; }
+    }
+}
+";
+            await UsingEntityFile(code, async file =>
             {
                 // Arrange
                 _entityParserStep.SetParameter("FilePathName", file);
@@ -80,6 +79,56 @@ namespace AbpHelper.Tests.Parsers
                 info.Properties[1].Name.ShouldBe("Type");
                 info.Properties[2].Name.ShouldBe("PublishDate");
                 info.Properties[3].Name.ShouldBe("Price");
+            });
+        }
+
+        [Fact]
+        public async Task Parse_Entity_Without_PrimaryKey()
+        {
+            var code = @"
+namespace Acme.BookStore
+{
+    public class UserRole : Entity
+    {
+        public Guid UserId { get; set; }
+
+        public Guid RoleId { get; set; }
+        
+        public DateTime CreationTime { get; set; }
+
+        public UserRole()
+        {
+                
+        }
+        
+        public override object[] GetKeys()
+        {
+            return new object[] { UserId, RoleId };
+        }
+    }
+}
+";
+            await UsingEntityFile(code, async file =>
+            {
+                // Arrange
+                _entityParserStep.SetParameter("FilePathName", file);
+
+                // Act
+                await _entityParserStep.Run();
+
+                // Assert
+                var info = _entityParserStep.GetParameter<EntityInfo>("EntityInfo");
+                info.Namespace.ShouldBe("Acme.BookStore");
+                info.ClassName.ShouldBe("UserRole");
+                info.BaseType.ShouldBe("Entity");
+                info.PrimaryKey.ShouldBeNull();
+                info.Properties.Count.ShouldBe(3);
+                info.Properties[0].Type.ShouldBe("Guid");
+                info.Properties[1].Type.ShouldBe("Guid");
+                info.Properties[2].Type.ShouldBe("DateTime");
+                info.Properties[0].Name.ShouldBe("UserId");
+                info.Properties[1].Name.ShouldBe("RoleId");
+                info.Properties[2].Name.ShouldBe("CreationTime");
             });
         }
 
