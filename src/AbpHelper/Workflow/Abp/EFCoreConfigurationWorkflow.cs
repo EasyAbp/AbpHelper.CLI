@@ -16,11 +16,11 @@ namespace AbpHelper.Workflow.Abp
             return builder
                     /* Add entity property to DbContext */
                     .AddStep<FileFinderStep>(
-                        step => { step.SearchFileName = $"{step.GetParameter<ProjectInfo>("ProjectInfo").Name}DbContext.cs"; })
+                        step => { step.SearchFileName = $"{step.Get<ProjectInfo>().Name}DbContext.cs"; })
                     .AddStep<ModificationCreatorStep>(
                         step =>
                         {
-                            var model = new {EntityInfo = GetEntityInfo(step)};
+                            var model = new {EntityInfo = step.Get<EntityInfo>()};
                             step.ModificationBuilders = new List<ModificationBuilder>
                             {
                                 new InsertionBuilder(
@@ -47,8 +47,8 @@ namespace AbpHelper.Workflow.Abp
                         {
                             var model = new
                             {
-                                EntityInfo = GetEntityInfo(step),
-                                ProjectInfo = step.GetParameter<ProjectInfo>("ProjectInfo")
+                                EntityInfo = step.Get<EntityInfo>(),
+                                ProjectInfo = step.Get<ProjectInfo>()
                             };
                             var modelingUsingText = TextGenerator.Generate("DbContextModelCreatingExtensions_Using", model);
                             var entityConfigText = TextGenerator.Generate("DbContextModelCreatingExtensions_EntityConfig", model);
@@ -73,16 +73,6 @@ namespace AbpHelper.Workflow.Abp
                         step => step.Modifications = step.GetParameter<IList<Modification>>("Modifications")
                     )
                 ;
-        }
-
-        private static EntityInfo GetEntityInfo(Step step)
-        {
-            return step.GetParameter<EntityInfo>("EntityInfo");
-        }
-
-        private static ProjectInfo GetProjectInfo(Step step)
-        {
-            return step.GetParameter<ProjectInfo>("ProjectInfo");
         }
 
         private static string GetEntityUsingText(Step step)
