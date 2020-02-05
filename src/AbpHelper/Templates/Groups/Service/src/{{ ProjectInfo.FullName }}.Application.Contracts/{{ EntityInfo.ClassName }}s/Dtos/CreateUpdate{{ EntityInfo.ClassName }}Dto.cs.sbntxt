@@ -1,0 +1,13 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.ClassName }}s.Dtos
+{
+    public class CreateUpdate{{ EntityInfo.ClassName }}Dto
+    {
+        {{~ for prop in EntityInfo.Properties ~}}
+        public {{ prop.Type}} {{ prop.Name }} {get; set;}
+
+        {{~ end ~}}
+    }
+}

@@ -15,7 +15,7 @@ namespace AbpHelper.Steps
             LogInput(() => Model);
             LogInput(() => GeneratedTextKey);
 
-            var text = TextGenerator.Generate(TemplateName, Model);
+            var text = TextGenerator.GenerateByTemplateName(TemplateName, Model);
 
             LogOutput(() => text, $"Length: {text.Length}");
             SetParameter(GeneratedTextKey, text);

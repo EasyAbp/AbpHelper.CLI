@@ -31,7 +31,7 @@ namespace AbpHelper.Workflow.Abp
                                 ),
                                 new InsertionBuilder(
                                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().Identifier.GetStartLine() - 1,
-                                    TextGenerator.Generate("DbContext_Property", model)
+                                    TextGenerator.GenerateByTemplateName("DbContext_Property", model)
                                 )
                             };
                         })
@@ -50,8 +50,8 @@ namespace AbpHelper.Workflow.Abp
                                 EntityInfo = step.Get<EntityInfo>(),
                                 ProjectInfo = step.Get<ProjectInfo>()
                             };
-                            var modelingUsingText = TextGenerator.Generate("DbContextModelCreatingExtensions_Using", model);
-                            var entityConfigText = TextGenerator.Generate("DbContextModelCreatingExtensions_EntityConfig", model);
+                            var modelingUsingText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_Using", model);
+                            var entityConfigText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_EntityConfig", model);
                             step.ModificationBuilders = new List<ModificationBuilder>
                             {
                                 new InsertionBuilder(

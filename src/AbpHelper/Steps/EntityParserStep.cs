@@ -35,7 +35,7 @@ namespace AbpHelper.Steps
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
                 var className = classDeclarationSyntax.Identifier.ToString();
-                var baseList = classDeclarationSyntax.BaseList;
+                var baseList = classDeclarationSyntax.BaseList!;
                 var genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>().Single().Descendants<GenericNameSyntax>().FirstOrDefault();
                 string baseType;
                 string? primaryKey;

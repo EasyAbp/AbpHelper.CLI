@@ -1,0 +1,18 @@
+using System;
+using {{ ProjectInfo.FullName }}.{{ EntityInfo.ClassName }}s.Dtos;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Application.Services;
+
+namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.ClassName }}s
+{
+    public interface I{{ EntityInfo.ClassName }}AppService :
+        ICrudAppService< 
+            {{ EntityInfo.ClassName }}Dto, 
+            {{ EntityInfo.PrimaryKey }}, 
+            PagedAndSortedResultRequestDto,
+            CreateUpdate{{ EntityInfo.ClassName }}Dto,
+            CreateUpdate{{ EntityInfo.ClassName }}Dto>
+    {
+
+    }
+}
