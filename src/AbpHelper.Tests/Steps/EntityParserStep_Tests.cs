@@ -18,6 +18,7 @@ namespace AbpHelper.Tests.Parsers
         }
 
         private readonly ITestOutputHelper _output;
+
         private readonly EntityParserStep _entityParserStep;
 
         private async Task UsingEntityFile(string code, Func<string, Task> action)
@@ -146,8 +147,8 @@ namespace Acme.BookStore
                 var ex = await Assert.ThrowsAsync<ParseException>(() => _entityParserStep.Run());
 
                 // Arrange
-                ex.ShouldNotBeNull();
                 _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
+                ex.ShouldNotBeNull();
             });
         }
     }

@@ -14,6 +14,7 @@ namespace AbpHelper.Workflow.Abp
         public static WorkflowBuilder AddServiceGenerationWorkflow(this WorkflowBuilder builder)
         {
             return builder
+                    /* Generate dto, service interface and class */
                     .AddStep<TemplateGroupGenerationStep>(
                         step =>
                         {
@@ -27,6 +28,7 @@ namespace AbpHelper.Workflow.Abp
                             step.TargetDirectory = step.GetParameter<string>("BaseDirectory");
                         }
                     )
+                    /* Add CreateMap<..., ...> */
                     .AddStep<FileFinderStep>(
                         step => step.SearchFileName = "*ApplicationAutoMapperProfile.cs"
                     )
@@ -37,17 +39,33 @@ namespace AbpHelper.Workflow.Abp
                             step.ModificationBuilders = new List<ModificationBuilder>
                             {
                                 new InsertionBuilder(
+                                    root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
+                                    GetEntityUsingText(step),
+                                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityUsingText(step))
+                                ),
+                                new InsertionBuilder(
+                                    root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
+                                    GetEntityDtoUsingText(step),
+                                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityDtoUsingText(step))
+                                ),
+                                new InsertionBuilder(
                                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),
-                                    TextGenerator.GenerateByTemplateName("CreateMap", new
-                                    {
-                                        Source = $"{entityInfo.Name}",
-                                        Destination = $"{entityInfo.Name}Dto"
-                                    })
+                                    TextGenerator.GenerateByTemplateName("ApplicationAutoMapperProfile_CreateMap", new {EntityInfo = entityInfo})
                                 )
                             };
                         })
                     .AddStep<FileModifierStep>()
                 ;
+        }
+
+        private static string GetEntityUsingText(Step step)
+        {
+            return step.GetParameter<string>("EntityUsingText");
+        }
+
+        private static string GetEntityDtoUsingText(Step step)
+        {
+            return step.GetParameter<string>("EntityDtoUsingText");
         }
     }
 }

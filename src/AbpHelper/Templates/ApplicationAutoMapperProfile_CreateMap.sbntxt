@@ -1,0 +1,1 @@
+            CreateMap<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto>();

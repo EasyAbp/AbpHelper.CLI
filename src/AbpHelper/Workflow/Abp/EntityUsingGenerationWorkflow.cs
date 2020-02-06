@@ -13,6 +13,11 @@ namespace AbpHelper.Workflow.Abp
                         step => step.Model = new {EntityInfo = step.GetParameter<EntityInfo>("EntityInfo")},
                         step => step.GeneratedTextKey = "EntityUsingText"
                     )
+                    .AddStep<TextGenerationStep>(
+                        step => step.TemplateName = "UsingEntityDtoNamespace",
+                        step => step.Model = new {EntityInfo = step.GetParameter<EntityInfo>("EntityInfo")},
+                        step => step.GeneratedTextKey = "EntityDtoUsingText"
+                    )
                 ;
         }
     }
