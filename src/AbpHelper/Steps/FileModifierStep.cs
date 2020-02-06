@@ -31,49 +31,40 @@ namespace AbpHelper.Steps
 
             var newFile = new StringBuilder();
             var lines = await System.IO.File.ReadAllLinesAsync(targetFile);
+            var beforeContents = new StringBuilder();
+            var afterContents = new StringBuilder();
             for (var line = 1; line <= lines.Length; line++)
             {
-                var appendLine = true;
-                var index = 0;
-                while (index < modifications.Count)
-                {
-                    var modification = modifications[index];
-                    if (line == modification.StartLine)
+                var lineText = lines[line - 1];
+                var lineModifications = modifications.Where(mod => mod.StartLine == line).ToArray();
+                beforeContents.Clear();
+                afterContents.Clear();
+                foreach (var modification in lineModifications)
+                    switch (modification)
                     {
-                        if (modification is Insertion insertion)
+                        case Insertion insertion:
                         {
                             if (insertion.InsertPosition == InsertPosition.Before)
-                            {
-                                newFile.Append(insertion.Contents);
-                                newFile.AppendLine(lines[line - 1]);
-                            }
+                                beforeContents.Append(insertion.Contents);
                             else
-                            {
-                                newFile.AppendLine(lines[line - 1]);
-                                newFile.Append(insertion.Contents);
-                            }
+                                afterContents.Append(insertion.Contents);
 
-                            appendLine = false;
+                            break;
                         }
-                        else if (modification is Deletion deletion)
-                        {
-                            line = deletion.EndLine + 1;
-                        }
-                        else if (modification is Replacement replacement)
-                        {
+                        case Deletion deletion:
+                            line = deletion.EndLine;
+                            goto NEXT_LINE;
+                        case Replacement replacement:
                             newFile.Append(replacement.Contents);
-                            line = replacement.EndLine + 1;
-                        }
-
-                        modifications.RemoveAt(index);
+                            line = replacement.EndLine;
+                            goto NEXT_LINE;
                     }
-                    else
-                    {
-                        index++;
-                    }
-                }
 
-                if (appendLine && line <= lines.Length) newFile.AppendLine(lines[line - 1]);
+                // We don't need these modifications anymore
+                foreach (var modification in lineModifications) modifications.Remove(modification);
+
+                newFile.Append(beforeContents).AppendLine(lineText).Append(afterContents);
+                NEXT_LINE: ;
             }
 
             await System.IO.File.WriteAllTextAsync(targetFile, newFile.ToString());

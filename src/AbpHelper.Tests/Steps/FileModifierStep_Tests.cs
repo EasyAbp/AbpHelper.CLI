@@ -116,6 +116,35 @@ abc
         }
 
         [Fact]
+        private async Task Multi_Insertions_With_Same_StartLine()
+        {
+            await UsingTempFile(DefaultFileContents, async file =>
+            {
+                // Arrange
+                _fileModifierStep.File = file;
+                _fileModifierStep.Modifications = new List<Modification>
+                {
+                    new Insertion(1, "abc\r\n"),
+                    new Insertion(1, "def\r\n")
+                };
+
+                // Act
+                await _fileModifierStep.Run();
+
+                // Assert
+                var contents = await File.ReadAllTextAsync(file);
+                contents.ShouldBe(@"abc
+def
+1
+2
+3
+4
+5
+");
+            });
+        }
+
+        [Fact]
         private async Task Multi_Modifications()
         {
             await UsingTempFile(DefaultFileContents, async file =>
