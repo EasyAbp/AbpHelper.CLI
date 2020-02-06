@@ -1,6 +1,16 @@
 ﻿namespace AbpHelper.Models
 {
-    public abstract class Modification
+    public interface IStartLine
+    {
+        int StartLine { get; }
+    }
+
+    public interface IRange : IStartLine
+    {
+        int EndLine { get; }
+    }
+
+    public abstract class Modification : IStartLine
     {
         protected Modification(int startLine)
         {
@@ -21,6 +31,11 @@
         public string Contents { get; }
 
         public InsertPosition InsertPosition { get; }
+
+        public override string ToString()
+        {
+            return $"Insertion: {nameof(StartLine)}: {StartLine}, {nameof(InsertPosition)}: {InsertPosition}";
+        }
     }
 
     public enum InsertPosition
@@ -29,7 +44,7 @@
         After
     }
 
-    public class Deletion : Modification
+    public class Deletion : Modification, IRange
     {
         public Deletion(int startLine, int endLine) : base(startLine)
         {
@@ -37,9 +52,14 @@
         }
 
         public int EndLine { get; }
+
+        public override string ToString()
+        {
+            return $"Deletion: {nameof(StartLine)}: {StartLine}, {nameof(EndLine)}: {EndLine}";
+        }
     }
 
-    public class Replacement : Modification
+    public class Replacement : Modification, IRange
     {
         public Replacement(int startLine, int endLine, string contents) : base(startLine)
         {
@@ -47,8 +67,13 @@
             Contents = contents;
         }
 
+        public string Contents { get; }
+
         public int EndLine { get; }
 
-        public string Contents { get; }
+        public override string ToString()
+        {
+            return $"Replacement: {nameof(StartLine)}: {StartLine}, {nameof(EndLine)}: {EndLine}";
+        }
     }
 }

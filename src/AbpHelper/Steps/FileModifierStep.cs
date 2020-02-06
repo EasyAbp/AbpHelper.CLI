@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbpHelper.Models;
+using Microsoft.Extensions.Logging;
 
 namespace AbpHelper.Steps
 {
@@ -18,6 +20,14 @@ namespace AbpHelper.Steps
 
             var modifications = Modifications.IsNullOrEmpty() ? GetParameter<IList<Modification>>("Modifications") : Modifications;
             LogInput(() => modifications, $"Modifications count: {modifications.Count}");
+
+            var errors = CheckModificationsOverlap(modifications).ToArray();
+            if (errors.Length > 0)
+            {
+                foreach (var error in errors) Logger.LogError(error);
+
+                throw new ModificationsOverlapException(errors);
+            }
 
             var newFile = new StringBuilder();
             var lines = await System.IO.File.ReadAllLinesAsync(targetFile);
@@ -68,5 +78,45 @@ namespace AbpHelper.Steps
 
             await System.IO.File.WriteAllTextAsync(targetFile, newFile.ToString());
         }
+
+        private IEnumerable<string> CheckModificationsOverlap(IList<Modification> modifications)
+        {
+            var insertions = modifications.OfType<Insertion>().ToArray();
+            var deletionsAndReplacements = modifications.OfType<Deletion>()
+                    .Concat(modifications.OfType<Replacement>().Cast<IRange>())
+                    .ToArray()
+                ;
+
+            // Check if deletions and replacements overlap with insertion
+            foreach (var range in deletionsAndReplacements)
+            foreach (var insertion in insertions)
+                if (insertion.StartLine >= range.StartLine && insertion.StartLine <= range.EndLine)
+                    yield return $"Overlap modifications: [{range}] - [{insertion}]";
+
+            // Check if deletions and replacements overlap with each other
+            for (var i = 0; i < deletionsAndReplacements.Length; i++)
+            {
+                var range1 = deletionsAndReplacements[i];
+                for (var j = i + 1; j < deletionsAndReplacements.Length; j++)
+                {
+                    var range2 = deletionsAndReplacements[j];
+                    if (
+                        range1.StartLine >= range2.StartLine && range1.StartLine <= range2.EndLine ||
+                        range1.EndLine >= range2.StartLine && range1.EndLine <= range2.EndLine
+                    )
+                        yield return $"Overlap modifications: [{range1}] - [{range2}]";
+                }
+            }
+        }
+    }
+
+    public class ModificationsOverlapException : Exception
+    {
+        public ModificationsOverlapException(IEnumerable<string> errors)
+        {
+            Errors.AddRange(errors);
+        }
+
+        public List<string> Errors { get; } = new List<string>();
     }
 }
