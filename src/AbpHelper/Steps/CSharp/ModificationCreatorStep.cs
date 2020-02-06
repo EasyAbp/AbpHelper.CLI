@@ -21,7 +21,7 @@ namespace AbpHelper.Steps.CSharp
             var root = tree.GetCompilationUnitRoot();
 
             var modifications = ModificationBuilders
-                .Where(builder => builder.ShouldModifier(root))
+                .Where(builder => builder.ModifyCondition(root))
                 .Select(builder => builder.Build(root))
                 .ToList();
             SetParameter("Modifications", modifications);

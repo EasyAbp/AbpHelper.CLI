@@ -55,7 +55,7 @@ namespace AbpHelper.Workflow.Abp
                                 new InsertionBuilder(
                                     root => 1,
                                     GetEntityUsingText(step),
-                                    shouldModifier: root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityUsingText(step))
+                                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityUsingText(step))
                                 ),
                                 new InsertionBuilder(
                                     root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),

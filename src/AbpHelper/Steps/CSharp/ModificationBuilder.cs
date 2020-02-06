@@ -6,21 +6,21 @@ namespace AbpHelper.Steps.CSharp
 {
     public abstract class ModificationBuilder
     {
-        public ModificationBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, bool>? shouldModifier)
+        public ModificationBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, bool>? modifyCondition)
         {
             StartLineExpression = startLineExpression;
-            ShouldModifier = shouldModifier ?? (node => true);
+            ModifyCondition = modifyCondition ?? (node => true);
         }
 
         public Func<CSharpSyntaxNode, int> StartLineExpression { get; }
-        public Func<CSharpSyntaxNode, bool> ShouldModifier { get; }
+        public Func<CSharpSyntaxNode, bool> ModifyCondition { get; }
 
         public abstract Modification Build(CSharpSyntaxNode root);
     }
 
     public class InsertionBuilder : ModificationBuilder
     {
-        public InsertionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, string contents, InsertPosition insertPosition = InsertPosition.Before, Func<CSharpSyntaxNode, bool>? shouldModifier = null) : base(startLineExpression, shouldModifier)
+        public InsertionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, string contents, InsertPosition insertPosition = InsertPosition.Before, Func<CSharpSyntaxNode, bool>? modifyCondition = null) : base(startLineExpression, modifyCondition)
         {
             Contents = contents;
             InsertPosition = insertPosition;
@@ -37,7 +37,7 @@ namespace AbpHelper.Steps.CSharp
 
     public class DeletionBuilder : ModificationBuilder
     {
-        public DeletionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, Func<CSharpSyntaxNode, bool>? shouldModifier = null) : base(startLineExpression, shouldModifier)
+        public DeletionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, Func<CSharpSyntaxNode, bool>? modifyCondition = null) : base(startLineExpression, modifyCondition)
         {
             EndLineExpression = endLineExpression;
         }
@@ -52,7 +52,7 @@ namespace AbpHelper.Steps.CSharp
 
     public class ReplacementBuilder : ModificationBuilder
     {
-        public ReplacementBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, string contents, Func<CSharpSyntaxNode, bool>? shouldModifier = null) : base(startLineExpression, shouldModifier)
+        public ReplacementBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, string contents, Func<CSharpSyntaxNode, bool>? modifyCondition = null) : base(startLineExpression, modifyCondition)
         {
             Contents = contents;
             EndLineExpression = endLineExpression;
