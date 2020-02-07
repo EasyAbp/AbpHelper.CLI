@@ -3,4 +3,34 @@
 @inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
 @model IndexModel
 
-<h2>{{ EntityInfo.NamePluralized }}</h2>
+@section scripts
+{
+    <abp-script src="/Pages/{{ EntityInfo.NamePluralized }}/index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_2">
+                <h2>@L["{{ EntityInfo.NamePluralized }}"]</h2>
+            </abp-column>
+            <abp-column size-md="_10" class="text-right">
+                <abp-button id="New{{ EntityInfo.Name }}Button"
+                            text="@L["New{{ EntityInfo.Name }}"].Value"
+                            icon="plus"
+                            button-type="Primary" />
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="{{ EntityInfo.NamePluralized }}Table">
+            <thead>
+            <tr>
+                <th>@L["Actions"]</th>
+                {{~ for prop in EntityInfo.Properties ~}}
+                <th>@L["{{ prop.Name }}"]</th>
+                {{~ end ~}}
+            </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
