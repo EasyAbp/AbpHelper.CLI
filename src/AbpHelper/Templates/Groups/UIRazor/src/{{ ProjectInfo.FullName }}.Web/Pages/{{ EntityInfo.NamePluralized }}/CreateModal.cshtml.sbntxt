@@ -1,0 +1,16 @@
+﻿@page
+@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}PageBase
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}.CreateModalModel
+@{
+    Layout = null;
+}
+<abp-dynamic-form abp-model="{{ EntityInfo.Name }}" data-ajaxForm="true" asp-page="/{{ EntityInfo.NamePluralized }}/CreateModal">
+    <abp-modal>
+        <abp-modal-header title="@L["New{{ EntityInfo.Name }}"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-form-content />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form>
