@@ -42,6 +42,7 @@ namespace AbpHelper
         {
             var workflow = WorkflowBuilder.CreateBuilder(serviceProvider)
                 .WithParameter("BaseDirectory", @"C:\Users\wakuw\Desktop\AbpApp\MyAbpRazorPages")
+                .WithParameter("Overwrite", true)
                 .AddStep<ProjectInfoProviderStep>()
                 .AddStep<FileFinderStep>(
                     step => step.SearchFileName = "Book.cs"

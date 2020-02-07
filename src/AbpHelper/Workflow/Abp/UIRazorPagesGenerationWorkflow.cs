@@ -23,7 +23,6 @@ namespace AbpHelper.Workflow.Abp
                                 EntityInfo = step.Get<EntityInfo>(),
                                 ProjectInfo = step.Get<ProjectInfo>()
                             };
-                            step.Overwrite = false;
                             step.GroupName = "UIRazor";
                             step.TargetDirectory = step.GetParameter<string>("BaseDirectory");
                         }

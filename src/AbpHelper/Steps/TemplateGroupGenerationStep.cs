@@ -10,13 +10,14 @@ namespace AbpHelper.Steps
     {
         public string GroupName { get; set; } = string.Empty;
         public string TargetDirectory { get; set; } = string.Empty;
-        public bool Overwrite { get; set; } = false;
+        public bool Overwrite { get; set; }
         public object Model { get; set; } = new object();
 
         protected override async Task RunStep()
         {
             LogInput(() => GroupName);
             LogInput(() => TargetDirectory);
+            if (ContainsParameter("Overwrite")) Overwrite = GetParameter<bool>("Overwrite");
             LogInput(() => Overwrite);
             LogInput(() => Model);
 
@@ -31,6 +32,7 @@ namespace AbpHelper.Steps
         {
             foreach (var file in Directory.EnumerateFiles(groupDirectory, "*.sbntxt", SearchOption.AllDirectories))
             {
+                Logger.LogDebug($"Generating using template file: {file}");
                 var targetFilePathNameTemplate = file.Replace(groupDirectory, targetDirectory);
                 var targetFilePathName = TextGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model).RemovePostFix(".sbntxt");
                 if (File.Exists(targetFilePathName) && !Overwrite)
