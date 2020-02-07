@@ -21,22 +21,26 @@ namespace AbpHelper.Steps
             var modifications = Modifications.IsNullOrEmpty() ? GetParameter<IList<Modification>>("Modifications") : Modifications;
             LogInput(() => modifications, $"Modifications count: {modifications.Count}");
 
-            var errors = CheckModificationsOverlap(modifications).ToArray();
+            var lines = await System.IO.File.ReadAllLinesAsync(targetFile);
+            var errors = CheckModifications(modifications, lines).ToArray();
             if (errors.Length > 0)
             {
                 foreach (var error in errors) Logger.LogError(error);
 
-                throw new ModificationsOverlapException(errors);
+                throw new InvalidModificationException(errors);
             }
 
             var newFile = new StringBuilder();
-            var lines = await System.IO.File.ReadAllLinesAsync(targetFile);
             var beforeContents = new StringBuilder();
             var afterContents = new StringBuilder();
             for (var line = 1; line <= lines.Length; line++)
             {
                 var lineText = lines[line - 1];
-                var lineModifications = modifications.Where(mod => mod.StartLine == line).ToArray();
+                var lineModifications = modifications
+                    .Where(mod => mod.StartLine == line || // Positive line number
+                                  mod.StartLine == line - lines.Length - 1 // Negative  line number
+                    )
+                    .ToArray();
                 beforeContents.Clear();
                 afterContents.Clear();
                 foreach (var modification in lineModifications)
@@ -51,12 +55,10 @@ namespace AbpHelper.Steps
 
                             break;
                         }
-                        case Deletion deletion:
-                            line = deletion.EndLine;
-                            goto NEXT_LINE;
-                        case Replacement replacement:
-                            newFile.Append(replacement.Contents);
-                            line = replacement.EndLine;
+                        case IRange range:
+                            line = range.EndLine > 0 ? range.EndLine : lines.Length + range.EndLine + 1;
+                            if (range is Replacement replacement) newFile.Append(replacement.Contents);
+
                             goto NEXT_LINE;
                     }
 
@@ -70,7 +72,7 @@ namespace AbpHelper.Steps
             await System.IO.File.WriteAllTextAsync(targetFile, newFile.ToString());
         }
 
-        private IEnumerable<string> CheckModificationsOverlap(IList<Modification> modifications)
+        private IEnumerable<string> CheckModifications(IList<Modification> modifications, string[] lines)
         {
             var insertions = modifications.OfType<Insertion>().ToArray();
             var deletionsAndReplacements = modifications.OfType<Deletion>()
@@ -78,6 +80,35 @@ namespace AbpHelper.Steps
                     .ToArray()
                 ;
 
+            var errors = CheckLinesInRange(modifications, lines).ToArray();
+            foreach (var error in errors) yield return error;
+
+            if (errors.Any()) yield break; // No need to perform following check if out of range
+
+            foreach (var error in CheckOverlap(deletionsAndReplacements, insertions)) yield return error;
+        }
+
+        private static IEnumerable<string> CheckLinesInRange(IList<Modification> modifications, string[] lines)
+        {
+            // Check StartLine and EndLine are in range
+            foreach (var modification in modifications)
+            {
+                var actualStartLine = modification.StartLine >= 0 ? modification.StartLine : lines.Length + modification.StartLine;
+
+                if (actualStartLine <= 0 || actualStartLine > lines.Length) yield return $"StartLine out of range: {modification}. {nameof(actualStartLine)}: {actualStartLine}";
+
+                if (modification is IRange range)
+                {
+                    var actualEndLine = range.EndLine >= 0 ? range.EndLine : lines.Length + range.EndLine;
+                    if (actualEndLine <= 0 || actualEndLine > lines.Length) yield return $"EndLine out of range: {modification}. {nameof(actualEndLine)}: {actualEndLine}";
+
+                    if (actualStartLine > actualEndLine) yield return $"StartLine grater than EndLine: {modification}. {nameof(actualStartLine)}: {actualStartLine} {nameof(actualEndLine)}: {actualEndLine}";
+                }
+            }
+        }
+
+        private static IEnumerable<string> CheckOverlap(IRange[] deletionsAndReplacements, Insertion[] insertions)
+        {
             // Check if deletions and replacements overlap with insertion
             foreach (var range in deletionsAndReplacements)
             foreach (var insertion in insertions)
@@ -101,9 +132,9 @@ namespace AbpHelper.Steps
         }
     }
 
-    public class ModificationsOverlapException : Exception
+    public class InvalidModificationException : Exception
     {
-        public ModificationsOverlapException(IEnumerable<string> errors)
+        public InvalidModificationException(IEnumerable<string> errors)
         {
             Errors.AddRange(errors);
         }

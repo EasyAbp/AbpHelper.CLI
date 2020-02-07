@@ -173,6 +173,59 @@ c");
         }
 
         [Fact]
+        private async Task Negative_Lines()
+        {
+            await UsingTempFile(DefaultFileContents, async file =>
+            {
+                // Arrange
+                _fileModifierStep.File = file;
+                _fileModifierStep.Modifications = new List<Modification>
+                {
+                    new Insertion(-4, "a\r\n"),
+                    new Deletion(-3, -2),
+                    new Replacement(-1, -1, "b\r\n")
+                };
+
+                // Act
+                await _fileModifierStep.Run();
+
+                // Assert
+                var contents = await File.ReadAllTextAsync(file);
+                contents.ShouldBe(@"1
+a
+2
+b
+");
+            });
+        }
+
+        [Fact]
+        private async Task OutOfRange_Lines()
+        {
+            await UsingTempFile(DefaultFileContents, async file =>
+            {
+                // Arrange
+                _fileModifierStep.File = file;
+                _fileModifierStep.Modifications = new List<Modification>
+                {
+                    new Insertion(0, "a\r\n"),
+                    new Insertion(-6, "a\r\n"),
+                    new Deletion(0, 1),
+                    new Deletion(1, 6),
+                    new Replacement(-6, 1, "a"),
+                    new Replacement(7, 8, "a")
+                };
+
+                // Act
+                var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _fileModifierStep.Run());
+
+                // Assert
+                _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
+                ex.Errors.Count.ShouldBe(7);
+            });
+        }
+
+        [Fact]
         private async Task Overlap_Deletion_And_Replacement()
         {
             await UsingTempFile(DefaultFileContents, async file =>
@@ -186,7 +239,7 @@ c");
                 };
 
                 // Act
-                var ex = await Assert.ThrowsAsync<ModificationsOverlapException>(() => _fileModifierStep.Run());
+                var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _fileModifierStep.Run());
 
                 // Assert
                 _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -208,7 +261,7 @@ c");
                 };
 
                 // Act
-                var ex = await Assert.ThrowsAsync<ModificationsOverlapException>(() => _fileModifierStep.Run());
+                var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _fileModifierStep.Run());
 
                 // Assert
                 _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -230,7 +283,7 @@ c");
                 };
 
                 // Act
-                var ex = await Assert.ThrowsAsync<ModificationsOverlapException>(() => _fileModifierStep.Run());
+                var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _fileModifierStep.Run());
 
                 // Assert
                 _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -257,6 +310,30 @@ c");
 4
 5
 ");
+            });
+        }
+
+        [Fact]
+        private async Task StartLine_Greater_Than_EndLine_Lines()
+        {
+            await UsingTempFile(DefaultFileContents, async file =>
+            {
+                // Arrange
+                _fileModifierStep.File = file;
+                _fileModifierStep.Modifications = new List<Modification>
+                {
+                    new Deletion(2, 1),
+                    new Deletion(-1, -2),
+                    new Replacement(4, 3, "a"),
+                    new Replacement(-3, -4, "a")
+                };
+
+                // Act
+                var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _fileModifierStep.Run());
+
+                // Assert
+                _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
+                ex.Errors.Count.ShouldBe(4);
             });
         }
     }
