@@ -13,7 +13,6 @@ namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}
         public {{ EntityInfo.Name }}AppService(IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> repository)
             : base(repository)
         {
-
         }
     }
 }

@@ -48,9 +48,12 @@ namespace AbpHelper
                 )
                 .AddStep<EntityParserStep>()
                 .AddEntityUsingGenerationWorkflow()
+                /*
                 .AddEfCoreConfigurationWorkflow()
                 .AddMigrationAndUpdateDatabaseWorkflow()
                 .AddServiceGenerationWorkflow()
+                */
+                .AddUIRazorPagesGenerationWorkflow()
                 .Build();
 
             // TODO: handle exception

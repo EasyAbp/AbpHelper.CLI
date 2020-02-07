@@ -1,0 +1,6 @@
+@page
+@using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
+@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
+@model IndexModel
+
+<h2>{{ EntityInfo.NamePluralized }}</h2>

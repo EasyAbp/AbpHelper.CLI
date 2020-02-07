@@ -14,7 +14,7 @@ namespace AbpHelper.Workflow.Abp
         public static WorkflowBuilder AddServiceGenerationWorkflow(this WorkflowBuilder builder)
         {
             return builder
-                    /* Generate dto, service interface and class */
+                    /* Generate dto, service interface and class files */
                     .AddStep<TemplateGroupGenerationStep>(
                         step =>
                         {
