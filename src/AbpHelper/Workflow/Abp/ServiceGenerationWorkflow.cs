@@ -27,7 +27,7 @@ namespace AbpHelper.Workflow.Abp
                             step.TargetDirectory = step.GetParameter<string>("BaseDirectory");
                         }
                     )
-                    /* Add CreateMap<..., ...> */
+                    /* Add mapping */
                     .AddStep<FileFinderStep>(
                         step => step.SearchFileName = "*ApplicationAutoMapperProfile.cs"
                     )

@@ -45,7 +45,39 @@ namespace AbpHelper.Workflow.Abp
                             };
                         })
                     .AddStep<FileModifierStep>()
+                    /* Add mapping */
+                    .AddStep<FileFinderStep>(
+                        step => step.SearchFileName = "*WebAutoMapperProfile.cs"
+                    )
+                    .AddStep<ModificationCreatorStep>(
+                        step =>
+                        {
+                            var entityInfo = step.Get<EntityInfo>();
+                            step.ModificationBuilders = new List<ModificationBuilder>
+                            {
+                                new InsertionBuilder(
+                                    root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
+                                    GetEntityDtoUsingText(step),
+                                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityDtoUsingText(step))
+                                ),
+                                new InsertionBuilder(
+                                    root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),
+                                    TextGenerator.GenerateByTemplateName("WebAutoMapperProfile_CreateMap", new {EntityInfo = entityInfo})
+                                )
+                            };
+                        })
+                    .AddStep<FileModifierStep>()
                 ;
+        }
+
+        private static string GetEntityUsingText(Step step)
+        {
+            return step.GetParameter<string>("EntityUsingText");
+        }
+
+        private static string GetEntityDtoUsingText(Step step)
+        {
+            return step.GetParameter<string>("EntityDtoUsingText");
         }
     }
 }

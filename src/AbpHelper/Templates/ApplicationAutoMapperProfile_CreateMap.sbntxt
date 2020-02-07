@@ -1,1 +1,2 @@
             CreateMap<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto>();
+            CreateMap<CreateUpdate{{ EntityInfo.Name }}Dto, {{ EntityInfo.Name }}>();
