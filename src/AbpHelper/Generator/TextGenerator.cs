@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Scriban;
+using Scriban.Runtime;
 
 namespace AbpHelper.Generator
 {
@@ -16,8 +17,15 @@ namespace AbpHelper.Generator
 
         public static string GenerateByTemplateText(string templateText, object model)
         {
+            var context = new TemplateContext();
+            var scriptObject = new ScriptObject();
+            scriptObject.SetValue("abp", new AbpFunctions(), true);
+            scriptObject.Import(model, renamer: member => member.Name);
+            context.PushGlobal(scriptObject);
+            context.MemberRenamer = member => member.Name;
+
             var template = Template.Parse(templateText);
-            var text = template.Render(model, member => member.Name).Replace("\r\n", Environment.NewLine);
+            var text = template.Render(context).Replace("\r\n", Environment.NewLine);
             return text;
         }
     }
