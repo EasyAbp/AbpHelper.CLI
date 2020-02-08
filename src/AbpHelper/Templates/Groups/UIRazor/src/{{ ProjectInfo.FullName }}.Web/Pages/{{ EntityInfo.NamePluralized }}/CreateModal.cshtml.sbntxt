@@ -7,7 +7,7 @@
 }
 <abp-dynamic-form abp-model="{{ EntityInfo.Name }}" data-ajaxForm="true" asp-page="/{{ EntityInfo.NamePluralized }}/CreateModal">
     <abp-modal>
-        <abp-modal-header title="@L["New{{ EntityInfo.Name }}"].Value"></abp-modal-header>
+        <abp-modal-header title="@L["Create{{ EntityInfo.Name }}"].Value"></abp-modal-header>
         <abp-modal-body>
             <abp-form-content />
         </abp-modal-body>

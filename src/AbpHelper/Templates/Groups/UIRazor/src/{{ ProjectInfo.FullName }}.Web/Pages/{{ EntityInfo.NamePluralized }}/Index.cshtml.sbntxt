@@ -16,11 +16,11 @@
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_2">
-                <h2>@L["{{ EntityInfo.NamePluralized }}"]</h2>
+                <h2>@L["{{ EntityInfo.Name }}"]</h2>
             </abp-column>
             <abp-column size-md="_10" class="text-right">
                 <abp-button id="New{{ EntityInfo.Name }}Button"
-                            text="@L["New{{ EntityInfo.Name }}"].Value"
+                            text="@L["Create{{ EntityInfo.Name }}"].Value"
                             icon="plus"
                             button-type="Primary" />
             </abp-column>
@@ -32,7 +32,7 @@
             <tr>
                 <th>@L["Actions"]</th>
                 {{~ for prop in EntityInfo.Properties ~}}
-                <th>@L["{{ prop.Name }}"]</th>
+                <th>@L["{{ EntityInfo.Name + prop.Name }}"]</th>
                 {{~ end ~}}
             </tr>
             </thead>
