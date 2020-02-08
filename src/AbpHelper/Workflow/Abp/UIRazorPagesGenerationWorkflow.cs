@@ -67,6 +67,25 @@ namespace AbpHelper.Workflow.Abp
                             };
                         })
                     .AddStep<FileModifierStep>()
+                    /* Add localization */
+                    .AddStep<FileFinderStep>(
+                        step => step.Multiple = true,
+                        step => step.SearchFileName = "*.json",
+                        step =>
+                        {
+                            var projectInfo = step.Get<ProjectInfo>();
+                            step.BaseDirectory = $@"{projectInfo.BaseDirectory}\src\{projectInfo.FullName}.Domain.Shared\Localization";
+                        }
+                    )
+                /*
+                .AddStep<LoopStep<string>>(
+                    step => step.LoopOn = () => step.GetParameter<string[]>(FileFinderStep.DefaultFilesParameterName),
+                    step => step.LoopBody = file =>
+                    {
+                        
+                    }
+                    )
+                */
                 ;
         }
 
