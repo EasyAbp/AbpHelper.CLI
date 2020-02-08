@@ -16,7 +16,7 @@ namespace AbpHelper.Steps
 
         protected override async Task RunStep()
         {
-            var entitySourceFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
+            var entitySourceFile = File.IsNullOrEmpty() ? GetParameter<string>(FileFinderStep.DefaultFilesParameterName) : File;
             LogInput(() => entitySourceFile);
 
             var sourceText = await System.IO.File.ReadAllTextAsync(entitySourceFile);

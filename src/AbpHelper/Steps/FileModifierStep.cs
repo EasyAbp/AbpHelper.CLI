@@ -15,7 +15,7 @@ namespace AbpHelper.Steps
 
         protected override async Task RunStep()
         {
-            var targetFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
+            var targetFile = File.IsNullOrEmpty() ? GetParameter<string>(FileFinderStep.DefaultFilesParameterName) : File;
             LogInput(() => targetFile);
 
             var modifications = Modifications.IsNullOrEmpty() ? GetParameter<IList<Modification>>("Modifications") : Modifications;

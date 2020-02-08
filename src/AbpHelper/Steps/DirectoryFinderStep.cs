@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -6,12 +7,14 @@ namespace AbpHelper.Steps
 {
     public class DirectoryFinderStep : Step
     {
+        public const string DefaultDirectoryParameterName = "DirectoryFinderResult";
+        public string BaseDirectory { get; set; } = string.Empty;
         public string SearchDirectoryName { get; set; } = string.Empty;
-        public string ResultParameterName { get; set; } = "DirectoryPathName";
+        public string ResultParameterName { get; set; } = DefaultDirectoryParameterName;
 
         protected override Task RunStep()
         {
-            var baseDirectory = GetParameter<string>("BaseDirectory");
+            var baseDirectory = BaseDirectory.IsNullOrEmpty() ? GetParameter<string>("BaseDirectory") : BaseDirectory;
             LogInput(() => baseDirectory);
             LogInput(() => SearchDirectoryName);
 

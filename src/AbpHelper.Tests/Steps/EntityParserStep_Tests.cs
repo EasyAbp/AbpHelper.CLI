@@ -60,7 +60,7 @@ namespace Acme.BookStore
             await UsingEntityFile(code, async file =>
             {
                 // Arrange
-                _entityParserStep.SetParameter("FilePathName", file);
+                _entityParserStep.SetParameter(FileFinderStep.DefaultFilesParameterName, file);
 
                 // Act
                 await _entityParserStep.Run();
@@ -113,7 +113,7 @@ namespace Acme.BookStore
             await UsingEntityFile(code, async file =>
             {
                 // Arrange
-                _entityParserStep.SetParameter("FilePathName", file);
+                _entityParserStep.SetParameter(FileFinderStep.DefaultFilesParameterName, file);
 
                 // Act
                 await _entityParserStep.Run();
@@ -141,7 +141,7 @@ namespace Acme.BookStore
             await UsingEntityFile("invalid c# code", async file =>
             {
                 // Arrange
-                _entityParserStep.SetParameter("FilePathName", file);
+                _entityParserStep.SetParameter(FileFinderStep.DefaultFilesParameterName, file);
 
                 // Act
                 var ex = await Assert.ThrowsAsync<ParseException>(() => _entityParserStep.Run());

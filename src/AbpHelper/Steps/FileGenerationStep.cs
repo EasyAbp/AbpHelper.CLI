@@ -12,7 +12,7 @@ namespace AbpHelper.Steps
 
         protected override async Task RunStep()
         {
-            var targetFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
+            var targetFile = File.IsNullOrEmpty() ? GetParameter<string>(FileFinderStep.DefaultFilesParameterName) : File;
 
             LogInput(() => targetFile);
             LogInput(() => Contents, $"Contents length: {Contents.Length}");

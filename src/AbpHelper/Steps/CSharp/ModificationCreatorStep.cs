@@ -13,7 +13,7 @@ namespace AbpHelper.Steps.CSharp
 
         protected override async Task RunStep()
         {
-            var sourceFile = File.IsNullOrEmpty() ? GetParameter<string>("FilePathName") : File;
+            var sourceFile = File.IsNullOrEmpty() ? GetParameter<string>(FileFinderStep.DefaultFilesParameterName) : File;
             LogInput(() => sourceFile);
 
             var sourceText = await System.IO.File.ReadAllTextAsync(sourceFile);
