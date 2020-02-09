@@ -2,8 +2,11 @@
 using System.IO;
 using System.Threading.Tasks;
 using AbpHelper.Steps;
-using AbpHelper.Workflow;
 using AbpHelper.Workflow.Abp;
+using Elsa.Activities;
+using Elsa.Expressions;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
@@ -40,14 +43,15 @@ namespace AbpHelper
 
         private static async Task Execute(IServiceProvider serviceProvider)
         {
+            /*
             var workflow = WorkflowBuilder.CreateBuilder(serviceProvider)
                 .WithParameter("BaseDirectory", @"C:\Users\wakuw\Desktop\AbpApp\MyAbpRazorPages")
                 .WithParameter("Overwrite", true)
-                .AddStep<ProjectInfoProviderStep>()
-                .AddStep<FileFinderStep>(
+                .Then<ProjectInfoProviderStep>()
+                .Then<FileFinderStep>(
                     step => step.SearchFileName = "Book.cs"
                 )
-                .AddStep<EntityParserStep>()
+                .Then<EntityParserStep>()
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
                 .AddMigrationAndUpdateDatabaseWorkflow()
@@ -57,6 +61,39 @@ namespace AbpHelper
 
             // TODO: handle exception
             await workflow.Run();
+        */
+            var workflowBuilderFactory = serviceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
+            var workflowBuilder = workflowBuilderFactory();
+            var workflowDefinition = workflowBuilder
+                .StartWith<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "BaseDirectory";
+                        step.ValueExpression = new LiteralExpression(@"C:\Users\wakuw\Desktop\AbpApp\MyAbpRazorPages");
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "Overwrite";
+                        step.ValueExpression = new JavaScriptExpression<bool>("true");
+                    })
+                .Then<ProjectInfoProviderStep>()
+                .Then<FileFinderStep>(
+                    step => { step.SearchFileName = new LiteralExpression("Book.cs"); })
+                .Then<EntityParserStep>()
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "Model";
+                        step.ValueExpression = new JavaScriptExpression<object>("({EntityInfo : EntityInfo, ProjectInfo : ProjectInfo})");
+                    })
+                .AddEntityUsingGenerationWorkflow()
+                .Build();
+
+            // Start the workflow.
+            var invoker = serviceProvider.GetService<IWorkflowInvoker>();
+            var context = await invoker.StartAsync(workflowDefinition);
+            foreach (var variable in context.GetVariables()) Console.WriteLine($"[{variable.Key}] : {variable.Value.Value}");
         }
     }
 }

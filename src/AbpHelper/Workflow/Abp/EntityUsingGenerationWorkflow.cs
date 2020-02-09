@@ -1,22 +1,27 @@
-﻿using AbpHelper.Models;
-using AbpHelper.Steps;
+﻿using AbpHelper.Steps;
+using Elsa.Expressions;
+using Elsa.Services;
 
 namespace AbpHelper.Workflow.Abp
 {
     public static class EntityUsingGenerationWorkflow
     {
-        public static WorkflowBuilder AddEntityUsingGenerationWorkflow(this WorkflowBuilder builder)
+        public static IActivityBuilder AddEntityUsingGenerationWorkflow(this IActivityBuilder builder)
         {
             return builder
-                    .AddStep<TextGenerationStep>(
-                        step => step.TemplateName = "UsingEntityNamespace",
-                        step => step.Model = new {EntityInfo = step.GetParameter<EntityInfo>("EntityInfo")},
-                        step => step.GeneratedTextKey = "EntityUsingText"
+                    .Then<TextGenerationStep>(
+                        step =>
+                        {
+                            step.TemplateName = "UsingEntityNamespace";
+                            step.GeneratedTextKey = new LiteralExpression("EntityUsingText");
+                        }
                     )
-                    .AddStep<TextGenerationStep>(
-                        step => step.TemplateName = "UsingEntityDtoNamespace",
-                        step => step.Model = new {EntityInfo = step.GetParameter<EntityInfo>("EntityInfo")},
-                        step => step.GeneratedTextKey = "EntityDtoUsingText"
+                    .Then<TextGenerationStep>(
+                        step =>
+                        {
+                            step.TemplateName = "UsingEntityDtoNamespace";
+                            step.GeneratedTextKey = new LiteralExpression("EntityDtoUsingText");
+                        }
                     )
                 ;
         }

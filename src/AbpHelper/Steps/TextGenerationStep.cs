@@ -1,25 +1,50 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using AbpHelper.Generator;
+using Elsa.Expressions;
+using Elsa.Results;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services.Models;
 
 namespace AbpHelper.Steps
 {
     public class TextGenerationStep : Step
     {
-        public string TemplateName { get; set; } = string.Empty;
-        public object Model { get; set; } = new object();
-        public string GeneratedTextKey { get; set; } = "GeneratedText";
+        public const string DefaultGeneratedTextParameterName = "GeneratedText";
 
-        protected override Task RunStep()
+        public string TemplateName
+        {
+            get => GetState<string>();
+            set => SetState(value);
+        }
+
+        public WorkflowExpression<object> Model
+        {
+            get => GetState<WorkflowExpression<object>>(() => new JavaScriptExpression<object>("Model"));
+            set => SetState(value);
+        }
+
+        public WorkflowExpression<string> GeneratedTextKey
+        {
+            get => GetState(() => new LiteralExpression(DefaultGeneratedTextParameterName));
+            set => SetState(value);
+        }
+
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
             LogInput(() => TemplateName);
+            var model = await context.EvaluateAsync(Model, cancellationToken);
             LogInput(() => Model);
+            var generatedTextKey = await context.EvaluateAsync(GeneratedTextKey, cancellationToken);
             LogInput(() => GeneratedTextKey);
 
-            var text = TextGenerator.GenerateByTemplateName(TemplateName, Model);
+            var text = TextGenerator.GenerateByTemplateName(TemplateName, model);
 
+            context.SetLastResult(text);
+            context.SetVariable(generatedTextKey, text);
             LogOutput(() => text, $"Length: {text.Length}");
-            SetParameter(GeneratedTextKey, text);
-            return Task.CompletedTask;
+
+            return Done();
         }
     }
 }

@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Elsa.Core" Version="1.2.1.19" />
+        <PackageReference Include="Elsa.Scripting.JavaScript" Version="1.2.1.19" />
         <PackageReference Include="Humanizer.Core" Version="2.7.9" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
         <PackageReference Include="Scriban" Version="2.1.1" />
@@ -25,5 +27,14 @@
 
     <ItemGroup>
       <Folder Include="Templates\Groups" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Steps\LoopStep.cs" />
+      <Compile Remove="Workflow\Abp\MigrationAndUpdateDatabaseWorkflow.cs" />
+      <Compile Remove="Workflow\Abp\ServiceGenerationWorkflow.cs" />
+      <Compile Remove="Workflow\Abp\UIRazorPagesGenerationWorkflow.cs" />
+      <Compile Remove="Steps\CSharp\InsertionStep.cs" />
+      <Compile Remove="Workflow\Abp\EFCoreConfigurationWorkflow.cs" />
     </ItemGroup>
 </Project>

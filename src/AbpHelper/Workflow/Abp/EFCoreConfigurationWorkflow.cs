@@ -5,27 +5,39 @@ using AbpHelper.Generator;
 using AbpHelper.Models;
 using AbpHelper.Steps;
 using AbpHelper.Steps.CSharp;
+using Elsa.Activities;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AbpHelper.Workflow.Abp
 {
     public static class EfCoreConfigurationWorkflow
     {
-        public static WorkflowBuilder AddEfCoreConfigurationWorkflow(this WorkflowBuilder builder)
+        public static IActivityBuilder AddEfCoreConfigurationWorkflow(this IActivityBuilder builder)
         {
             return builder
                     /* Add entity property to DbContext */
-                    .AddStep<FileFinderStep>(
-                        step => { step.SearchFileName = $"{step.Get<ProjectInfo>().Name}DbContext.cs"; })
-                    .AddStep<ModificationCreatorStep>(
+                    .Then<FileFinderStep>(
                         step =>
                         {
-                            var model = new {EntityInfo = step.Get<EntityInfo>()};
+                            step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`");
+                        })
+                    .Then<TextGenerationStep>(
+                        step =>
+                        {
+                            step.TemplateName = "DbContext_Property";
+                            step.Model = 
+                        }
+                    )
+                    .Then<ModificationCreatorStep>(
+                        step =>
+                        {
                             step.ModificationBuilders = new List<ModificationBuilder>
                             {
                                 new InsertionBuilder(
                                     root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
-                                    GetEntityUsingText(step),
+                                    new JavaScriptExpression<string>("EntityUsingText"),
                                     InsertPosition.After,
                                     root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityUsingText(step))
                                 ),
@@ -35,12 +47,12 @@ namespace AbpHelper.Workflow.Abp
                                 )
                             };
                         })
-                    .AddStep<FileModifierStep>()
+                    .Then<FileModifierStep>()
                     /* Add entity configuration to DbContextModelCreatingExtensions */
-                    .AddStep<FileFinderStep>(
+                    .Then<FileFinderStep>(
                         step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
                     )
-                    .AddStep<ModificationCreatorStep>(
+                    .Then<ModificationCreatorStep>(
                         step =>
                         {
                             var model = new
@@ -67,7 +79,7 @@ namespace AbpHelper.Workflow.Abp
                                 )
                             };
                         })
-                    .AddStep<FileModifierStep>()
+                    .Then<FileModifierStep>()
                 ;
         }
 

@@ -11,11 +11,11 @@ namespace AbpHelper.Workflow.Abp
 {
     public static class UIRazorPagesGenerationWorkflow
     {
-        public static WorkflowBuilder AddUIRazorPagesGenerationWorkflow(this WorkflowBuilder builder)
+        public static IActivityBuilder AddUIRazorPagesGenerationWorkflow(this IActivityBuilder builder)
         {
             return builder
                     /* Generate razor pages ui files*/
-                    .AddStep<TemplateGroupGenerationStep>(
+                    .Then<TemplateGroupGenerationStep>(
                         step =>
                         {
                             step.Model = new
@@ -28,10 +28,10 @@ namespace AbpHelper.Workflow.Abp
                         }
                     )
                     /* Add menu */
-                    .AddStep<FileFinderStep>(
+                    .Then<FileFinderStep>(
                         step => step.SearchFileName = "*MenuContributor.cs"
                     )
-                    .AddStep<ModificationCreatorStep>(
+                    .Then<ModificationCreatorStep>(
                         step =>
                         {
                             var entityInfo = step.Get<EntityInfo>();
@@ -44,12 +44,12 @@ namespace AbpHelper.Workflow.Abp
                                 )
                             };
                         })
-                    .AddStep<FileModifierStep>()
+                    .Then<FileModifierStep>()
                     /* Add mapping */
-                    .AddStep<FileFinderStep>(
+                    .Then<FileFinderStep>(
                         step => step.SearchFileName = "*WebAutoMapperProfile.cs"
                     )
-                    .AddStep<ModificationCreatorStep>(
+                    .Then<ModificationCreatorStep>(
                         step =>
                         {
                             var entityInfo = step.Get<EntityInfo>();
@@ -66,9 +66,9 @@ namespace AbpHelper.Workflow.Abp
                                 )
                             };
                         })
-                    .AddStep<FileModifierStep>()
+                    .Then<FileModifierStep>()
                     /* Add localization */
-                    .AddStep<FileFinderStep>(
+                    .Then<FileFinderStep>(
                         step => step.Multiple = true,
                         step => step.SearchFileName = "*.json",
                         step =>
@@ -78,7 +78,7 @@ namespace AbpHelper.Workflow.Abp
                         }
                     )
                 /*
-                .AddStep<LoopStep<string>>(
+                .Then<LoopStep<string>>(
                     step => step.LoopOn = () => step.GetParameter<string[]>(FileFinderStep.DefaultFilesParameterName),
                     step => step.LoopBody = file =>
                     {

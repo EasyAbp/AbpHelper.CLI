@@ -1,28 +1,49 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Elsa.Expressions;
+using Elsa.Results;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services.Models;
 
 namespace AbpHelper.Steps
 {
     public class DirectoryFinderStep : Step
     {
         public const string DefaultDirectoryParameterName = "DirectoryFinderResult";
-        public string BaseDirectory { get; set; } = string.Empty;
-        public string SearchDirectoryName { get; set; } = string.Empty;
-        public string ResultParameterName { get; set; } = DefaultDirectoryParameterName;
 
-        protected override Task RunStep()
+        public WorkflowExpression<string> BaseDirectory
         {
-            var baseDirectory = BaseDirectory.IsNullOrEmpty() ? GetParameter<string>("BaseDirectory") : BaseDirectory;
+            get => GetState(() => new JavaScriptExpression<string>("BaseDirectory"));
+            set => SetState(value);
+        }
+
+        public string SearchDirectoryName
+        {
+            get => GetState<string>();
+            set => SetState(value);
+        }
+
+        public WorkflowExpression<string> ResultParameterName
+        {
+            get => GetState(() => new LiteralExpression(DefaultDirectoryParameterName));
+            set => SetState(value);
+        }
+
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        {
+            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
             LogInput(() => SearchDirectoryName);
+            var resultParameterName = await context.EvaluateAsync(ResultParameterName, cancellationToken);
 
             var directoryPathName = Directory.EnumerateDirectories(baseDirectory, SearchDirectoryName, SearchOption.AllDirectories).Single();
-            SetParameter(ResultParameterName, directoryPathName);
+            context.SetLastResult(directoryPathName);
+            context.SetVariable(resultParameterName, directoryPathName);
             LogOutput(() => directoryPathName, $"Found directory: {directoryPathName}, stored in parameter: [{ResultParameterName}]");
 
-            return Task.CompletedTask;
+            return Done();
         }
     }
 }

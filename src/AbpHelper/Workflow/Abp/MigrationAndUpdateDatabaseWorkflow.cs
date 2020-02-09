@@ -6,19 +6,19 @@ namespace AbpHelper.Workflow.Abp
 {
     public static class MigrationAndUpdateDatabaseWorkflow
     {
-        public static WorkflowBuilder AddMigrationAndUpdateDatabaseWorkflow(this WorkflowBuilder builder)
+        public static IActivityBuilder AddMigrationAndUpdateDatabaseWorkflow(this IActivityBuilder builder)
         {
             return builder
-                    .AddStep<FileFinderStep>(
+                    .Then<FileFinderStep>(
                         step => step.SearchFileName = "*.EntityFrameworkCore.DbMigrations.csproj",
                         step => step.ResultParameterName = "MigrationProjectFile"
                     )
-                    .AddStep<FileFinderStep>(
+                    .Then<FileFinderStep>(
                         step => step.SearchFileName = "*.Web.csproj",
                         step => step.ResultParameterName = "WebProjectFile"
                     )
                     /* Add migration */
-                    .AddStep<RunCommandStep>(
+                    .Then<RunCommandStep>(
                         step =>
                         {
                             var entityInfo = step.Get<EntityInfo>();
@@ -27,7 +27,7 @@ namespace AbpHelper.Workflow.Abp
                             step.Command = $"dotnet ef migrations add Added{entityInfo.Name} -p \"{migrationProjectFile}\" -s \"{webProjectFile}\"";
                         })
                     /* Update database */
-                    .AddStep<RunCommandStep>(
+                    .Then<RunCommandStep>(
                         step =>
                         {
                             var migrationProjectFile = step.GetParameter<string>("MigrationProjectFile");

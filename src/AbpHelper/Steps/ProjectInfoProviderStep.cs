@@ -1,16 +1,27 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AbpHelper.Models;
+using Elsa.Expressions;
+using Elsa.Results;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services.Models;
 
 namespace AbpHelper.Steps
 {
     public class ProjectInfoProviderStep : Step
     {
-        protected override Task RunStep()
+        public WorkflowExpression<string> BaseDirectory
         {
-            var baseDirectory = GetParameter<string>("BaseDirectory");
+            get => GetState(() => new JavaScriptExpression<string>("BaseDirectory"));
+            set => SetState(value);
+        }
+
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        {
+            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
 
             TemplateType templateType;
@@ -41,9 +52,11 @@ namespace AbpHelper.Steps
             if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(baseDirectory, "*.IdentityServer.csproj").Any();
 
             var projectInfo = new ProjectInfo(baseDirectory, fullName, name, templateType, uiFramework, tiered);
-            SetParameter("ProjectInfo", projectInfo);
+            context.SetLastResult(projectInfo);
+            context.SetVariable("ProjectInfo", projectInfo);
             LogOutput(() => projectInfo);
-            return Task.CompletedTask;
+
+            return Done();
         }
     }
 }

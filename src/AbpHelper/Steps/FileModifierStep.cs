@@ -1,27 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AbpHelper.Models;
+using Elsa.Expressions;
+using Elsa.Results;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
 namespace AbpHelper.Steps
 {
     public class FileModifierStep : Step
     {
-        public string File { get; set; } = string.Empty;
-        public IList<Modification> Modifications { get; set; } = new List<Modification>();
-
-        protected override async Task RunStep()
+        public WorkflowExpression<string> TargetFile
         {
-            var targetFile = File.IsNullOrEmpty() ? GetParameter<string>(FileFinderStep.DefaultFilesParameterName) : File;
+            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
+            set => SetState(value);
+        }
+
+        public WorkflowExpression<IList<Modification>> Modifications
+        {
+            get => GetState(() => new JavaScriptExpression<IList<Modification>>("Modifications"));
+            set => SetState(value);
+        }
+
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        {
+            var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
             LogInput(() => targetFile);
 
-            var modifications = Modifications.IsNullOrEmpty() ? GetParameter<IList<Modification>>("Modifications") : Modifications;
+            var modifications = await context.EvaluateAsync(Modifications, cancellationToken);
             LogInput(() => modifications, $"Modifications count: {modifications.Count}");
 
-            var lines = await System.IO.File.ReadAllLinesAsync(targetFile);
+            var lines = await File.ReadAllLinesAsync(targetFile);
             var errors = CheckModifications(modifications, lines).ToArray();
             if (errors.Length > 0)
             {
@@ -69,7 +84,9 @@ namespace AbpHelper.Steps
                 NEXT_LINE: ;
             }
 
-            await System.IO.File.WriteAllTextAsync(targetFile, newFile.ToString());
+            await File.WriteAllTextAsync(targetFile, newFile.ToString());
+
+            return Done();
         }
 
         private IEnumerable<string> CheckModifications(IList<Modification> modifications, string[] lines)

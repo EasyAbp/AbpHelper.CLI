@@ -11,11 +11,11 @@ namespace AbpHelper.Workflow.Abp
 {
     public static class ServiceGenerationWorkflow
     {
-        public static WorkflowBuilder AddServiceGenerationWorkflow(this WorkflowBuilder builder)
+        public static IActivityBuilder AddServiceGenerationWorkflow(this IActivityBuilder builder)
         {
             return builder
                     /* Generate dto, service interface and class files */
-                    .AddStep<TemplateGroupGenerationStep>(
+                    .Then<TemplateGroupGenerationStep>(
                         step =>
                         {
                             step.Model = new
@@ -28,10 +28,10 @@ namespace AbpHelper.Workflow.Abp
                         }
                     )
                     /* Add mapping */
-                    .AddStep<FileFinderStep>(
+                    .Then<FileFinderStep>(
                         step => step.SearchFileName = "*ApplicationAutoMapperProfile.cs"
                     )
-                    .AddStep<ModificationCreatorStep>(
+                    .Then<ModificationCreatorStep>(
                         step =>
                         {
                             var entityInfo = step.Get<EntityInfo>();
@@ -53,7 +53,7 @@ namespace AbpHelper.Workflow.Abp
                                 )
                             };
                         })
-                    .AddStep<FileModifierStep>()
+                    .Then<FileModifierStep>()
                 ;
         }
 

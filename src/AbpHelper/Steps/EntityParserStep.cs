@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AbpHelper.Extensions;
 using AbpHelper.Models;
+using Elsa.Expressions;
+using Elsa.Results;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
@@ -12,14 +18,18 @@ namespace AbpHelper.Steps
 {
     public class EntityParserStep : Step
     {
-        public string File { get; set; } = string.Empty;
-
-        protected override async Task RunStep()
+        public WorkflowExpression<string> EntityFile
         {
-            var entitySourceFile = File.IsNullOrEmpty() ? GetParameter<string>(FileFinderStep.DefaultFilesParameterName) : File;
-            LogInput(() => entitySourceFile);
+            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
+            set => SetState(value);
+        }
 
-            var sourceText = await System.IO.File.ReadAllTextAsync(entitySourceFile);
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        {
+            var entityFile = await context.EvaluateAsync(EntityFile, cancellationToken);
+            LogInput(() => entityFile);
+
+            var sourceText = await File.ReadAllTextAsync(entityFile);
 
             try
             {
@@ -58,8 +68,11 @@ namespace AbpHelper.Steps
                 var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey);
                 entityInfo.Properties.AddRange(properties);
 
-                SetParameter("EntityInfo", entityInfo);
+                context.SetLastResult(entityInfo);
+                context.SetVariable("EntityInfo", entityInfo);
                 LogOutput(() => entityInfo);
+
+                return Done();
             }
             catch (Exception e)
             {

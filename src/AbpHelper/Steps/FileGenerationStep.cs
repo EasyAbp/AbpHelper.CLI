@@ -1,18 +1,31 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using Elsa.Expressions;
+using Elsa.Results;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
 namespace AbpHelper.Steps
 {
     public class FileGenerationStep : Step
     {
-        public string File { get; set; } = string.Empty;
-        public string Contents { get; set; } = string.Empty;
-
-        protected override async Task RunStep()
+        public WorkflowExpression<string> TargetFile
         {
-            var targetFile = File.IsNullOrEmpty() ? GetParameter<string>(FileFinderStep.DefaultFilesParameterName) : File;
+            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
+            set => SetState(value);
+        }
+
+        public string Contents
+        {
+            get => GetState<string>();
+            set => SetState(value);
+        }
+
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        {
+            var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
 
             LogInput(() => targetFile);
             LogInput(() => Contents, $"Contents length: {Contents.Length}");
@@ -24,8 +37,10 @@ namespace AbpHelper.Steps
                 Logger.LogInformation($"Directory {dir} created.");
             }
 
-            await System.IO.File.WriteAllTextAsync(targetFile, Contents);
+            await File.WriteAllTextAsync(targetFile, Contents);
             Logger.LogInformation($"File {targetFile} generated.");
+
+            return Done();
         }
     }
 }
