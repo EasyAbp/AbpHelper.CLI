@@ -7,8 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Elsa.Core" Version="1.2.1.19" />
-        <PackageReference Include="Elsa.Scripting.JavaScript" Version="1.2.1.19" />
+        <PackageReference Include="Elsa" Version="1.2.1.19" />
         <PackageReference Include="Humanizer.Core" Version="2.7.9" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
         <PackageReference Include="Scriban" Version="2.1.1" />

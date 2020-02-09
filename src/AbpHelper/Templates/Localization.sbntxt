@@ -1,0 +1,11 @@
+{
+    "Menu:{{ EntityInfo.Name }}": "Menu{{ EntityInfo.Name }}",
+    "{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
+    {{~ for prop in EntityInfo.Properties ~}}
+    "{{ EntityInfo.Name + prop.Name}}": "{{ EntityInfo.Name + prop.Name}}",
+    {{~ end ~}}
+    "Create{{ EntityInfo.Name }}": "Create{{ EntityInfo.Name }}",
+    "Edit{{ EntityInfo.Name }}": "Edit{{ EntityInfo.Name }}",
+    "{{ EntityInfo.Name }}DeletionConfirmationMessage": "Are you sure to delete the {{ EntityInfo.Name | string.downcase }} {0}?",
+    "SuccessfullyDeleted": "Successfully deleted"
+}
