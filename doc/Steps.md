@@ -8,7 +8,7 @@
 1. - [x] 生成Service接口
 1. - [x] 生成Service
 1. - [x] 增加菜单
-1. - [ ] 增加本地化资源
+1. - [x] 增加本地化资源
 1. - [x] 生成Index
 1. - [x] 生成JS
 1. - [x] 生成CreateModal
