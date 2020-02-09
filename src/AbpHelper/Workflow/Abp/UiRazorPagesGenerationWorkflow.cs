@@ -10,7 +10,7 @@ using Elsa.Services;
 
 namespace AbpHelper.Workflow.Abp
 {
-    public static class UIRazorPagesGenerationWorkflow
+    public static class UiRazorPagesGenerationWorkflow
     {
         public static IActivityBuilder AddUIRazorPagesGenerationWorkflow(this IActivityBuilder builder)
         {
