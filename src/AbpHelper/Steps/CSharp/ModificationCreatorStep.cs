@@ -11,17 +11,11 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace AbpHelper.Steps.CSharp
 {
-    public class ModificationCreatorStep : Step
+    public abstract class ModificationCreatorStep : Step
     {
         public WorkflowExpression<string> SourceFile
         {
             get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
-            set => SetState(value);
-        }
-
-        public IList<ModificationBuilder> ModificationBuilders
-        {
-            get => GetState<IList<ModificationBuilder>>();
             set => SetState(value);
         }
 
@@ -34,15 +28,20 @@ namespace AbpHelper.Steps.CSharp
             var tree = CSharpSyntaxTree.ParseText(sourceText);
             var root = tree.GetCompilationUnitRoot();
 
-            var modifications = ModificationBuilders
-                .Where(builder => builder.ModifyCondition(root))
-                .Select(builder => builder.Build(root, context))
-                .ToList();
+            var builders = CreateModifications(context);
+            var modifications = builders
+                    .Where(builder => builder.ModifyCondition(root))
+                    .Select(builder => builder.Build(root))
+                    .ToList()
+                ;
+
             context.SetLastResult(modifications);
             context.SetVariable("Modifications", modifications);
             LogOutput(() => modifications, $"Modifications count: {modifications.Count}");
 
             return Done();
         }
+
+        protected abstract IList<ModificationBuilder> CreateModifications(WorkflowExecutionContext context);
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 using AbpHelper.Models;
-using Elsa.Expressions;
-using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace AbpHelper.Steps.CSharp
@@ -17,26 +13,25 @@ namespace AbpHelper.Steps.CSharp
         }
 
         public Func<CSharpSyntaxNode, int> StartLineExpression { get; }
-        public Func<CSharpSyntaxNode, bool> ModifyCondition { get; }
+        public Func<CSharpSyntaxNode, bool> ModifyCondition { get; set; }
 
-        public abstract Task<Modification> Build(CSharpSyntaxNode root, WorkflowExecutionContext context);
+        public abstract Modification Build(CSharpSyntaxNode root);
     }
 
     public class InsertionBuilder : ModificationBuilder
     {
-        public InsertionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, WorkflowExpression<string> contents, InsertPosition insertPosition = InsertPosition.Before, Func<CSharpSyntaxNode, bool>? modifyCondition = null) : base(startLineExpression, modifyCondition)
+        public InsertionBuilder(Func<CSharpSyntaxNode, int> startLineExpression, string contents, InsertPosition insertPosition = InsertPosition.Before, Func<CSharpSyntaxNode, bool>? modifyCondition = null) : base(startLineExpression, modifyCondition)
         {
             Contents = contents;
             InsertPosition = insertPosition;
         }
 
-        public WorkflowExpression<string> Contents { get; }
+        public string Contents { get; }
         public InsertPosition InsertPosition { get; }
 
-        public override async Task<Modification> Build(CSharpSyntaxNode root, WorkflowExecutionContext context)
+        public override Modification Build(CSharpSyntaxNode root)
         {
-            var contents = await context.EvaluateAsync(Contents, CancellationToken.None);
-            return new Insertion(StartLineExpression(root), contents, InsertPosition);
+            return new Insertion(StartLineExpression(root), Contents, InsertPosition);
         }
     }
 
@@ -49,7 +44,7 @@ namespace AbpHelper.Steps.CSharp
 
         public Func<CSharpSyntaxNode, int> EndLineExpression { get; }
 
-        public override async Task<Modification> Build(CSharpSyntaxNode root, WorkflowExecutionContext context)
+        public override Modification Build(CSharpSyntaxNode root)
         {
             return new Deletion(StartLineExpression(root), EndLineExpression(root));
         }
@@ -57,19 +52,18 @@ namespace AbpHelper.Steps.CSharp
 
     public class ReplacementBuilder : ModificationBuilder
     {
-        public ReplacementBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, WorkflowExpression<string> contents, Func<CSharpSyntaxNode, bool>? modifyCondition = null) : base(startLineExpression, modifyCondition)
+        public ReplacementBuilder(Func<CSharpSyntaxNode, int> startLineExpression, Func<CSharpSyntaxNode, int> endLineExpression, string contents, Func<CSharpSyntaxNode, bool>? modifyCondition = null) : base(startLineExpression, modifyCondition)
         {
             Contents = contents;
             EndLineExpression = endLineExpression;
         }
 
         public Func<CSharpSyntaxNode, int> EndLineExpression { get; }
-        public WorkflowExpression<string> Contents { get; }
+        public string Contents { get; }
 
-        public override async Task<Modification> Build(CSharpSyntaxNode root, WorkflowExecutionContext context)
+        public override Modification Build(CSharpSyntaxNode root)
         {
-            var contents = await context.EvaluateAsync(Contents, CancellationToken.None);
-            return new Replacement(StartLineExpression(root), EndLineExpression(root), contents);
+            return new Replacement(StartLineExpression(root), EndLineExpression(root), Contents);
         }
     }
 }

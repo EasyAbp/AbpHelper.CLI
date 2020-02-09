@@ -22,7 +22,7 @@ namespace AbpHelper.Generator
             var context = new TemplateContext();
             var scriptObject = new ScriptObject();
             scriptObject.SetValue("abp", new AbpFunctions(), true);
-            if (model is JObject jObj) model = jObj.ToObject<Dictionary<string, object>>();
+            if (model is JObject jObj) model = jObj.ToObject<Dictionary<string, object>>()!;
             scriptObject.Import(model, renamer: member => member.Name);
             context.PushGlobal(scriptObject);
             context.MemberRenamer = member => member.Name;

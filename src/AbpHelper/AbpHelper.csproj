@@ -35,6 +35,5 @@
       <Compile Remove="Workflow\Abp\ServiceGenerationWorkflow.cs" />
       <Compile Remove="Workflow\Abp\UIRazorPagesGenerationWorkflow.cs" />
       <Compile Remove="Steps\CSharp\InsertionStep.cs" />
-      <Compile Remove="Workflow\Abp\EFCoreConfigurationWorkflow.cs" />
     </ItemGroup>
 </Project>

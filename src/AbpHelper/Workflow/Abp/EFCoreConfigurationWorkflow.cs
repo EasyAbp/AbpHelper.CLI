@@ -1,14 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AbpHelper.Extensions;
-using AbpHelper.Generator;
-using AbpHelper.Models;
-using AbpHelper.Steps;
-using AbpHelper.Steps.CSharp;
-using Elsa.Activities;
+﻿using AbpHelper.Steps;
+using AbpHelper.Steps.AbpModificationCreatorSteps;
+using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AbpHelper.Workflow.Abp
 {
@@ -19,73 +13,27 @@ namespace AbpHelper.Workflow.Abp
             return builder
                     /* Add entity property to DbContext */
                     .Then<FileFinderStep>(
-                        step =>
-                        {
-                            step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`");
-                        })
-                    .Then<TextGenerationStep>(
-                        step =>
-                        {
-                            step.TemplateName = "DbContext_Property";
-                            step.Model = 
-                        }
-                    )
-                    .Then<ModificationCreatorStep>(
-                        step =>
-                        {
-                            step.ModificationBuilders = new List<ModificationBuilder>
-                            {
-                                new InsertionBuilder(
-                                    root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
-                                    new JavaScriptExpression<string>("EntityUsingText"),
-                                    InsertPosition.After,
-                                    root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityUsingText(step))
-                                ),
-                                new InsertionBuilder(
-                                    root => root.Descendants<ConstructorDeclarationSyntax>().Single().Identifier.GetStartLine() - 1,
-                                    TextGenerator.GenerateByTemplateName("DbContext_Property", model)
-                                )
-                            };
-                        })
+                        step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); })
+                    .Then<TextGenerationStep>(step => { step.TemplateName = "DbContext_Property"; })
+                    .Then<DbContextStep>()
                     .Then<FileModifierStep>()
                     /* Add entity configuration to DbContextModelCreatingExtensions */
+                    .Then<TextGenerationStep>(step =>
+                    {
+                        step.TemplateName = "DbContextModelCreatingExtensions_Using";
+                        step.GeneratedTextKey = new LiteralExpression("ModelingUsingText");
+                    })
+                    .Then<TextGenerationStep>(step =>
+                    {
+                        step.TemplateName = "DbContextModelCreatingExtensions_EntityConfig";
+                        step.GeneratedTextKey = new LiteralExpression("EntityConfigText");
+                    })
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = "*DbContextModelCreatingExtensions.cs"
+                        step => step.SearchFileName = new LiteralExpression("*DbContextModelCreatingExtensions.cs")
                     )
-                    .Then<ModificationCreatorStep>(
-                        step =>
-                        {
-                            var model = new
-                            {
-                                EntityInfo = step.Get<EntityInfo>(),
-                                ProjectInfo = step.Get<ProjectInfo>()
-                            };
-                            var modelingUsingText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_Using", model);
-                            var entityConfigText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_EntityConfig", model);
-                            step.ModificationBuilders = new List<ModificationBuilder>
-                            {
-                                new InsertionBuilder(
-                                    root => 1,
-                                    GetEntityUsingText(step),
-                                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(GetEntityUsingText(step))
-                                ),
-                                new InsertionBuilder(
-                                    root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
-                                    modelingUsingText,
-                                    InsertPosition.After,
-                                    root => root.DescendantsNotContain<UsingDirectiveSyntax>(modelingUsingText)),
-                                new InsertionBuilder(root => root.Descendants<MethodDeclarationSyntax>().First().GetEndLine(),
-                                    entityConfigText
-                                )
-                            };
-                        })
+                    .Then<DbContextModelCreatingExtensionsStep>()
                     .Then<FileModifierStep>()
                 ;
-        }
-
-        private static string GetEntityUsingText(Step step)
-        {
-            return step.GetParameter<string>("EntityUsingText");
         }
     }
 }

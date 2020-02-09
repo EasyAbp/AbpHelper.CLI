@@ -88,12 +88,13 @@ namespace AbpHelper
                         step.ValueExpression = new JavaScriptExpression<object>("({EntityInfo : EntityInfo, ProjectInfo : ProjectInfo})");
                     })
                 .AddEntityUsingGenerationWorkflow()
+                .AddEfCoreConfigurationWorkflow()
                 .Build();
 
             // Start the workflow.
             var invoker = serviceProvider.GetService<IWorkflowInvoker>();
             var context = await invoker.StartAsync(workflowDefinition);
-            foreach (var variable in context.GetVariables()) Console.WriteLine($"[{variable.Key}] : {variable.Value.Value}");
+            // foreach (var variable in context.GetVariables()) Console.WriteLine($"[{variable.Key}] : {variable.Value.Value}");
         }
     }
 }

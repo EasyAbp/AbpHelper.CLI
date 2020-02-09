@@ -3,6 +3,8 @@ using System.IO;
 using System.Threading.Tasks;
 using AbpHelper.Models;
 using AbpHelper.Steps;
+using Elsa.Expressions;
+using Elsa.Services.Models;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
@@ -60,10 +62,10 @@ namespace Acme.BookStore
             await UsingEntityFile(code, async file =>
             {
                 // Arrange
-                _entityParserStep.SetParameter(FileFinderStep.DefaultFilesParameterName, file);
+                _entityParserStep.EntityFile = new LiteralExpression(file); 
 
                 // Act
-                await _entityParserStep.Run();
+                await _entityParserStep.ExecuteAsync()
 
                 // Assert
                 var info = _entityParserStep.GetParameter<EntityInfo>("EntityInfo");
