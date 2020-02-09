@@ -12,7 +12,7 @@ namespace AbpHelper.Workflow.Abp
 {
     public static class UiRazorPagesGenerationWorkflow
     {
-        public static IActivityBuilder AddUIRazorPagesGenerationWorkflow(this IActivityBuilder builder)
+        public static IActivityBuilder AddUiRazorPagesGenerationWorkflow(this IActivityBuilder builder)
         {
             return builder
                     /* Generate razor pages ui files*/

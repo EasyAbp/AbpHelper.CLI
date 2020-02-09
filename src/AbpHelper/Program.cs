@@ -87,7 +87,7 @@ namespace AbpHelper
                 .AddEfCoreConfigurationWorkflow()
                 .AddMigrationAndUpdateDatabaseWorkflow()
                 .AddServiceGenerationWorkflow()
-                .AddUIRazorPagesGenerationWorkflow()
+                .AddUiRazorPagesGenerationWorkflow()
                 .Build();
 
             // Start the workflow.
