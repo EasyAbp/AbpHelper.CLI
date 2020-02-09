@@ -31,9 +31,6 @@
 
     <ItemGroup>
       <Compile Remove="Steps\LoopStep.cs" />
-      <Compile Remove="Workflow\Abp\MigrationAndUpdateDatabaseWorkflow.cs" />
-      <Compile Remove="Workflow\Abp\ServiceGenerationWorkflow.cs" />
-      <Compile Remove="Workflow\Abp\UIRazorPagesGenerationWorkflow.cs" />
       <Compile Remove="Steps\CSharp\InsertionStep.cs" />
     </ItemGroup>
 </Project>

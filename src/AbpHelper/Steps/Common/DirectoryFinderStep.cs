@@ -7,7 +7,7 @@ using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Common
 {
     public class DirectoryFinderStep : Step
     {
@@ -25,7 +25,7 @@ namespace AbpHelper.Steps
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> ResultParameterName
+        public WorkflowExpression<string> ResultVariableName
         {
             get => GetState(() => new LiteralExpression(DefaultDirectoryParameterName));
             set => SetState(value);
@@ -36,12 +36,12 @@ namespace AbpHelper.Steps
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
             LogInput(() => SearchDirectoryName);
-            var resultParameterName = await context.EvaluateAsync(ResultParameterName, cancellationToken);
+            var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
             var directoryPathName = Directory.EnumerateDirectories(baseDirectory, SearchDirectoryName, SearchOption.AllDirectories).Single();
             context.SetLastResult(directoryPathName);
             context.SetVariable(resultParameterName, directoryPathName);
-            LogOutput(() => directoryPathName, $"Found directory: {directoryPathName}, stored in parameter: [{ResultParameterName}]");
+            LogOutput(() => directoryPathName, $"Found directory: {directoryPathName}, stored in parameter: [{ResultVariableName}]");
 
             return Done();
         }

@@ -7,7 +7,7 @@ using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Common
 {
     public class FileFinderStep : Step
     {
@@ -25,7 +25,7 @@ namespace AbpHelper.Steps
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> ResultParameterName
+        public WorkflowExpression<string> ResultVariableName
         {
             get => GetState(() => new LiteralExpression(DefaultFileParameterName));
             set => SetState(value);
@@ -38,7 +38,7 @@ namespace AbpHelper.Steps
             LogInput(() => baseDirectory);
             var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
             LogInput(() => SearchFileName);
-            var resultParameterName = await context.EvaluateAsync(ResultParameterName, cancellationToken);
+            var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
             var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
 
@@ -47,7 +47,7 @@ namespace AbpHelper.Steps
 
             context.SetLastResult(filePathName);
             context.SetVariable(resultParameterName, filePathName);
-            LogOutput(() => filePathName, $"Found file: '{filePathName}', stored in parameter: '{ResultParameterName}'");
+            LogOutput(() => filePathName, $"Found file: '{filePathName}', stored in parameter: '{ResultVariableName}'");
 
             return Done();
         }

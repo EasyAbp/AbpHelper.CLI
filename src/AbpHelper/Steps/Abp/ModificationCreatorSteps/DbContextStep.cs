@@ -2,11 +2,12 @@
 using System.Linq;
 using AbpHelper.Extensions;
 using AbpHelper.Models;
+using AbpHelper.Steps.Common;
 using AbpHelper.Steps.CSharp;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace AbpHelper.Steps.AbpModificationCreatorSteps
+namespace AbpHelper.Steps.Abp.ModificationCreatorSteps
 {
     public class DbContextStep : ModificationCreatorStep
     {

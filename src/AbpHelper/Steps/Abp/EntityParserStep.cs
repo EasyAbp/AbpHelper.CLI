@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AbpHelper.Extensions;
 using AbpHelper.Models;
+using AbpHelper.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
@@ -14,7 +15,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Abp
 {
     public class EntityParserStep : Step
     {

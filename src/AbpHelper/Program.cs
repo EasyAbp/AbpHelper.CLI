@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using AbpHelper.Steps;
+using AbpHelper.Steps.Abp;
+using AbpHelper.Steps.Common;
 using AbpHelper.Workflow.Abp;
 using Elsa.Activities;
 using Elsa.Expressions;
@@ -81,14 +82,12 @@ namespace AbpHelper
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new LiteralExpression("Book.cs"); })
                 .Then<EntityParserStep>()
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Model";
-                        step.ValueExpression = new JavaScriptExpression<object>("({EntityInfo : EntityInfo, ProjectInfo : ProjectInfo})");
-                    })
+                .Then<SetModelVariableStep>()
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
+                .AddMigrationAndUpdateDatabaseWorkflow()
+                .AddServiceGenerationWorkflow()
+                .AddUIRazorPagesGenerationWorkflow()
                 .Build();
 
             // Start the workflow.

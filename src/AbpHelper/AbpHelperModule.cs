@@ -1,5 +1,4 @@
 ﻿using AbpHelper.Extensions;
-using AbpHelper.Steps;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
@@ -15,7 +14,6 @@ namespace AbpHelper
                 .AddElsaCore()
                 .AddJavaScriptExpressionEvaluator()
                 .AddAllActivities()
-                .AddActivity<ProjectInfoProviderStep>()
                 ;
         }
     }

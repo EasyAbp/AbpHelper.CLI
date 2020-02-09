@@ -7,7 +7,7 @@ using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Common
 {
     public class FileGenerationStep : Step
     {

@@ -9,7 +9,7 @@ using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Abp
 {
     public class ProjectInfoProviderStep : Step
     {

@@ -9,7 +9,7 @@ using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Common
 {
     public class TemplateGroupGenerationStep : Step
     {
@@ -19,9 +19,9 @@ namespace AbpHelper.Steps
             set => SetState(value);
         }
 
-        public string TargetDirectory
+        public WorkflowExpression<string> TargetDirectory
         {
-            get => GetState<string>();
+            get => GetState<WorkflowExpression<string>>();
             set => SetState(value);
         }
 
@@ -31,25 +31,27 @@ namespace AbpHelper.Steps
             set => SetState(value);
         }
 
-        public object Model
+        public WorkflowExpression<object> Model
         {
-            get => GetState<object>();
+            get => GetState<WorkflowExpression<object>>(() => new JavaScriptExpression<object>("Model"));
             set => SetState(value);
         }
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
             LogInput(() => GroupName);
-            LogInput(() => TargetDirectory);
+            var targetDirectory = await context.EvaluateAsync(TargetDirectory, cancellationToken);
+            LogInput(() => targetDirectory);
             var overwrite = await context.EvaluateAsync(Overwrite, cancellationToken);
             LogInput(() => Overwrite);
-            LogInput(() => Model);
+            var model = await context.EvaluateAsync(Model, cancellationToken);
+            LogInput(() => model);
 
             var appDir = AppDomain.CurrentDomain.BaseDirectory!;
             var groupDir = Path.Combine(appDir, "Templates", "Groups", GroupName);
             if (!Directory.Exists(groupDir)) throw new DirectoryNotFoundException($"Template group directory {groupDir} is not exist.");
 
-            await GenerateFile(groupDir, TargetDirectory, Model, overwrite);
+            await GenerateFile(groupDir, targetDirectory, model, overwrite);
 
             return Done();
         }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json.Linq;
 using Scriban;
 using Scriban.Runtime;
 
@@ -22,7 +20,6 @@ namespace AbpHelper.Generator
             var context = new TemplateContext();
             var scriptObject = new ScriptObject();
             scriptObject.SetValue("abp", new AbpFunctions(), true);
-            if (model is JObject jObj) model = jObj.ToObject<Dictionary<string, object>>()!;
             scriptObject.Import(model, renamer: member => member.Name);
             context.PushGlobal(scriptObject);
             context.MemberRenamer = member => member.Name;

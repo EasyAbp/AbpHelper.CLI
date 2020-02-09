@@ -1,6 +1,7 @@
-﻿using AbpHelper.Extensions;
-using AbpHelper.Models;
-using AbpHelper.Steps;
+﻿using AbpHelper.Steps.Common;
+using Elsa.Expressions;
+using Elsa.Scripting.JavaScript;
+using Elsa.Services;
 
 namespace AbpHelper.Workflow.Abp
 {
@@ -10,30 +11,27 @@ namespace AbpHelper.Workflow.Abp
         {
             return builder
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = "*.EntityFrameworkCore.DbMigrations.csproj",
-                        step => step.ResultParameterName = "MigrationProjectFile"
+                        step =>
+                        {
+                            step.SearchFileName = new LiteralExpression("*.EntityFrameworkCore.DbMigrations.csproj");
+                            step.ResultVariableName = new LiteralExpression("MigrationProjectFile");
+                        }
                     )
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = "*.Web.csproj",
-                        step => step.ResultParameterName = "WebProjectFile"
+                        step =>
+                        {
+                            step.SearchFileName = new LiteralExpression("*.Web.csproj");
+                            step.ResultVariableName = new LiteralExpression<string>("WebProjectFile");
+                        }
                     )
                     /* Add migration */
                     .Then<RunCommandStep>(
-                        step =>
-                        {
-                            var entityInfo = step.Get<EntityInfo>();
-                            var migrationProjectFile = step.GetParameter<string>("MigrationProjectFile");
-                            var webProjectFile = step.GetParameter<string>("WebProjectFile");
-                            step.Command = $"dotnet ef migrations add Added{entityInfo.Name} -p \"{migrationProjectFile}\" -s \"{webProjectFile}\"";
-                        })
+                        step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add Added${EntityInfo.Name} -p \"${MigrationProjectFile}\" -s \"${WebProjectFile}\"`")
+                    )
                     /* Update database */
                     .Then<RunCommandStep>(
-                        step =>
-                        {
-                            var migrationProjectFile = step.GetParameter<string>("MigrationProjectFile");
-                            var webProjectFile = step.GetParameter<string>("WebProjectFile");
-                            step.Command = $"dotnet ef database update -p \"{migrationProjectFile}\" -s \"{webProjectFile}\"";
-                        })
+                        step => step.Command = new JavaScriptExpression<string>("`dotnet ef database update -p \"${MigrationProjectFile}\" -s \"${WebProjectFile}\"`")
+                    )
                 ;
         }
     }

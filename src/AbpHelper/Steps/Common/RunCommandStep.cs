@@ -3,27 +3,29 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Common
 {
     public class RunCommandStep : Step
     {
-        public string Command
+        public WorkflowExpression<string> Command
         {
-            get => GetState<string>();
+            get => GetState<WorkflowExpression<string>>();
             set => SetState(value);
         }
 
-        protected override Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            LogInput(() => Command);
-            var exitCode = RunCommand(Command);
+            var command = await context.EvaluateAsync(Command, cancellationToken);
+            LogInput(() => command);
+            var exitCode = RunCommand(command);
             if (exitCode != 0) throw new RunningCommandFailedException(exitCode);
 
-            return Task.FromResult(Done());
+            return Done();
         }
 
         private int RunCommand(string command)

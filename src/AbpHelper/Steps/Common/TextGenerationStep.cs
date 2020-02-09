@@ -6,7 +6,7 @@ using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 
-namespace AbpHelper.Steps
+namespace AbpHelper.Steps.Common
 {
     public class TextGenerationStep : Step
     {
@@ -34,7 +34,7 @@ namespace AbpHelper.Steps
         {
             LogInput(() => TemplateName);
             var model = await context.EvaluateAsync(Model, cancellationToken);
-            LogInput(() => Model);
+            LogInput(() => model);
             var generatedTextKey = await context.EvaluateAsync(GeneratedTextKey, cancellationToken);
             LogInput(() => GeneratedTextKey);
 
