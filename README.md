@@ -2,7 +2,7 @@
 
 AbpHelper is a tool to help you with developing Abp vNext applications.
 
-**Make sure **backup** your source file before using it!**.
+**Make sure **backup** your source files before using it!**.
 
 # Getting Started
 
@@ -29,7 +29,7 @@ AbpHelper is a tool to help you with developing Abp vNext applications.
 
     `abphelper c:\MyTodo Todo.cs`
 
-    AbpHelper will generate all the CRUD stuff , even include adding migration and database udpating!
+    AbpHelper will generate all the CRUD stuff , even include adding migration and database updating!
 
 1. Just rebuild your application and run. See the magic happens:)
 
