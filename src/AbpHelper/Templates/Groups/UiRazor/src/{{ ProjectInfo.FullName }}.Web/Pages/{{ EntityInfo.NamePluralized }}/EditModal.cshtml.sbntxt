@@ -1,5 +1,5 @@
 ﻿@page
-@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}PageBase
+@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
 @model {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}.EditModalModel
 @{

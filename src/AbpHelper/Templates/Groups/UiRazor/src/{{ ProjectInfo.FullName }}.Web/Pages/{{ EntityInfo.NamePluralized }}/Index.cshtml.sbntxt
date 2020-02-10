@@ -1,6 +1,6 @@
 @page
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
-@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}PageBase
+@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
 @model IndexModel
 
 @section scripts

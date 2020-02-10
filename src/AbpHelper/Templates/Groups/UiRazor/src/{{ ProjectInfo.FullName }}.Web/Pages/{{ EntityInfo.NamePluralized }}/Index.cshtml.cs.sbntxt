@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
 {
-    public class IndexModel : {{ ProjectInfo.Name }}PageModelBase
+    public class IndexModel : {{ ProjectInfo.Name }}PageModel
     {
         public async Task OnGetAsync()
         {

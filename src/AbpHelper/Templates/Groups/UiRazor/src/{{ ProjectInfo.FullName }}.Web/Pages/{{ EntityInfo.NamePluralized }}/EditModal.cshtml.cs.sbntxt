@@ -6,7 +6,7 @@ using {{ ProjectInfo.Name }}.{{ EntityInfo.NamePluralized }}.Dtos;
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
 {
-    public class EditModalModel : {{ ProjectInfo.Name }}PageModelBase
+    public class EditModalModel : {{ ProjectInfo.Name }}PageModel
     {
         [HiddenInput]
         [BindProperty(SupportsGet = true)]

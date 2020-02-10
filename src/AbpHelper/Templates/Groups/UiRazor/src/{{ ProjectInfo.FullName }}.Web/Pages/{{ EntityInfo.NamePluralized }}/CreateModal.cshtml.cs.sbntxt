@@ -5,7 +5,7 @@ using {{ ProjectInfo.Name }}.{{ EntityInfo.NamePluralized }}.Dtos;
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
 {
-    public class CreateModalModel : {{ ProjectInfo.Name }}PageModelBase
+    public class CreateModalModel : {{ ProjectInfo.Name }}PageModel
     {
         [BindProperty]
         public CreateUpdate{{ EntityInfo.Name }}Dto {{ EntityInfo.Name }} { get; set; }
