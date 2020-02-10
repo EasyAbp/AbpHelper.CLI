@@ -38,8 +38,8 @@ namespace AbpHelper
 
                 if (args.Length != 2)
                 {
-                    Log.Logger.Information(@"Usage: abphelper abp_solution_dir entity_file_name" +
-                                           @"Example: abphelper c:\MyAbpApp book.cs");
+                    Console.WriteLine(@"Usage: abphelper abp_solution_dir entity_file_name");
+                    Console.WriteLine(@"Example: abphelper c:\MyAbpApp book.cs");
                     return;
                 }
 

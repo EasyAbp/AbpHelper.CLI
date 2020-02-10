@@ -9,7 +9,9 @@
         <Copyright>EasyAbp team</Copyright>
         <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
         <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
-        <PackageVersion>0.1</PackageVersion>
+        <PackageVersion>0.1.2-alpha</PackageVersion>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>abphelper</ToolCommandName>
     </PropertyGroup>
 
     <ItemGroup>
