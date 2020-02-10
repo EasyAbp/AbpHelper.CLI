@@ -85,9 +85,10 @@ namespace AbpHelper
                 .Then<SetModelVariableStep>()
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
-                .AddMigrationAndUpdateDatabaseWorkflow()
+                // .AddMigrationAndUpdateDatabaseWorkflow()
                 .AddServiceGenerationWorkflow()
                 .AddUiRazorPagesGenerationWorkflow()
+                .AddTestGenerationWorkflow()
                 .Build();
 
             // Start the workflow.

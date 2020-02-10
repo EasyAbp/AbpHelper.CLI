@@ -1,0 +1,21 @@
+using System.Threading.Tasks;
+using Shouldly;
+using Xunit;
+
+namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.NamePluralized }}
+{
+    public class Index_Tests : {{ ProjectInfo.FullName }}WebTestBase
+    {
+        [Fact]
+        public async Task Index_Page_Test()
+        {
+            // Arrange
+
+            // Act
+            var response = await GetResponseAsStringAsync("/{{ EntityInfo.NamePluralized }}");
+
+            // Assert
+            response.ShouldNotBeNull();
+        }
+    }
+}

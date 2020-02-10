@@ -20,8 +20,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Steps\EntityParserStep_Tests.cs" />
       <Compile Remove="Steps\FileModifierStep_Tests.cs" />
+      <Compile Remove="Steps\EntityParserStep_Tests.cs" />
     </ItemGroup>
 
     <ItemGroup>

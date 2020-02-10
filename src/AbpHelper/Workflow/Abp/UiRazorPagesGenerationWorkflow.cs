@@ -20,7 +20,6 @@ namespace AbpHelper.Workflow.Abp
                         step =>
                         {
                             step.GroupName = "UIRazor";
-                            step.TargetDirectory = new JavaScriptExpression<string>("BaseDirectory");
                         }
                     )
                     /* Add menu */

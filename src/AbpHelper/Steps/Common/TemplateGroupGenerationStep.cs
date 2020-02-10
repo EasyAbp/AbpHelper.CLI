@@ -21,7 +21,7 @@ namespace AbpHelper.Steps.Common
 
         public WorkflowExpression<string> TargetDirectory
         {
-            get => GetState<WorkflowExpression<string>>();
+            get => GetState(() => new JavaScriptExpression<string>("BaseDirectory"));
             set => SetState(value);
         }
 

@@ -1,0 +1,31 @@
+using System;
+using System.Threading.Tasks;
+using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }};
+using Volo.Abp.Domain.Repositories;
+using Xunit;
+
+namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.NamePluralized }}
+{
+    public class {{ EntityInfo.Name }}RepositoryTests : {{ ProjectInfo.FullName }}EntityFrameworkCoreTestBase
+    {
+        private readonly IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> _{{ EntityInfo.Name | abp.camel_case }}Repository;
+
+        public {{ EntityInfo.Name }}RepositoryTests()
+        {
+            _{{ EntityInfo.Name | abp.camel_case }}Repository = GetRequiredService<IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}>>();
+        }
+
+        [Fact]
+        public async Task Test1()
+        {
+            await WithUnitOfWorkAsync(async () =>
+            {
+                // Arrange
+
+                // Act
+
+                //Assert
+            });
+        }
+    }
+}

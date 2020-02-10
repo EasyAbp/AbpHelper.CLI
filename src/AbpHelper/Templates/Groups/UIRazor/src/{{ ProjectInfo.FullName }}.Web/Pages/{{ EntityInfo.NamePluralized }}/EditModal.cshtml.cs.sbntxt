@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using {{ ProjectInfo.Name }}.{{ EntityInfo.NamePluralized}};
-using {{ ProjectInfo.Name }}.{{ EntityInfo.NamePluralized}}.Dtos;
+using {{ ProjectInfo.Name }}.{{ EntityInfo.NamePluralized }};
+using {{ ProjectInfo.Name }}.{{ EntityInfo.NamePluralized }}.Dtos;
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
 {
@@ -10,7 +10,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
     {
         [HiddenInput]
         [BindProperty(SupportsGet = true)]
-        public Guid Id { get; set; }
+        public {{ EntityInfo.PrimaryKey }} Id { get; set; }
 
         [BindProperty]
         public CreateUpdate{{ EntityInfo.Name }}Dto {{ EntityInfo.Name }} { get; set; }
