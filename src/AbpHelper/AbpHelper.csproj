@@ -4,6 +4,12 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>AbpHelper is a tool to help you with developing Abp vNext applications.</Description>
+        <Copyright>EasyAbp team</Copyright>
+        <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
+        <PackageVersion>0.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

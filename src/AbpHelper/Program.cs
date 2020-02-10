@@ -36,33 +36,21 @@ namespace AbpHelper
             {
                 application.Initialize();
 
-                await Execute(application.ServiceProvider);
+                if (args.Length != 2)
+                {
+                    Log.Logger.Information(@"Usage: abphelper abp_solution_dir entity_file_name" +
+                                           @"Example: abphelper c:\MyAbpApp book.cs");
+                    return;
+                }
 
-                Console.WriteLine("Done.");
+                var dir = args[0];
+                var entityFile = args[1];
+                await Execute(application.ServiceProvider, dir, entityFile);
             }
         }
 
-        private static async Task Execute(IServiceProvider serviceProvider)
+        private static async Task Execute(IServiceProvider serviceProvider, string dir, string entityFile)
         {
-            /*
-            var workflow = WorkflowBuilder.CreateBuilder(serviceProvider)
-                .WithParameter("BaseDirectory", @"C:\Users\wakuw\Desktop\AbpApp\MyAbpRazorPages")
-                .WithParameter("Overwrite", true)
-                .Then<ProjectInfoProviderStep>()
-                .Then<FileFinderStep>(
-                    step => step.SearchFileName = "Book.cs"
-                )
-                .Then<EntityParserStep>()
-                .AddEntityUsingGenerationWorkflow()
-                .AddEfCoreConfigurationWorkflow()
-                .AddMigrationAndUpdateDatabaseWorkflow()
-                .AddServiceGenerationWorkflow()
-                .AddUIRazorPagesGenerationWorkflow()
-                .Build();
-
-            // TODO: handle exception
-            await workflow.Run();
-        */
             var workflowBuilderFactory = serviceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
             var workflowBuilder = workflowBuilderFactory();
             var workflowDefinition = workflowBuilder
@@ -70,7 +58,7 @@ namespace AbpHelper
                     step =>
                     {
                         step.VariableName = "BaseDirectory";
-                        step.ValueExpression = new LiteralExpression(@"C:\Users\wakuw\Desktop\AbpApp\MyAbpRazorPages");
+                        step.ValueExpression = new LiteralExpression(dir);
                     })
                 .Then<SetVariable>(
                     step =>
@@ -80,12 +68,12 @@ namespace AbpHelper
                     })
                 .Then<ProjectInfoProviderStep>()
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new LiteralExpression("Book.cs"); })
+                    step => { step.SearchFileName = new LiteralExpression(entityFile); })
                 .Then<EntityParserStep>()
                 .Then<SetModelVariableStep>()
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
-                // .AddMigrationAndUpdateDatabaseWorkflow()
+                .AddMigrationAndUpdateDatabaseWorkflow()
                 .AddServiceGenerationWorkflow()
                 .AddUiRazorPagesGenerationWorkflow()
                 .AddTestGenerationWorkflow()
