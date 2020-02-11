@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using AbpHelper.Steps.Abp;
-using AbpHelper.Steps.Common;
-using AbpHelper.Workflow.Abp;
+using EasyAbp.AbpHelper.Steps.Abp;
+using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Workflow.Abp;
 using Elsa.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
@@ -13,7 +13,7 @@ using Serilog;
 using Serilog.Events;
 using Volo.Abp;
 
-namespace AbpHelper
+namespace EasyAbp.AbpHelper
 {
     internal class Program
     {

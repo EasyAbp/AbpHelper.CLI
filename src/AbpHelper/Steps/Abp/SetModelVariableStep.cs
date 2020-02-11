@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using AbpHelper.Models;
+using EasyAbp.AbpHelper.Models;
 using Elsa.Results;
 using Elsa.Services.Models;
 
-namespace AbpHelper.Steps.Abp
+namespace EasyAbp.AbpHelper.Steps.Abp
 {
     public class SetModelVariableStep : Step
     {

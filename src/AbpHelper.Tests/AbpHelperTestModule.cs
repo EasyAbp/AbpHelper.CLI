@@ -1,7 +1,8 @@
-﻿using Volo.Abp;
+﻿using EasyAbp.AbpHelper;
+using Volo.Abp;
 using Volo.Abp.Modularity;
 
-namespace AbpHelper.Tests
+namespace EasyApp.AbpHelper.Tests
 {
     [DependsOn(
         typeof(AbpTestBaseModule),
@@ -9,6 +10,5 @@ namespace AbpHelper.Tests
     )]
     public class AbpHelperTestModule : AbpModule
     {
-        
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
-using AbpHelper.Models;
+using EasyAbp.AbpHelper.Models;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace AbpHelper.Steps.CSharp
+namespace EasyAbp.AbpHelper.Steps.CSharp
 {
     public abstract class ModificationBuilder
     {

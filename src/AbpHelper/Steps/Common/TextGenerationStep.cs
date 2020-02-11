@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using AbpHelper.Generator;
+using EasyAbp.AbpHelper.Generator;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 
-namespace AbpHelper.Steps.Common
+namespace EasyAbp.AbpHelper.Steps.Common
 {
     public class TextGenerationStep : Step
     {

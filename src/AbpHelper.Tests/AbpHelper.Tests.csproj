@@ -4,6 +4,10 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
 
         <IsPackable>false</IsPackable>
+
+        <AssemblyName>EasyAbpAbpHelper.Tests</AssemblyName>
+
+        <RootNamespace>EasyApp.AbpHelper.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

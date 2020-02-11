@@ -4,7 +4,7 @@ using System.Reflection;
 using Elsa.Services.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AbpHelper.Extensions
+namespace EasyAbp.AbpHelper.Extensions
 {
     public static class ServiceCollectionExtensions
     {

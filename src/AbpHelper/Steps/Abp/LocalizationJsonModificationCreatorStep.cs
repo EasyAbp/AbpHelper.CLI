@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Newtonsoft.Json.Linq;
 
-namespace AbpHelper.Steps.Abp
+namespace EasyAbp.AbpHelper.Steps.Abp
 {
     public class LocalizationJsonModificationCreatorStep : Step
     {

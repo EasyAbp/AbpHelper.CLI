@@ -1,7 +1,7 @@
-﻿using AbpHelper.Steps.Common;
+﻿using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Services;
 
-namespace AbpHelper.Workflow.Abp
+namespace EasyAbp.AbpHelper.Workflow.Abp
 {
     public static class TestGenerationWorkflow
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using Scriban.Runtime;
 
-namespace AbpHelper.Generator
+namespace EasyAbp.AbpHelper.Generator
 {
     public class AbpFunctions : ScriptObject
     {

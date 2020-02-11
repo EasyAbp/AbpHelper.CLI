@@ -12,6 +12,8 @@
         <PackageVersion>0.1.2-alpha</PackageVersion>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>abphelper</ToolCommandName>
+        <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
+        <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

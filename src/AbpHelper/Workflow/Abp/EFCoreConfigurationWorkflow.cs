@@ -1,10 +1,10 @@
-﻿using AbpHelper.Steps.Abp.ModificationCreatorSteps;
-using AbpHelper.Steps.Common;
+﻿using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps;
+using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace AbpHelper.Workflow.Abp
+namespace EasyAbp.AbpHelper.Workflow.Abp
 {
     public static class EfCoreConfigurationWorkflow
     {

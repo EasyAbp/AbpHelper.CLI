@@ -3,7 +3,7 @@ using System.IO;
 using Scriban;
 using Scriban.Runtime;
 
-namespace AbpHelper.Generator
+namespace EasyAbp.AbpHelper.Generator
 {
     public static class TextGenerator
     {

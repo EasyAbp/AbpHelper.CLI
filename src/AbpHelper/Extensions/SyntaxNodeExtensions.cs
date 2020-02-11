@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace AbpHelper.Extensions
+namespace EasyAbp.AbpHelper.Extensions
 {
     public static class SyntaxNodeExtensions
     {

@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
-using AbpHelper.Steps.Abp;
-using AbpHelper.Steps.Abp.ModificationCreatorSteps;
-using AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Steps.Abp;
+using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps;
+using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace AbpHelper.Workflow.Abp
+namespace EasyAbp.AbpHelper.Workflow.Abp
 {
     public static class UiRazorPagesGenerationWorkflow
     {
@@ -17,10 +17,7 @@ namespace AbpHelper.Workflow.Abp
             return builder
                     /* Generate razor pages ui files*/
                     .Then<TemplateGroupGenerationStep>(
-                        step =>
-                        {
-                            step.GroupName = "UIRazor";
-                        }
+                        step => { step.GroupName = "UIRazor"; }
                     )
                     /* Add menu */
                     .Then<FileFinderStep>(

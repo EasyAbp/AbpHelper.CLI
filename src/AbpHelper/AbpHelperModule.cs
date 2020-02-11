@@ -1,9 +1,9 @@
-﻿using AbpHelper.Extensions;
+﻿using EasyAbp.AbpHelper.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
 
-namespace AbpHelper
+namespace EasyAbp.AbpHelper
 {
     [DependsOn(typeof(AbpAutofacModule))]
     public class AbpHelperModule : AbpModule

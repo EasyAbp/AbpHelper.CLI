@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Humanizer;
 
-namespace AbpHelper.Models
+namespace EasyAbp.AbpHelper.Models
 {
     public class EntityInfo
     {

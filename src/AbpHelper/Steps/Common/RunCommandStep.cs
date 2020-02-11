@@ -8,7 +8,7 @@ using Elsa.Results;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
-namespace AbpHelper.Steps.Common
+namespace EasyAbp.AbpHelper.Steps.Common
 {
     public class RunCommandStep : Step
     {

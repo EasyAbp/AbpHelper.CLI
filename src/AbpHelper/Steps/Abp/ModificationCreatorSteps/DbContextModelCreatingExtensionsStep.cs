@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AbpHelper.Extensions;
-using AbpHelper.Models;
-using AbpHelper.Steps.CSharp;
+using EasyAbp.AbpHelper.Extensions;
+using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Steps.CSharp;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace AbpHelper.Steps.Abp.ModificationCreatorSteps
+namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
 {
     public class DbContextModelCreatingExtensionsStep : ModificationCreatorStep
     {
