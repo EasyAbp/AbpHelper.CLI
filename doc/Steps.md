@@ -14,4 +14,4 @@
 1. - [x] 生成CreateModal
 1. - [x] 生成EditModal
 1. - [x] 生成Mapping
-1. - [ ] 生成测试骨架代码
+1. - [x] 生成测试骨架代码
