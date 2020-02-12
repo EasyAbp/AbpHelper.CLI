@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
@@ -36,20 +37,52 @@ namespace EasyAbp.AbpHelper
             {
                 application.Initialize();
 
-                if (args.Length != 2)
-                {
-                    Console.WriteLine(@"Usage: abphelper abp_solution_dir entity_file_name");
-                    Console.WriteLine(@"Example: abphelper c:\MyAbpApp book.cs");
-                    return;
-                }
+                (var entityFileName, var baseDirectory) = ParsingArguments(args);
 
-                var dir = args[0];
-                var entityFile = args[1];
-                await Execute(application.ServiceProvider, dir, entityFile);
+                await Execute(application.ServiceProvider, entityFileName, baseDirectory);
             }
         }
 
-        private static async Task Execute(IServiceProvider serviceProvider, string dir, string entityFile)
+        private static (string entityFileName, string baseDirectory) ParsingArguments(string[] args)
+        {
+            string entityFileName;
+            string baseDirectory;
+            var solutionFile = string.Empty;
+
+            if (args.Length == 1)
+            {
+                solutionFile = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.sln").FirstOrDefault();
+                if (solutionFile == null)
+                {
+                    Console.WriteLine("No .sln file founded in the current directory.");
+                    Environment.Exit(-1);
+                }
+            }
+            else if (args.Length == 2 && args[1].EndsWith("*.sln"))
+            {
+                solutionFile = args[1];
+                if (!File.Exists(solutionFile))
+                {
+                    Console.WriteLine("The specified solution file does not exist.");
+                    Environment.Exit(-1);
+                }
+            }
+            else
+            {
+                Console.WriteLine(@"Usage: abphelper entity_name [abp_solution_file]");
+                Console.WriteLine(@"Example: abphelper book");
+                Console.WriteLine(@"Or specific solution file:");
+                Console.WriteLine(@"Example: abphelper book c:\Acme.BookStore\Acme.BookStore.sln");
+                Environment.Exit(-1);
+            }
+
+            entityFileName = args[0] + ".cs";
+            baseDirectory = Path.GetDirectoryName(solutionFile)!;
+
+            return (entityFileName, baseDirectory);
+        }
+
+        private static async Task Execute(IServiceProvider serviceProvider, string entityFileName, string baseDirectory)
         {
             var workflowBuilderFactory = serviceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
             var workflowBuilder = workflowBuilderFactory();
@@ -58,7 +91,7 @@ namespace EasyAbp.AbpHelper
                     step =>
                     {
                         step.VariableName = "BaseDirectory";
-                        step.ValueExpression = new LiteralExpression(dir);
+                        step.ValueExpression = new LiteralExpression(baseDirectory);
                     })
                 .Then<SetVariable>(
                     step =>
@@ -68,7 +101,7 @@ namespace EasyAbp.AbpHelper
                     })
                 .Then<ProjectInfoProviderStep>()
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new LiteralExpression(entityFile); })
+                    step => { step.SearchFileName = new LiteralExpression(entityFileName); })
                 .Then<EntityParserStep>()
                 .Then<SetModelVariableStep>()
                 .AddEntityUsingGenerationWorkflow()
