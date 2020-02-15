@@ -6,7 +6,7 @@ using Xunit;
 
 namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.NamePluralized }}
 {
-    public class {{ EntityInfo.Name }}RepositoryTests : {{ ProjectInfo.FullName }}EntityFrameworkCoreTestBase
+    public class {{ EntityInfo.Name }}RepositoryTests : {{ ProjectInfo.Name }}EntityFrameworkCoreTestBase
     {
         private readonly IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> _{{ EntityInfo.Name | abp.camel_case }}Repository;
 

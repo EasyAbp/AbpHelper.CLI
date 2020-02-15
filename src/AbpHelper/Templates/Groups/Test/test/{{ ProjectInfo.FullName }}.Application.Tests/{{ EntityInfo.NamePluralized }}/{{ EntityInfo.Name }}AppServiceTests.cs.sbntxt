@@ -4,7 +4,7 @@ using Xunit;
 
 namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}
 {
-    public class {{ EntityInfo.Name }}AppServiceTests : {{ ProjectInfo.FullName }}ApplicationTestBase
+    public class {{ EntityInfo.Name }}AppServiceTests : {{ ProjectInfo.Name }}ApplicationTestBase
     {
         private readonly I{{ EntityInfo.Name }}AppService _{{ EntityInfo.Name | abp.camel_case }}AppService;
 
