@@ -25,5 +25,10 @@ namespace EasyAbp.AbpHelper.Extensions
         {
             return node.Descendants<T>().All(child => !child.ToFullString().Contains(text));
         }
+        
+        public static bool NotContains(this SyntaxNode node, string text)
+        {
+            return node.DescendantNodesAndSelf().All(child => !child.ToFullString().Contains(text));
+        }
     }
 }

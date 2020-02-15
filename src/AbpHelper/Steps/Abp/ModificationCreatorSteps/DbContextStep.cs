@@ -26,7 +26,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
                 ),
                 new InsertionBuilder(
                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().Identifier.GetStartLine() - 1,
-                    dbContextPropertyText
+                    dbContextPropertyText,
+                    modifyCondition: root => root.DescendantsNotContain<PropertyDeclarationSyntax>(dbContextPropertyText)
                 )
             };
         }

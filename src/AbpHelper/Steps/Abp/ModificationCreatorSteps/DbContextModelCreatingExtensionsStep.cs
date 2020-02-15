@@ -30,7 +30,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
                     root => root.DescendantsNotContain<UsingDirectiveSyntax>(modelingUsingText)),
                 new InsertionBuilder(
                     root => root.Descendants<MethodDeclarationSyntax>().First().GetEndLine(),
-                    entityConfigText
+                    entityConfigText,
+                    modifyCondition: root => root.Descendants<MethodDeclarationSyntax>().First().NotContains(entityConfigText)
                 )
             };
         }

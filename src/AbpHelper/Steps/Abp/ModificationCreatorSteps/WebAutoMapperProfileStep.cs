@@ -16,6 +16,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
             var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
             var entityDtoUsingText = context.GetVariable<string>("EntityDtoUsingText");
 
+            string contents = TextGenerator.GenerateByTemplateName("WebAutoMapperProfile_CreateMap", new {EntityInfo = entityInfo});
             return new List<ModificationBuilder>
             {
                 new InsertionBuilder(
@@ -25,7 +26,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
                 ),
                 new InsertionBuilder(
                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),
-                    TextGenerator.GenerateByTemplateName("WebAutoMapperProfile_CreateMap", new {EntityInfo = entityInfo})
+                    contents,
+                    modifyCondition: root => root.Descendants<ConstructorDeclarationSyntax>().Single().NotContains(contents)
                 )
             };
         }

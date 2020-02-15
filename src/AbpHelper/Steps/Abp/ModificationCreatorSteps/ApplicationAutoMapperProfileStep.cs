@@ -14,9 +14,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
         protected override IList<ModificationBuilder> CreateModifications(WorkflowExecutionContext context)
         {
             var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            var entityUsingText = context.GetVariable<string>("EntityUsingText");
-            var entityDtoUsingText = context.GetVariable<string>("EntityDtoUsingText");
-
+            string entityUsingText = context.GetVariable<string>("EntityUsingText");
+            string entityDtoUsingText = context.GetVariable<string>("EntityDtoUsingText");
+            string contents = TextGenerator.GenerateByTemplateName("ApplicationAutoMapperProfile_CreateMap", new {EntityInfo = entityInfo});
+            
             return new List<ModificationBuilder>
             {
                 new InsertionBuilder(
@@ -31,7 +32,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
                 ),
                 new InsertionBuilder(
                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),
-                    TextGenerator.GenerateByTemplateName("ApplicationAutoMapperProfile_CreateMap", new {EntityInfo = entityInfo})
+                    contents,
+                    modifyCondition: root => root.Descendants<ConstructorDeclarationSyntax>().Single().NotContains(contents)
                 )
             };
         }
