@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }};
+using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }};
 using Volo.Abp.Domain.Repositories;
 using Xunit;
 
-namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.NamePluralized }}
+namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.NamespaceLastPart }}
 {
     public class {{ EntityInfo.Name }}RepositoryTests : {{ ProjectInfo.Name }}EntityFrameworkCoreTestBase
     {

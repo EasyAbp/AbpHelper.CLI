@@ -1,10 +1,10 @@
 using System;
-using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}.Dtos;
+using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}
+namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
 {
     public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto,
             CreateUpdate{{ EntityInfo.Name }}Dto, CreateUpdate{{ EntityInfo.Name }}Dto>,

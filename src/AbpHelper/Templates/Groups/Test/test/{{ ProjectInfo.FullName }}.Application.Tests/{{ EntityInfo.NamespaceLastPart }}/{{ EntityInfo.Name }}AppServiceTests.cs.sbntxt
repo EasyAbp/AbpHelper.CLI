@@ -2,7 +2,7 @@ using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamePluralized }}
+namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
 {
     public class {{ EntityInfo.Name }}AppServiceTests : {{ ProjectInfo.Name }}ApplicationTestBase
     {

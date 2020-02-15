@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
-namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.NamePluralized }}
+namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.NamespaceLastPart }}
 {
     public class Index_Tests : {{ ProjectInfo.Name }}WebTestBase
     {
@@ -12,7 +12,7 @@ namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.NamePluralized }}
             // Arrange
 
             // Act
-            var response = await GetResponseAsStringAsync("/{{ EntityInfo.NamePluralized }}");
+            var response = await GetResponseAsStringAsync("/{{ EntityInfo.Name }}");
 
             // Assert
             response.ShouldNotBeNull();

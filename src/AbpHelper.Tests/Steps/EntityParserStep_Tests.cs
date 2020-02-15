@@ -2,17 +2,15 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using AbpHelper.Models;
-using AbpHelper.Steps;
-using AbpHelper.Steps.Abp;
-using AbpHelper.Steps.Common;
-using Elsa.Expressions;
+using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Steps.Abp;
+using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Services.Models;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AbpHelper.Tests.Parsers
+namespace EasyApp.AbpHelper.Tests.Steps
 {
     public class EntityParserStep_Tests : AbpHelperTestBase
     {
@@ -28,7 +26,7 @@ namespace AbpHelper.Tests.Parsers
 
         private async Task UsingWorkflowContext(Func<WorkflowExecutionContext, Task> action)
         {
-            var context = new WorkflowExecutionContext();
+            var context = new WorkflowExecutionContext(new Workflow(), null, Application.ServiceProvider);
             await action(context);
         }
 
@@ -73,7 +71,7 @@ namespace Acme.BookStore
                 await UsingEntityFile(code, async file =>
                 {
                     // Arrange
-                    _entityParserStep.EntityFile = new LiteralExpression(file);
+                    ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
                     await _entityParserStep.ExecuteAsync(ctx, CancellationToken.None);
@@ -81,6 +79,7 @@ namespace Acme.BookStore
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
                     info.Namespace.ShouldBe("Acme.BookStore");
+                    info.NamespaceLastPart.ShouldBe("BookStore");
                     info.Name.ShouldBe("Book");
                     info.NamePluralized.ShouldBe("Books");
                     info.BaseType.ShouldBe("AuditedAggregateRoot");
@@ -98,7 +97,7 @@ namespace Acme.BookStore
             });
         }
 
-        /*[Fact]
+        [Fact]
         public async Task Parse_Entity_Without_PrimaryKey()
         {
             var code = @"
@@ -124,46 +123,52 @@ namespace Acme.BookStore
     }
 }
 ";
-            await UsingEntityFile(code, async file =>
+            await UsingWorkflowContext(async ctx =>
             {
-                // Arrange
-                _entityParserStep.SetParameter(FileFinderStep.DefaultFilesParameterName, file);
+                await UsingEntityFile(code, async file =>
+                {
+                    // Arrange
+                    ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
-                // Act
-                await _entityParserStep.Run();
+                    // Act
+                    await _entityParserStep.ExecuteAsync(ctx, CancellationToken.None);
 
-                // Assert
-                var info = _entityParserStep.GetParameter<EntityInfo>("EntityInfo");
-                info.Namespace.ShouldBe("Acme.BookStore");
-                info.Name.ShouldBe("UserRole");
-                info.NamePluralized.ShouldBe("UserRoles");
-                info.BaseType.ShouldBe("Entity");
-                info.PrimaryKey.ShouldBeNull();
-                info.Properties.Count.ShouldBe(3);
-                info.Properties[0].Type.ShouldBe("Guid");
-                info.Properties[1].Type.ShouldBe("Guid");
-                info.Properties[2].Type.ShouldBe("DateTime");
-                info.Properties[0].Name.ShouldBe("UserId");
-                info.Properties[1].Name.ShouldBe("RoleId");
-                info.Properties[2].Name.ShouldBe("CreationTime");
+                    // Assert
+                    var info = ctx.GetVariable<EntityInfo>("EntityInfo");
+                    info.Namespace.ShouldBe("Acme.BookStore");
+                    info.Name.ShouldBe("UserRole");
+                    info.NamePluralized.ShouldBe("UserRoles");
+                    info.BaseType.ShouldBe("Entity");
+                    info.PrimaryKey.ShouldBeNull();
+                    info.Properties.Count.ShouldBe(3);
+                    info.Properties[0].Type.ShouldBe("Guid");
+                    info.Properties[1].Type.ShouldBe("Guid");
+                    info.Properties[2].Type.ShouldBe("DateTime");
+                    info.Properties[0].Name.ShouldBe("UserId");
+                    info.Properties[1].Name.ShouldBe("RoleId");
+                    info.Properties[2].Name.ShouldBe("CreationTime");
+                });
             });
         }
 
         [Fact]
         public async Task Parse_SyntaxError()
         {
-            await UsingEntityFile("invalid c# code", async file =>
+            await UsingWorkflowContext(async ctx =>
             {
-                // Arrange
-                _entityParserStep.SetParameter(FileFinderStep.DefaultFilesParameterName, file);
+                await UsingEntityFile("invalid c# code", async file =>
+                {
+                    // Arrange
+                    ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
-                // Act
-                var ex = await Assert.ThrowsAsync<ParseException>(() => _entityParserStep.Run());
+                    // Act
+                    var ex = await Assert.ThrowsAsync<ParseException>(() => _entityParserStep.ExecuteAsync(ctx, CancellationToken.None));
 
-                // Arrange
-                _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
-                ex.ShouldNotBeNull();
+                    // Arrange
+                    _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
+                    ex.ShouldNotBeNull();
+                });
             });
-        }*/
+        }
     }
 }

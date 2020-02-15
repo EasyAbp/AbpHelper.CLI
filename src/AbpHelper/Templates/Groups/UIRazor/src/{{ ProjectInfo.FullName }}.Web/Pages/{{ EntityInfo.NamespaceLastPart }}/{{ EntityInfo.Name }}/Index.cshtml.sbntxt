@@ -1,15 +1,15 @@
 @page
-@using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamePluralized }}
+@using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamespaceLastPart }}.{{ EntityInfo.Name }}
 @inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
 @model IndexModel
 
 @section scripts
 {
-    <abp-script src="/Pages/{{ EntityInfo.NamePluralized }}/index.js" />
+    <abp-script src="/Pages/{{ EntityInfo.NamespaceLastPart }}/{{ EntityInfo.Name }}/index.js" />
 }
 @section styles
 {
-    <abp-style src="/Pages/{{ EntityInfo.NamePluralized }}/index.css"/>
+    <abp-style src="/Pages/{{ EntityInfo.NamespaceLastPart }}/{{ EntityInfo.Name }}/index.css"/>
 }
 
 <abp-card>
@@ -27,7 +27,7 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" id="{{ EntityInfo.NamePluralized }}Table">
+        <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table">
             <thead>
             <tr>
                 <th>@L["Actions"]</th>
