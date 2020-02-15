@@ -14,6 +14,6 @@ namespace EasyAbp.AbpHelper.Commands
         }
 
         public ILogger<CommandBase> Logger { get; set; }
-        public IServiceProvider? ServiceProvider { get; set; }
+        public IServiceProvider ServiceProvider { get; set; } = null!;
     }
 }

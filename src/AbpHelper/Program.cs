@@ -1,5 +1,4 @@
-﻿using System.CommandLine;
-using System.CommandLine.Builder;
+﻿using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using Volo.Abp;
+using CommandLineBuilder = EasyAbp.AbpHelper.Commands.CommandLines.CommandLineBuilder;
 
 namespace EasyAbp.AbpHelper
 {
@@ -32,11 +32,10 @@ namespace EasyAbp.AbpHelper
             }))
             {
                 application.Initialize();
-                var sp = application.ServiceProvider;
 
-                var parser = new CommandLineBuilder(new RootCommand {Name = "abphelper"})
+                var parser = new CommandLineBuilder(application.ServiceProvider, "abphelper")
+                    .AddCommand<GenerateCommand>()
                     .UseDefaults()
-                    .AddCommand(sp.GetRequiredService<GenerateCommand>())
                     .Build();
 
                 await parser.InvokeAsync(args);
