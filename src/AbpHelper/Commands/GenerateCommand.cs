@@ -77,10 +77,10 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<SetModelVariableStep>()
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
-                .AddMigrationAndUpdateDatabaseWorkflow()
                 .AddServiceGenerationWorkflow()
                 .AddUiRazorPagesGenerationWorkflow()
                 .AddTestGenerationWorkflow()
+                .AddMigrationAndUpdateDatabaseWorkflow()
                 .Build();
 
             // Start the workflow.
@@ -90,8 +90,8 @@ namespace EasyAbp.AbpHelper.Commands
 
         private class CommandOption
         {
-            public string Solution { get; } = null!;
-            public string Entity { get; } = null!;
+            public string Solution { get; set; } = null!;
+            public string Entity { get; set; } = null!;
             public bool SeparateDto { get; set; }
         }
     }
