@@ -4,6 +4,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow.Abp;
@@ -29,7 +30,11 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<string>()
             });
-            AddOption(new Option(new[] {"--separate-dto"}, "Generate separate Create and Update DTO files.")
+            AddOption(new Option(new[] {"--separate-dto"}, "Generate separate Create and Update DTO file")
+            {
+                Argument = new Argument<bool>()
+            });
+            AddOption(new Option(new[] {"--custom-repository"}, "Generate custom repository interface and class for the entity")
             {
                 Argument = new Argument<bool>()
             });
@@ -48,9 +53,15 @@ namespace EasyAbp.AbpHelper.Commands
                     return;
                 }
 
-                Logger.LogInformation($"Solution file founded: `{file}`");
                 solution = file;
             }
+            else if (!File.Exists(solution))
+            {
+                Logger.LogError($"The specified solution '{solution}' does not exist.");
+                return;
+            }
+
+            Logger.LogInformation($"Use solution file: `{solution}`");
 
             var entityFileName = option.Entity + ".cs";
             var baseDirectory = Path.GetDirectoryName(solution)!;
@@ -70,6 +81,12 @@ namespace EasyAbp.AbpHelper.Commands
                         step.VariableName = "Overwrite";
                         step.ValueExpression = new JavaScriptExpression<bool>("true");
                     })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "Option";
+                        step.ValueExpression = new JavaScriptExpression<CommandOption>($"({option.ToJson()})");
+                    })
                 .Then<ProjectInfoProviderStep>()
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new LiteralExpression(entityFileName); })
@@ -85,7 +102,7 @@ namespace EasyAbp.AbpHelper.Commands
 
             // Start the workflow.
             var invoker = ServiceProvider.GetService<IWorkflowInvoker>();
-            var context = await invoker.StartAsync(workflowDefinition);
+            await invoker.StartAsync(workflowDefinition);
         }
 
         private class CommandOption
@@ -93,6 +110,7 @@ namespace EasyAbp.AbpHelper.Commands
             public string Solution { get; set; } = null!;
             public string Entity { get; set; } = null!;
             public bool SeparateDto { get; set; }
+            public bool CustomRepository { get; set; }
         }
     }
 }
