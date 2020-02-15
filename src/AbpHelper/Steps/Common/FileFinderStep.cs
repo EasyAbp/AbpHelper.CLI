@@ -43,7 +43,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
             var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
 
             var filePathName = files.SingleOrDefault();
-            if (filePathName == null) throw new FileNotFoundException();
+            if (filePathName == null) throw new FileNotFoundException(searchFileName);
 
             context.SetLastResult(filePathName);
             context.SetVariable(resultParameterName, filePathName);
