@@ -20,20 +20,25 @@ namespace EasyAbp.AbpHelper.Commands
     {
         public GenerateCommand() : base("generate", "Generate a set of CRUD related files according to the specified entity.")
         {
-            AddOption(new Option(new[] {"-s", "--solution"}, "The ABP solution(.sln) file. If no file is specified, the command searches for a file in the current directory")
-            {
-                Argument = new Argument<string>()
-            });
             AddOption(new Option(new[] {"-e", "--entity"}, "The entity class name")
             {
                 Argument = new Argument<string>(),
                 Required = true
             });
-            Handler = CommandHandler.Create((string solution, string entity) => Run(solution, entity));
+            AddOption(new Option(new[] {"-s", "--solution"}, "The ABP solution(.sln) file. If no file is specified, the command searches for a file in the current directory")
+            {
+                Argument = new Argument<string>()
+            });
+            AddOption(new Option(new[] {"--separate-dto"}, "Generate separate Create and Update DTO files.")
+            {
+                Argument = new Argument<bool>()
+            });
+            Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
-        private async Task Run(string solution, string entity)
+        private async Task Run(CommandOption option)
         {
+            var solution = option.Solution;
             if (solution.IsNullOrEmpty())
             {
                 var file = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.sln").FirstOrDefault();
@@ -47,7 +52,7 @@ namespace EasyAbp.AbpHelper.Commands
                 solution = file;
             }
 
-            var entityFileName = entity + ".cs";
+            var entityFileName = option.Entity + ".cs";
             var baseDirectory = Path.GetDirectoryName(solution)!;
 
             var workflowBuilderFactory = ServiceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
@@ -81,6 +86,13 @@ namespace EasyAbp.AbpHelper.Commands
             // Start the workflow.
             var invoker = ServiceProvider.GetService<IWorkflowInvoker>();
             var context = await invoker.StartAsync(workflowDefinition);
+        }
+
+        private class CommandOption
+        {
+            public string Solution { get; } = null!;
+            public string Entity { get; } = null!;
+            public bool SeparateDto { get; set; }
         }
     }
 }
