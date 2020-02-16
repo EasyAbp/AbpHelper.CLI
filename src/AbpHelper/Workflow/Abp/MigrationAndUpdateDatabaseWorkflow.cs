@@ -7,7 +7,7 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
 {
     public static class MigrationAndUpdateDatabaseWorkflow
     {
-        public static IActivityBuilder AddMigrationAndUpdateDatabaseWorkflow(this IActivityBuilder builder)
+        public static IActivityBuilder AddMigrationAndUpdateDatabaseWorkflow(this IOutcomeBuilder builder)
         {
             return builder
                     .Then<FileFinderStep>(

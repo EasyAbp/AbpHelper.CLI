@@ -8,7 +8,9 @@ using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow.Abp;
+using Elsa;
 using Elsa.Activities;
+using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
@@ -35,6 +37,10 @@ namespace EasyAbp.AbpHelper.Commands
                 Argument = new Argument<bool>()
             });
             AddOption(new Option(new[] {"--custom-repository"}, "Generate custom repository interface and class for the entity")
+            {
+                Argument = new Argument<bool>()
+            });
+            AddOption(new Option(new[] {"--skip-db-migrations"}, "Skip performing db migration and update")
             {
                 Argument = new Argument<bool>()
             });
@@ -94,10 +100,34 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<SetModelVariableStep>()
                 .AddEntityUsingGenerationWorkflow()
                 .AddEfCoreConfigurationWorkflow()
-                .AddServiceGenerationWorkflow()
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.CustomRepository"),
+                    ifElse =>
+                    {
+                        ifElse
+                            .When(OutcomeNames.True)
+                            .AddCustomRepositoryGeneration()
+                            .Then("Service")
+                            ;
+                        ifElse
+                            .When(OutcomeNames.False)
+                            .Then("Service")
+                            ;
+                    }
+                )
+                .AddServiceGenerationWorkflow("Service")
                 .AddUiRazorPagesGenerationWorkflow()
                 .AddTestGenerationWorkflow()
-                .AddMigrationAndUpdateDatabaseWorkflow()
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipDbMigrations"),
+                    ifElse =>
+                    {
+                        ifElse
+                            .When(OutcomeNames.False)
+                            .AddMigrationAndUpdateDatabaseWorkflow()
+                            ;
+                    }
+                )
                 .Build();
 
             // Start the workflow.
@@ -111,6 +141,7 @@ namespace EasyAbp.AbpHelper.Commands
             public string Entity { get; set; } = null!;
             public bool SeparateDto { get; set; }
             public bool CustomRepository { get; set; }
+            public bool SkipDbMigrations { get; set; }
         }
     }
 }

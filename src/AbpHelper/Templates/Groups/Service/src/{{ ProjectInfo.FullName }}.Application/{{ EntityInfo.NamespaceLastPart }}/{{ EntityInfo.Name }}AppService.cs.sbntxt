@@ -1,8 +1,3 @@
-{{- if Option.CustomRepository -}}
-    {{ capture repo }}I{{ EntityInfo.Name }}Repository{{ end }}
-{{- else -}}
-    {{ capture repo }}IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}>{{ end }}
-{{- end -}}
 using System;
 using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
 using Volo.Abp.Application.Dtos;
@@ -15,8 +10,7 @@ namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
             CreateUpdate{{ EntityInfo.Name }}Dto, CreateUpdate{{ EntityInfo.Name }}Dto>,
         I{{ EntityInfo.Name }}AppService
     {
-        public {{ EntityInfo.Name }}AppService({{ repo }} repository)
-            : base(repository)
+        public {{ EntityInfo.Name }}AppService(IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> repository) : base(repository)
         {
         }
     }
