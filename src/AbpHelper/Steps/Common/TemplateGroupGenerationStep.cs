@@ -8,11 +8,15 @@ using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
+using Scriban;
+using Scriban.Runtime;
 
 namespace EasyAbp.AbpHelper.Steps.Common
 {
     public class TemplateGroupGenerationStep : Step
     {
+        private const string SkipGenerate = "SKIP_GENERATE";
+
         public string GroupName
         {
             get => GetState<string>();
@@ -69,11 +73,19 @@ namespace EasyAbp.AbpHelper.Steps.Common
                     continue;
                 }
 
+                var templateText = await File.ReadAllTextAsync(file);
+                var contents = TextGenerator.GenerateByTemplateText(templateText, model, out TemplateContext context);
+
+                context.CurrentGlobal.TryGetValue(SkipGenerate, out object value);
+                if (value is bool skipGenerate && skipGenerate)
+                {
+                    Logger.LogInformation($"Evaluated value of `{SkipGenerate}` is true, skip generating.");
+                    continue;
+                }
+
                 var dir = Path.GetDirectoryName(targetFilePathName);
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
-                var templateText = await File.ReadAllTextAsync(file);
-                var contents = TextGenerator.GenerateByTemplateText(templateText, model);
                 await File.WriteAllTextAsync(targetFilePathName, contents);
                 Logger.LogInformation($"File {targetFilePathName} successfully generated.");
             }

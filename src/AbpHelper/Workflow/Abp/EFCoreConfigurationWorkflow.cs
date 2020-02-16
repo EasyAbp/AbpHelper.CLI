@@ -18,16 +18,6 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
                     .Then<DbContextStep>()
                     .Then<FileModifierStep>()
                     /* Add entity configuration to DbContextModelCreatingExtensions */
-                    .Then<TextGenerationStep>(step =>
-                    {
-                        step.TemplateName = "DbContextModelCreatingExtensions_Using";
-                        step.GeneratedTextKey = new LiteralExpression("ModelingUsingText");
-                    })
-                    .Then<TextGenerationStep>(step =>
-                    {
-                        step.TemplateName = "DbContextModelCreatingExtensions_EntityConfig";
-                        step.GeneratedTextKey = new LiteralExpression("EntityConfigText");
-                    })
                     .Then<FileFinderStep>(
                         step => step.SearchFileName = new LiteralExpression("*DbContextModelCreatingExtensions.cs")
                     )

@@ -1,3 +1,11 @@
+{{- if Option.SeparateDto
+createDto = "Create" + EntityInfo.Name + "Dto"
+updateDto = "Update" + EntityInfo.Name + "Dto"
+else
+createDto = "CreateUpdate" + EntityInfo.Name + "Dto"
+updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
+end
+-}}
 using System;
 using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
 using Volo.Abp.Application.Dtos;
@@ -6,8 +14,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
 {
-    public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto,
-            CreateUpdate{{ EntityInfo.Name }}Dto, CreateUpdate{{ EntityInfo.Name }}Dto>,
+    public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto, {{ createDto }}, {{ updateDto }}>,
         I{{ EntityInfo.Name }}AppService
     {
         public {{ EntityInfo.Name }}AppService(IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> repository) : base(repository)

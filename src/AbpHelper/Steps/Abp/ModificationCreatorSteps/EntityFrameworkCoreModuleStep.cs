@@ -2,7 +2,6 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
-using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.CSharp;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
@@ -14,9 +13,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
     {
         protected override IList<ModificationBuilder> CreateModifications(WorkflowExecutionContext context)
         {
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
+            var model = context.GetVariable<object>("Model");
             string entityUsingText = context.GetVariable<string>("EntityUsingText");
-            string contents = TextGenerator.GenerateByTemplateName("EntityFrameworkCoreModule_AddRepository", new {EntityInfo = entityInfo});
+            string contents = TextGenerator.GenerateByTemplateName("EntityFrameworkCoreModule_AddRepository", model);
 
             CSharpSyntaxNode Func(CSharpSyntaxNode root) => root
                 .Descendants<ExpressionStatementSyntax>()

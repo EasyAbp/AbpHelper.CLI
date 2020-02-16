@@ -9,15 +9,25 @@ namespace EasyAbp.AbpHelper.Generator
     {
         public static string GenerateByTemplateName(string templateName, object model)
         {
+            return GenerateByTemplateName(templateName, model, out _);
+        }
+        
+        public static string GenerateByTemplateName(string templateName, object model, out TemplateContext context)
+        {
             var appDir = AppDomain.CurrentDomain.BaseDirectory!;
             var templateFile = Path.Combine(appDir, "Templates", templateName + ".sbntxt");
             var templateText = File.ReadAllText(templateFile);
-            return GenerateByTemplateText(templateText, model);
+            return GenerateByTemplateText(templateText, model, out context);
         }
 
         public static string GenerateByTemplateText(string templateText, object model)
         {
-            var context = new TemplateContext();
+            return GenerateByTemplateText(templateText, model, out _);
+        }
+
+        public static string GenerateByTemplateText(string templateText, object model, out TemplateContext context)
+        {
+            context = new TemplateContext();
             var scriptObject = new ScriptObject();
             scriptObject.SetValue("abp", new AbpFunctions(), true);
             scriptObject.Import(model, renamer: member => member.Name);

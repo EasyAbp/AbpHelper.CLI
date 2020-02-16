@@ -2,7 +2,6 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
-using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.CSharp;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,10 +12,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
     {
         protected override IList<ModificationBuilder> CreateModifications(WorkflowExecutionContext context)
         {
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
+            var model = context.GetVariable<object>("Model");
             var entityDtoUsingText = context.GetVariable<string>("EntityDtoUsingText");
 
-            string contents = TextGenerator.GenerateByTemplateName("WebAutoMapperProfile_CreateMap", new {EntityInfo = entityInfo});
+            string contents = TextGenerator.GenerateByTemplateName("WebAutoMapperProfile_CreateMap", model);
             return new List<ModificationBuilder>
             {
                 new InsertionBuilder(

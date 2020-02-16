@@ -1,3 +1,11 @@
+{{- if Option.SeparateDto
+createDto = "Create" + EntityInfo.Name + "Dto"
+updateDto = "Update" + EntityInfo.Name + "Dto"
+else
+createDto = "CreateUpdate" + EntityInfo.Name + "Dto"
+updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
+end
+-}}
 using System;
 using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
 using Volo.Abp.Application.Dtos;
@@ -10,8 +18,8 @@ namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
             {{ EntityInfo.Name }}Dto, 
             {{ EntityInfo.PrimaryKey }}, 
             PagedAndSortedResultRequestDto,
-            CreateUpdate{{ EntityInfo.Name }}Dto,
-            CreateUpdate{{ EntityInfo.Name }}Dto>
+            {{ createDto }},
+            {{ updateDto }}>
     {
 
     }

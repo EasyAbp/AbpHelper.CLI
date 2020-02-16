@@ -1,2 +1,7 @@
             CreateMap<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto>();
+{{~ if Option.SeparateDto ~}}
+            CreateMap<Create{{ EntityInfo.Name }}Dto, {{ EntityInfo.Name }}>();
+            CreateMap<Update{{ EntityInfo.Name }}Dto, {{ EntityInfo.Name }}>();
+{{~ else ~}}
             CreateMap<CreateUpdate{{ EntityInfo.Name }}Dto, {{ EntityInfo.Name }}>();
+{{~ end ~}}

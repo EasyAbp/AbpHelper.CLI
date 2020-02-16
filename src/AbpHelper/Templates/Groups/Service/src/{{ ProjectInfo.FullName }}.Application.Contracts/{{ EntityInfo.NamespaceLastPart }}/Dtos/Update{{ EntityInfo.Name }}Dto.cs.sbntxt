@@ -1,10 +1,10 @@
-{{ SKIP_GENERATE = Option.SeparateDto }}
+{{ SKIP_GENERATE = !Option.SeparateDto }}
 using System;
 using System.ComponentModel;
 
 namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos
 {
-    public class CreateUpdate{{ EntityInfo.Name }}Dto
+    public class Update{{ EntityInfo.Name }}Dto
     {
         {{~ for prop in EntityInfo.Properties ~}}
         [DisplayName("{{ EntityInfo.Name + prop.Name}}")]

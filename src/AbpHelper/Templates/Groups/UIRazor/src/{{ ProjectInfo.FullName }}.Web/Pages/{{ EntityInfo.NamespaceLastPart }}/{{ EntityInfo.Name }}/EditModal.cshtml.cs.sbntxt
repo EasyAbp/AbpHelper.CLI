@@ -1,3 +1,9 @@
+{{- if Option.SeparateDto
+updateDto = "Update" + EntityInfo.Name + "Dto"
+else
+updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
+end
+-}}
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +19,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamespaceLastPart }
         public {{ EntityInfo.PrimaryKey }} Id { get; set; }
 
         [BindProperty]
-        public CreateUpdate{{ EntityInfo.Name }}Dto {{ EntityInfo.Name }} { get; set; }
+        public {{ updateDto }} {{ EntityInfo.Name }} { get; set; }
 
         private readonly I{{ EntityInfo.Name }}AppService _service;
 
@@ -25,7 +31,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamespaceLastPart }
         public async Task OnGetAsync()
         {
             var dto = await _service.GetAsync(Id);
-            {{ EntityInfo.Name }} = ObjectMapper.Map<{{ EntityInfo.Name }}Dto, CreateUpdate{{ EntityInfo.Name }}Dto>(dto);
+            {{ EntityInfo.Name }} = ObjectMapper.Map<{{ EntityInfo.Name }}Dto, {{ updateDto }}>(dto);
         }
 
         public async Task<IActionResult> OnPostAsync()

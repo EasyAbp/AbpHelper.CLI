@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
+using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.CSharp;
 using Elsa.Services.Models;
@@ -12,9 +13,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
     {
         protected override IList<ModificationBuilder> CreateModifications(WorkflowExecutionContext context)
         {
+            var model = context.GetVariable<object>("Model");
             var entityUsingText = context.GetVariable<string>("EntityUsingText");
-            var modelingUsingText = context.GetVariable<string>("ModelingUsingText");
-            var entityConfigText = context.GetVariable<string>("EntityConfigText");
+            var modelingUsingText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_Using", model);
+            var entityConfigText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_EntityConfig", model);
 
             return new List<ModificationBuilder>
             {
