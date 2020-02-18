@@ -12,12 +12,16 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
 {
     public static class UiRazorPagesGenerationWorkflow
     {
-        public static IActivityBuilder AddUiRazorPagesGenerationWorkflow(this IActivityBuilder builder)
+        public static IActivityBuilder AddUiRazorPagesGenerationWorkflow(this IOutcomeBuilder builder)
         {
             return builder
                     /* Generate razor pages ui files*/
                     .Then<TemplateGroupGenerationStep>(
-                        step => { step.GroupName = "UIRazor"; }
+                        step =>
+                        {
+                            step.GroupName = "UiRazor";
+                            step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                        }
                     )
                     /* Add menu */
                     .Then<FileFinderStep>(

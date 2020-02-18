@@ -1,6 +1,7 @@
 ﻿using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Expressions;
+using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
 namespace EasyAbp.AbpHelper.Workflow.Abp
@@ -12,7 +13,11 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
             return builder
                     /* Generate dto, service interface and class files */
                     .Then<TemplateGroupGenerationStep>(
-                        step => { step.GroupName = "Service"; }
+                        step =>
+                        {
+                            step.GroupName = "Service";
+                            step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                        }
                     ).WithName(name)
                     /* Add mapping */
                     .Then<FileFinderStep>(step => step.SearchFileName = new LiteralExpression("*ApplicationAutoMapperProfile.cs"))

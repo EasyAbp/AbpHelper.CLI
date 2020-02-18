@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
+using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow.Abp;
@@ -28,7 +29,7 @@ namespace EasyAbp.AbpHelper.Commands
                 Argument = new Argument<string>(),
                 Required = true
             });
-            AddOption(new Option(new[] {"-s", "--solution"}, "The ABP solution(.sln) file. If no file is specified, the command searches for a file in the current directory")
+            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used.")
             {
                 Argument = new Argument<string>()
             });
@@ -49,28 +50,20 @@ namespace EasyAbp.AbpHelper.Commands
 
         private async Task Run(CommandOption option)
         {
-            var solution = option.Solution;
-            if (solution.IsNullOrEmpty())
+            var directory = option.Directory;
+            if (directory.IsNullOrEmpty())
             {
-                var file = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.sln").FirstOrDefault();
-                if (file == null)
-                {
-                    Logger.LogError("No solution file founded.");
-                    return;
-                }
-
-                solution = file;
+                directory = Environment.CurrentDirectory;
             }
-            else if (!File.Exists(solution))
+            else if (!Directory.Exists(directory))
             {
-                Logger.LogError($"The specified solution '{solution}' does not exist.");
+                Logger.LogError($"Directory '{directory}' does not exist.");
                 return;
             }
 
-            Logger.LogInformation($"Use solution file: `{solution}`");
+            Logger.LogInformation($"Use directory: `{directory}`");
 
             var entityFileName = option.Entity + ".cs";
-            var baseDirectory = Path.GetDirectoryName(solution)!;
 
             var workflowBuilderFactory = ServiceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
             var workflowBuilder = workflowBuilderFactory();
@@ -79,7 +72,7 @@ namespace EasyAbp.AbpHelper.Commands
                     step =>
                     {
                         step.VariableName = "BaseDirectory";
-                        step.ValueExpression = new LiteralExpression(baseDirectory);
+                        step.ValueExpression = new LiteralExpression(directory);
                     })
                 .Then<SetVariable>(
                     step =>
@@ -107,17 +100,36 @@ namespace EasyAbp.AbpHelper.Commands
                         ifElse
                             .When(OutcomeNames.True)
                             .AddCustomRepositoryGeneration()
-                            .Then("Service")
+                            .Then("ServiceGeneration")
                             ;
                         ifElse
                             .When(OutcomeNames.False)
-                            .Then("Service")
+                            .Then("ServiceGeneration")
                             ;
                     }
                 )
-                .AddServiceGenerationWorkflow("Service")
-                .AddUiRazorPagesGenerationWorkflow()
-                .AddTestGenerationWorkflow()
+                .AddServiceGenerationWorkflow("ServiceGeneration")
+                .Then<Switch>(
+                    @switch =>
+                    {
+                        @switch.Expression = new JavaScriptExpression<string>("(ProjectInfo.UiFramework)");
+                        @switch.Cases = Enum.GetValues(typeof(UiFramework)).Cast<int>().Select(u => u.ToString()).ToArray();
+                    },
+                    @switch =>
+                    {
+                        @switch.When(UiFramework.None.ToString("D"))
+                            .Then("TestGeneration");
+
+                        @switch.When(UiFramework.RazorPages.ToString("D"))
+                            .AddUiRazorPagesGenerationWorkflow()
+                            .Then("TestGeneration");
+
+                        @switch.When(UiFramework.Angular.ToString("D"))
+                            .AddUiAngularGenerationWorkflow()
+                            .Then("TestGeneration");
+                    }
+                )
+                .AddTestGenerationWorkflow("TestGeneration")
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipDbMigrations"),
                     ifElse =>
@@ -137,7 +149,7 @@ namespace EasyAbp.AbpHelper.Commands
 
         private class CommandOption
         {
-            public string Solution { get; set; } = null!;
+            public string Directory { get; set; } = null!;
             public string Entity { get; set; } = null!;
             public bool SeparateDto { get; set; }
             public bool CustomRepository { get; set; }

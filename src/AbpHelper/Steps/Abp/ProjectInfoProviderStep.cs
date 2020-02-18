@@ -40,13 +40,22 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             var fullName = fileName.RemovePostFix(".Domain.csproj");
             var name = fullName.Split('.').Last();
 
-            UIFramework uiFramework;
+            UiFramework uiFramework;
             if (Directory.EnumerateFiles(baseDirectory, "*.cshtml", SearchOption.AllDirectories).Any())
-                uiFramework = UIFramework.RazorPages;
+            {
+                uiFramework = UiFramework.RazorPages;
+                context.SetVariable("AspNetCoreDir", baseDirectory);
+            }
             else if (Directory.EnumerateFiles(baseDirectory, "app.module.ts", SearchOption.AllDirectories).Any())
-                uiFramework = UIFramework.Angular;
+            {
+                uiFramework = UiFramework.Angular;
+                context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
+            }
             else
-                uiFramework = UIFramework.None;
+            {
+                uiFramework = UiFramework.None;
+                context.SetVariable("AspNetCoreDir", baseDirectory);
+            }
 
             var tiered = false;
             if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(baseDirectory, "*.IdentityServer.csproj").Any();

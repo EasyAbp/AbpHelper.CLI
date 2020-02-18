@@ -1,6 +1,7 @@
 ﻿using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Expressions;
+using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
 namespace EasyAbp.AbpHelper.Workflow.Abp
@@ -12,7 +13,11 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
             return builder
                     /* Generate custom repository interface and class */
                     .Then<TemplateGroupGenerationStep>(
-                        step => { step.GroupName = "Repository"; }
+                        step =>
+                        {
+                            step.GroupName = "Repository"; 
+                            step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                        }
                     )
                     /* Add repository configuration to EntityFrameworkCoreModule */
                     .Then<FileFinderStep>(
