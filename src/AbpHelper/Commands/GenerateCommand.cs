@@ -21,7 +21,7 @@ namespace EasyAbp.AbpHelper.Commands
 {
     public class GenerateCommand : CommandBase
     {
-        public GenerateCommand() : base("generate", "Generate a set of CRUD related files according to the specified entity.")
+        public GenerateCommand() : base("generate", "Generate a set of CRUD related files according to the specified entity")
         {
             AddOption(new Option(new[] {"-e", "--entity"}, "The entity class name")
             {
