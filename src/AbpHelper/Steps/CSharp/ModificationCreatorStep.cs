@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Results;
@@ -43,6 +44,6 @@ namespace EasyAbp.AbpHelper.Steps.CSharp
             return Done();
         }
 
-        protected abstract IList<ModificationBuilder> CreateModifications(WorkflowExecutionContext context);
+        protected abstract IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context);
     }
 }

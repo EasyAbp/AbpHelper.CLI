@@ -1,0 +1,63 @@
+$(function () {
+
+    var l = abp.localization.getResource('{{ ProjectInfo.Name }}');
+
+    var service = {{ ProjectInfo.FullName + '.' + EntityInfo.NamespaceLastPart + '.' + EntityInfo.Name | abp.camel_case }};
+    var createModal = new abp.ModalManager(abp.appPath + '{{ EntityInfo.NamespaceLastPart }}/{{ EntityInfo.Name }}/CreateModal');
+    var editModal = new abp.ModalManager(abp.appPath + '{{ EntityInfo.NamespaceLastPart }}/{{ EntityInfo.Name }}/EditModal');
+
+    var dataTable = $('#{{ EntityInfo.Name }}Table').DataTable(abp.libs.datatables.normalizeConfiguration({
+        processing: true,
+        serverSide: true,
+        paging: true,
+        searching: false,
+        autoWidth: false,
+        scrollCollapse: true,
+        order: [[1, "asc"]],
+        ajax: abp.libs.datatables.createAjax(service.getList),
+        columnDefs: [
+            {
+                rowAction: {
+                    items:
+                        [
+                            {
+                                text: l('Edit'),
+                                action: function (data) {
+                                    editModal.open({ id: data.record.id });
+                                }
+                            },
+                            {
+                                text: l('Delete'),
+                                confirmMessage: function (data) {
+                                    return l('{{ EntityInfo.Name }}DeletionConfirmationMessage', data.record.id);
+                                },
+                                action: function (data) {
+                                    service.delete(data.record.id)
+                                        .then(function () {
+                                            abp.notify.info(l('SuccessfullyDeleted'));
+                                            dataTable.ajax.reload();
+                                        });
+                                }
+                            }
+                        ]
+                }
+            },
+            {{~ for prop in EntityInfo.Properties ~}}
+            { data: "{{ prop.Name | abp.camel_case }}" },
+            {{~ end ~}}
+        ]
+    }));
+
+    createModal.onResult(function () {
+        dataTable.ajax.reload();
+    });
+
+    editModal.onResult(function () {
+        dataTable.ajax.reload();
+    });
+
+    $('#New{{ EntityInfo.Name }}Button').click(function (e) {
+        e.preventDefault();
+        createModal.open();
+    });
+});

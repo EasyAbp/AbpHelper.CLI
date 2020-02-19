@@ -2,6 +2,7 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
+using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.CSharp;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
@@ -11,7 +12,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
 {
     public class MenuContributorStep : ModificationCreatorStep
     {
-        protected override IList<ModificationBuilder> CreateModifications(WorkflowExecutionContext context)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
             var model = context.GetVariable<object>("Model");
             string contents = TextGenerator.GenerateByTemplateName("MenuContributor_AddMenuItem", model);
@@ -19,9 +20,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
             CSharpSyntaxNode Func(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
                     .Single(n => n.Identifier.ToString() == "ConfigureMainMenuAsync");
 
-            return new List<ModificationBuilder>
+            return new List<ModificationBuilder<CSharpSyntaxNode>>
             {
-                new InsertionBuilder(root => Func(root).GetEndLine(),
+                new InsertionBuilder<CSharpSyntaxNode>(root => Func(root).GetEndLine(),
                     contents,
                     modifyCondition: root => Func(root).NotContains(contents)
                 )
