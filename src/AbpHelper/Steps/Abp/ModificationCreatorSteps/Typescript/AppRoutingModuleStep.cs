@@ -1,20 +1,37 @@
 ﻿using System.Collections.Generic;
-using Antlr4.Runtime.Tree;
+using System.Linq;
+using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
-using EasyParser.Core;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
 {
     public class AppRoutingModuleStep : TypeScriptModificationCreatorStep
     {
-        public AppRoutingModuleStep(TextParser textParser) : base(textParser)
+        protected override IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
+            WorkflowExecutionContext context)
         {
-        }
+            var model = context.GetVariable<object>("Model");
+            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
+            string importContents =
+                TextGenerator.GenerateByTemplateName("AppRoutingModule_ImportApplicationLayoutComponent", model);
 
-        protected override IList<ModificationBuilder<IParseTree>> CreateModifications(WorkflowExecutionContext context)
-        {
-            throw new System.NotImplementedException();
+            int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"{entityInfo.NamespaceLastPart.ToLower()}")).LineNumber;
+
+            return new List<ModificationBuilder<IEnumerable<LineNode>>>
+            {
+                new InsertionBuilder<IEnumerable<LineNode>>(
+                    lines => lines.Last(l => l.IsMath("^import")).LineNumber,
+                    importContents,
+                    InsertPosition.After,
+                    lines => lines.Where(l => l.IsMath("^import")).All(l => !l.LineContent.Contains(importContents))
+                ),
+                new ReplacementBuilder<IEnumerable<LineNode>>(
+                    LineExpression,
+                    LineExpression,
+                    "REPLACE"
+                )
+            };
         }
     }
 }
