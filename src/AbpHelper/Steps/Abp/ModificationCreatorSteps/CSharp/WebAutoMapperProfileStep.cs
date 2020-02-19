@@ -3,14 +3,13 @@ using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.CSharp;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps
+namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
-    public class WebAutoMapperProfileStep : ModificationCreatorStep
+    public class WebAutoMapperProfileStep : CSharpModificationCreatorStep
     {
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {

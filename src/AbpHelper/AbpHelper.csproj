@@ -20,7 +20,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="EasyParser.Core" Version="1.0.0" />
         <PackageReference Include="EasyParser.TypeScriptParser" Version="1.0.0" />
         <PackageReference Include="Elsa" Version="1.2.1.19" />
         <PackageReference Include="Humanizer.Core" Version="2.7.9" />
