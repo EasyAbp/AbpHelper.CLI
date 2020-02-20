@@ -50,6 +50,10 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
                         step => step.Command = new JavaScriptExpression<string>(
                             @"`cd /d ${BaseDirectory}\\angular && yarn ng generate ngxs-schematic:state ${EntityInfo.NamespaceLastPart.toLowerCase()}`"
                         ))
+                    /* Generate XXX.ts */
+                    .Then<TemplateGroupGenerationStep>(
+                        step => { step.GroupName = "UiAngular"; }
+                    )
                 ;
         }
     }

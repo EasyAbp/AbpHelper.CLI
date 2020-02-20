@@ -41,10 +41,12 @@
     <ItemGroup>
       <Folder Include="Parser" />
       <Folder Include="Templates\Groups\Test" />
+      <Folder Include="Templates\Groups\UiAngular\angular" />
     </ItemGroup>
 
     <ItemGroup>
       <Compile Remove="Steps\LoopStep.cs" />
       <Compile Remove="Steps\CSharp\InsertionStep.cs" />
     </ItemGroup>
+
 </Project>
