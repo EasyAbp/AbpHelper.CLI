@@ -23,8 +23,4 @@
       <ProjectReference Include="..\AbpHelper\AbpHelper.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="Steps\FileModifierStep_Tests.cs" />
-    </ItemGroup>
-
 </Project>

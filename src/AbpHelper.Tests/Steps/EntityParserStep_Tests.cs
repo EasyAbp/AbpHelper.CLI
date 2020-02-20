@@ -5,30 +5,23 @@ using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
-using Elsa.Services.Models;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace EasyApp.AbpHelper.Tests.Steps
 {
-    public class EntityParserStep_Tests : AbpHelperTestBase
+    public class EntityParserStep_Tests : StepTestsBase
     {
         public EntityParserStep_Tests(ITestOutputHelper output)
         {
             _output = output;
-            _entityParserStep = GetRequiredService<EntityParserStep>();
+            _step = GetRequiredService<EntityParserStep>();
         }
 
         private readonly ITestOutputHelper _output;
 
-        private readonly EntityParserStep _entityParserStep;
-
-        private async Task UsingWorkflowContext(Func<WorkflowExecutionContext, Task> action)
-        {
-            var context = new WorkflowExecutionContext(new Workflow(), null, Application.ServiceProvider);
-            await action(context);
-        }
+        private readonly EntityParserStep _step;
 
         private async Task UsingEntityFile(string code, Func<string, Task> action)
         {
@@ -74,7 +67,7 @@ namespace Acme.BookStore
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _entityParserStep.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
@@ -131,7 +124,7 @@ namespace Acme.BookStore
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _entityParserStep.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
@@ -162,7 +155,7 @@ namespace Acme.BookStore
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<ParseException>(() => _entityParserStep.ExecuteAsync(ctx, CancellationToken.None));
+                    var ex = await Assert.ThrowsAsync<ParseException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
 
                     // Arrange
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
