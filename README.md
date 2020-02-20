@@ -10,7 +10,7 @@ AbpHelper is a tool to help you with developing Abp vNext applications.
 
     `dotnet tool install EasyAbp.AbpHelper -g`
 
-1. Use ABP CLI to create a test application
+1. Use [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) to create a test application
 
     `abp new MyToDo`
 
@@ -30,7 +30,7 @@ AbpHelper is a tool to help you with developing Abp vNext applications.
     `abphelper generate -e Todo -d C:\MyTodo`
 
     * `-e` specified the entity name (`Todo` in this example)
-    * `-d` specified the **root** directory of the ABP project, which is created by ABP CLI
+    * `-d` specified the **root** directory of the ABP application, which is created by ABP CLI
 
     AbpHelper will generate all the CRUD stuff , even include adding migration and database updating!
 
@@ -45,7 +45,7 @@ AbpHelper is a tool to help you with developing Abp vNext applications.
 
 # Extensibility
 
-TODO
+TODO: Describe how to custom the generating steps, and custom templates.
 
 # Roadmap
 
