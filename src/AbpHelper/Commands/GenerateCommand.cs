@@ -109,6 +109,7 @@ namespace EasyAbp.AbpHelper.Commands
                     }
                 )
                 .AddServiceGenerationWorkflow("ServiceGeneration")
+                .AddLocalizationGenerationWorkflow("LocalizationGeneration")
                 .Then<Switch>(
                     @switch =>
                     {
