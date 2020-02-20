@@ -45,6 +45,10 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<bool>()
             });
+            AddOption(new Option(new[] {"--skip-ui"}, "Skip generating UI")
+            {
+                Argument = new Argument<bool>()
+            });
             Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
@@ -110,25 +114,38 @@ namespace EasyAbp.AbpHelper.Commands
                 )
                 .AddServiceGenerationWorkflow("ServiceGeneration")
                 .AddLocalizationGenerationWorkflow("LocalizationGeneration")
-                .Then<Switch>(
-                    @switch =>
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipUi"),
+                    ifElse =>
                     {
-                        @switch.Expression = new JavaScriptExpression<string>("(ProjectInfo.UiFramework)");
-                        @switch.Cases = Enum.GetValues(typeof(UiFramework)).Cast<int>().Select(u => u.ToString()).ToArray();
-                    },
-                    @switch =>
-                    {
-                        @switch.When(UiFramework.None.ToString("D"))
-                            .Then("TestGeneration");
+                        ifElse
+                            .When(OutcomeNames.False)
+                            .Then<Switch>(
+                                @switch =>
+                                {
+                                    @switch.Expression = new JavaScriptExpression<string>("(ProjectInfo.UiFramework)");
+                                    @switch.Cases = Enum.GetValues(typeof(UiFramework)).Cast<int>().Select(u => u.ToString()).ToArray();
+                                },
+                                @switch =>
+                                {
+                                    @switch.When(UiFramework.None.ToString("D"))
+                                        .Then("TestGeneration");
 
-                        @switch.When(UiFramework.RazorPages.ToString("D"))
-                            .AddUiRazorPagesGenerationWorkflow()
-                            .Then("TestGeneration");
+                                    @switch.When(UiFramework.RazorPages.ToString("D"))
+                                        .AddUiRazorPagesGenerationWorkflow()
+                                        .Then("TestGeneration");
 
-                        @switch.When(UiFramework.Angular.ToString("D"))
-                            // TODO
-                            //.AddUiAngularGenerationWorkflow()
-                            .Then("TestGeneration");
+                                    @switch.When(UiFramework.Angular.ToString("D"))
+                                        // TODO
+                                        //.AddUiAngularGenerationWorkflow()
+                                        .Then("TestGeneration");
+                                }
+                            )
+                            ;
+                        ifElse
+                            .When(OutcomeNames.True)
+                            .Then("TestGeneration")
+                            ;
                     }
                 )
                 .AddTestGenerationWorkflow("TestGeneration")
@@ -156,6 +173,7 @@ namespace EasyAbp.AbpHelper.Commands
             public bool SeparateDto { get; set; }
             public bool CustomRepository { get; set; }
             public bool SkipDbMigrations { get; set; }
+            public bool SkipUi { get; set; }
         }
     }
 }
