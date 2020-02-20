@@ -14,9 +14,11 @@
         <ToolCommandName>abphelper</ToolCommandName>
         <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
         <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
-        <AssemblyVersion>0.1.3</AssemblyVersion>
-        <FileVersion>0.1.3</FileVersion>
+        <AssemblyVersion>0.1.0</AssemblyVersion>
+        <FileVersion>0.1.0</FileVersion>
         <Authors>EasyAbp Team</Authors>
+        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+        <PackageTags>abp helper generator</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

@@ -8,13 +8,13 @@ AbpHelper is a tool to help you with developing Abp vNext applications.
 
 1. Install AbpHelper CLI tool
 
-    `dotnet tool install AbpHelper -g --version 0.1.2-alpha`
+    `dotnet tool install EasyAbp.AbpHelper -g`
 
 1. Use ABP CLI to create a test application
 
     `abp new MyToDo`
 
-1. Create an entity(e.g. `Todo`)
+1. Create an entity
 
     ``` csharp
     public class Todo : FullAuditedEntity<Guid>
@@ -27,7 +27,10 @@ AbpHelper is a tool to help you with developing Abp vNext applications.
 
 1. Run AbpHelper
 
-    `abphelper c:\MyTodo Todo.cs`
+    `abphelper generate -e Todo -d C:\MyTodo`
+
+    * `-e` specified the entity name (`Todo` in this example)
+    * `-d` specified the **root** directory of the ABP project, which is created by ABP CLI
 
     AbpHelper will generate all the CRUD stuff , even include adding migration and database updating!
 
@@ -37,10 +40,8 @@ AbpHelper is a tool to help you with developing Abp vNext applications.
 
 # Usage
 
-`abphelper abp_solution_dir entity_file_name`
-
-* `abp_solution_dir`: ABP souliton directory(e.g. `c:\MyTodo` )
-* `entity_file_name`: The entity file name(e.g. `Todo.cs` )
+* Run `abphelper -h` to see the general help
+* Run `abphelper generate -h` to see the generate command help
 
 # Extensibility
 
