@@ -1,0 +1,3 @@
+{{- name = EntityInfo.Name ~}}
+{{- name_camel_case = name | abp.camel_case ~}}
+import { {{ name }}ListComponent } from './{{ name_camel_case }}-list/{{ name_camel_case }}-list.component';

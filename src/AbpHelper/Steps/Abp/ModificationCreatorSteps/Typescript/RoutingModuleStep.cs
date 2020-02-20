@@ -6,17 +6,16 @@ using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
 {
-    public class AppRoutingModuleStep : TypeScriptModificationCreatorStep
+    public class RoutingModuleStep : TypeScriptModificationCreatorStep
     {
         protected override IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
             WorkflowExecutionContext context)
         {
             var model = context.GetVariable<object>("Model");
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            string importContents = TextGenerator.GenerateByTemplateName("AppRoutingModule_ImportApplicationLayoutComponent", model);
-            string routeContents = TextGenerator.GenerateByTemplateName("AppRoutingModule_Routing", model);
+            string importContents = TextGenerator.GenerateByTemplateName("RoutingModule_ImportList", model);
+            string moduleContents = TextGenerator.GenerateByTemplateName("RoutingModule_Routes", model);
 
-            int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"{entityInfo.NamespaceLastPart.ToLower()}")).LineNumber;
+            int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"const routes")).LineNumber;
 
             return new List<ModificationBuilder<IEnumerable<LineNode>>>
             {
@@ -29,7 +28,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
                 new ReplacementBuilder<IEnumerable<LineNode>>(
                     LineExpression,
                     LineExpression,
-                    routeContents
+                    moduleContents
                 )
             };
         }

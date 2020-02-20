@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Models;
 using Elsa.Expressions;
 using Elsa.Results;
@@ -28,6 +29,13 @@ namespace EasyAbp.AbpHelper.Steps.Common
             set => SetState(value);
         }
 
+        public WorkflowExpression<string> NewLine
+        {
+            // TODO: https://github.com/elsa-workflows/elsa-core/issues/250
+            get => GetState(() => new JavaScriptExpression<string>($"'{Environment.NewLine.Replace("\r", "\\r").Replace("\n", "\\n")}'"));
+            set => SetState(value);
+        }
+
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
             var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
@@ -35,6 +43,8 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
             var modifications = await context.EvaluateAsync(Modifications, cancellationToken);
             LogInput(() => modifications, $"Modifications count: {modifications.Count}");
+
+            var newLine = await context.EvaluateAsync(NewLine, cancellationToken);
 
             var lines = await File.ReadAllLinesAsync(targetFile);
             var errors = CheckModifications(modifications, lines).ToArray();
@@ -80,7 +90,9 @@ namespace EasyAbp.AbpHelper.Steps.Common
                 // We don't need these modifications anymore
                 foreach (var modification in lineModifications) modifications.Remove(modification);
 
-                newFile.Append(beforeContents).AppendLine(lineText).Append(afterContents);
+                newFile.AppendWithControlChar(beforeContents)
+                    .AppendLineWithControlChar(lineText, newLine)
+                    .AppendWithControlChar(afterContents);
                 NEXT_LINE: ;
             }
 
