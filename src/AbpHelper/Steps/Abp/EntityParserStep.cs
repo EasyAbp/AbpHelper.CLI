@@ -47,7 +47,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
                 var className = classDeclarationSyntax.Identifier.ToString();
                 var baseList = classDeclarationSyntax.BaseList!;
-                var genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>().Single().Descendants<GenericNameSyntax>().FirstOrDefault();
+                var genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>()
+                    .First(node => !node.ToFullString().StartsWith("I"))    // Not interface
+                    .Descendants<GenericNameSyntax>()
+                    .FirstOrDefault();
                 string baseType;
                 string? primaryKey;
                 if (genericNameSyntax == null)
