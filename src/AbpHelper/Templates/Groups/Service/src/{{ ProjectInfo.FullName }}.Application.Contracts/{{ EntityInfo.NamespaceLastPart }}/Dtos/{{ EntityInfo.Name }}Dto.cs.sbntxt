@@ -6,8 +6,10 @@ namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos
     public class {{ EntityInfo.Name }}Dto : {{ EntityInfo.BaseType | string.replace "AggregateRoot" "Entity"}}Dto{{ if EntityInfo.PrimaryKey }}<{{ EntityInfo.PrimaryKey}}>{{ end }}
     {
         {{~ for prop in EntityInfo.Properties ~}}
-        public {{ prop.Type}} {{ prop.Name }} {get; set;}
+        public {{ prop.Type}} {{ prop.Name }} { get; set; }
+        {{~ if !for.last ~}}
 
+        {{~ end ~}}
         {{~ end ~}}
     }
 }

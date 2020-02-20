@@ -8,8 +8,10 @@ namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos
     {
         {{~ for prop in EntityInfo.Properties ~}}
         [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
-        public {{ prop.Type}} {{ prop.Name }} {get; set;}
+        public {{ prop.Type}} {{ prop.Name }} { get; set; }
+        {{~ if !for.last ~}}
 
+        {{~ end ~}}
         {{~ end ~}}
     }
 }
