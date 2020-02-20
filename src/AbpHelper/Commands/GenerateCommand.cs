@@ -125,7 +125,8 @@ namespace EasyAbp.AbpHelper.Commands
                             .Then("TestGeneration");
 
                         @switch.When(UiFramework.Angular.ToString("D"))
-                            .AddUiAngularGenerationWorkflow()
+                            // TODO
+                            //.AddUiAngularGenerationWorkflow()
                             .Then("TestGeneration");
                     }
                 )
