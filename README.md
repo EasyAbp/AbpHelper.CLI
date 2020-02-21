@@ -36,7 +36,7 @@ AbpHelper is a tool help you with developing Abp vNext applications.
 
 1. Just rebuild your application and run. See the magic happens:)
 
-    ![](doc/images/2020-02-10-14-09-22.png)
+    ![running_demo](doc/images/2020-02-10-14-09-22.png)
 
 # Usage
 
