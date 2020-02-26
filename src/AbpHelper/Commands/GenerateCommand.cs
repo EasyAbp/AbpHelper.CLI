@@ -174,6 +174,11 @@ namespace EasyAbp.AbpHelper.Commands
                         ifElse
                             .When(OutcomeNames.False)
                             .AddTestGenerationWorkflow()
+                            .Then("DbMigrations")
+                            ;
+                        ifElse
+                            .When(OutcomeNames.True)
+                            .Then("DbMigrations")
                             ;
                     }
                 ).WithName("TestGeneration")
@@ -186,7 +191,7 @@ namespace EasyAbp.AbpHelper.Commands
                             .AddMigrationAndUpdateDatabaseWorkflow()
                             ;
                     }
-                )
+                ).WithName("DbMigrations")
                 .Build();
 
             // Start the workflow.

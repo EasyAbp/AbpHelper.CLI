@@ -33,6 +33,10 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
                                 .Then<FileModifierStep>()
                                 .Then("DbContextModel")
                                 ;
+                            ifElse
+                                .When(OutcomeNames.False)
+                                .Then("DbContextModel")
+                                ;
                         }
                     )
                     /* Add entity configuration to DbContextModelCreatingExtensions */
