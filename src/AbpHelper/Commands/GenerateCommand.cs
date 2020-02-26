@@ -49,6 +49,14 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<bool>()
             });
+            AddOption(new Option(new[] {"--skip-localization"}, "Skip generating localization")
+            {
+                Argument = new Argument<bool>()
+            });
+            AddOption(new Option(new[] {"--skip-test"}, "Skip generating test")
+            {
+                Argument = new Argument<bool>()
+            });
             Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
@@ -113,7 +121,18 @@ namespace EasyAbp.AbpHelper.Commands
                     }
                 )
                 .AddServiceGenerationWorkflow("ServiceGeneration")
-                .AddLocalizationGenerationWorkflow("LocalizationGeneration")
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipLocalization"),
+                    ifElse =>
+                    {
+                        ifElse.When(OutcomeNames.False)
+                            .AddLocalizationGenerationWorkflow("LocalizationGeneration")
+                            .Then("Ui")
+                            ;
+                        ifElse.When(OutcomeNames.True)
+                            .Then("Ui")
+                            ;
+                    })
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipUi"),
                     ifElse =>
@@ -147,8 +166,17 @@ namespace EasyAbp.AbpHelper.Commands
                             .Then("TestGeneration")
                             ;
                     }
-                )
-                .AddTestGenerationWorkflow("TestGeneration")
+                ).WithName("Ui")
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipTest"),
+                    ifElse =>
+                    {
+                        ifElse
+                            .When(OutcomeNames.False)
+                            .AddTestGenerationWorkflow()
+                            ;
+                    }
+                ).WithName("TestGeneration")
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipDbMigrations"),
                     ifElse =>
@@ -174,6 +202,8 @@ namespace EasyAbp.AbpHelper.Commands
             public bool CustomRepository { get; set; }
             public bool SkipDbMigrations { get; set; }
             public bool SkipUi { get; set; }
+            public bool SkipLocalization { get; set; }
+            public bool SkipTest { get; set; }
         }
     }
 }

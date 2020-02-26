@@ -11,7 +11,7 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
 {
     public static class LocalizationGenerationWorkflow
     {
-        public static IActivityBuilder AddLocalizationGenerationWorkflow(this IActivityBuilder builder, string name)
+        public static IActivityBuilder AddLocalizationGenerationWorkflow(this IOutcomeBuilder builder, string name)
         {
             return builder
                     /* Add localization */

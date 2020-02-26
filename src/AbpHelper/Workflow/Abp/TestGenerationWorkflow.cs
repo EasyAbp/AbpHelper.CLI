@@ -6,7 +6,7 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
 {
     public static class TestGenerationWorkflow
     {
-        public static IActivityBuilder AddTestGenerationWorkflow(this IActivityBuilder builder, string name)
+        public static IActivityBuilder AddTestGenerationWorkflow(this IOutcomeBuilder builder)
         {
             return builder
                     /* Generate test files */
@@ -16,7 +16,7 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
                             step.GroupName = "Test";
                             step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
                         }
-                    ).WithName(name)
+                    )
                 ;
         }
     }

@@ -1,3 +1,4 @@
+{{ SKIP_GENERATE = (ProjectInfo.TemplateType == 'Module')}}
 using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
