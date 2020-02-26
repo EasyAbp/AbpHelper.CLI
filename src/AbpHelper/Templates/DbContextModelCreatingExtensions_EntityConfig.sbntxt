@@ -1,3 +1,4 @@
+{{~ if ProjectInfo.TemplateType == "Application" ~}}
 
             builder.Entity<{{ EntityInfo.Name }}>(b =>
             {
@@ -5,3 +6,12 @@
                 b.ConfigureByConvention(); 
                 /* Configure more properties here */
             });
+{{~ else if ProjectInfo.TemplateType == "Module" ~}}
+
+            builder.Entity<{{ EntityInfo.Name }}>(b =>
+            {
+                b.ToTable(options.TablePrefix + "{{ EntityInfo.NamePluralized }}", options.Schema);
+                b.ConfigureByConvention(); 
+                /* Configure more properties here */
+            });
+{{~ end ~}}

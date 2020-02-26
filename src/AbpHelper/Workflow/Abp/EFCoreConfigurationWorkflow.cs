@@ -1,5 +1,7 @@
 ﻿using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Common;
+using Elsa;
+using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
@@ -11,16 +13,32 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
         public static IActivityBuilder AddEfCoreConfigurationWorkflow(this IActivityBuilder builder)
         {
             return builder
-                    /* Add entity property to DbContext */
+                    /* Add entity property to DbContext class*/
                     .Then<FileFinderStep>(
                         step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); })
-                    .Then<TextGenerationStep>(step => { step.TemplateName = "DbContext_Property"; })
-                    .Then<DbContextStep>()
+                    .Then<TextGenerationStep>(step => { step.TemplateName = "DbContextClass_Property"; })
+                    .Then<DbContextClassStep>()
                     .Then<FileModifierStep>()
+                    .IfElse(
+                        step => step.ConditionExpression = new JavaScriptExpression<bool>("ProjectInfo.TemplateType == 1"),
+                        ifElse =>
+                        {
+                            // For module, we also need to modify the IDbContext interface */
+                            ifElse
+                                .When(OutcomeNames.True)
+                                .Then<FileFinderStep>(
+                                    step => { step.SearchFileName = new JavaScriptExpression<string>("`I${ProjectInfo.Name}DbContext.cs`"); })
+                                .Then<TextGenerationStep>(step => { step.TemplateName = "DbContextInterface_Property"; })
+                                .Then<DbContextInterfaceStep>()
+                                .Then<FileModifierStep>()
+                                .Then("DbContextModel")
+                                ;
+                        }
+                    )
                     /* Add entity configuration to DbContextModelCreatingExtensions */
                     .Then<FileFinderStep>(
                         step => step.SearchFileName = new LiteralExpression("*DbContextModelCreatingExtensions.cs")
-                    )
+                    ).WithName("DbContextModel")
                     .Then<DbContextModelCreatingExtensionsStep>()
                     .Then<FileModifierStep>()
                 ;
