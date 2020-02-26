@@ -1,13 +1,13 @@
-{{ SKIP_GENERATE = Option.SeparateDto }}
+{{- SKIP_GENERATE = Option.SeparateDto -}}
 using System;
-using System.ComponentModel;
+{{~ if !Option.SkipLocalization }}using System.ComponentModel;{{ end ~}}
 
 namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos
 {
     public class CreateUpdate{{ EntityInfo.Name }}Dto
     {
         {{~ for prop in EntityInfo.Properties ~}}
-        {{ if !Option.SkipLocalization }}[DisplayName("{{ EntityInfo.Name + prop.Name}}")]{{ end }}
+        {{- if !Option.SkipLocalization }}[DisplayName("{{ EntityInfo.Name + prop.Name}}")]{{ end ~}}
         public {{ prop.Type}} {{ prop.Name }} { get; set; }
         {{~ if !for.last ~}}
 
