@@ -9,6 +9,8 @@ AbpHelper is a tool help you with developing Abp vNext applications.
 1. Install AbpHelper CLI tool
 
     `dotnet tool install EasyAbp.AbpHelper -g`
+    
+    > If you prefer GUI, there is also a tool with a fancy UI: [AbpHelper.GUI](https://github.com/EasyAbp/AbpHelper.GUI)
 
 1. Use [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) to create a test application
 
