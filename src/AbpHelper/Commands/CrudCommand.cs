@@ -20,16 +20,12 @@ namespace EasyAbp.AbpHelper.Commands
     {
         public CrudCommand(IServiceProvider serviceProvider) : base(serviceProvider, "crud", "Generate a set of CRUD related files according to the specified entity")
         {
-            AddOption(new Option(new[] {"-e", "--entity"}, "The entity class name")
-            {
-                Argument = new Argument<string>(),
-                Required = true
-            });
+            AddArgument(new Argument<string>("entity"){Description = "The entity class name"});
             AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used.")
             {
                 Argument = new Argument<string>()
             });
-            AddOption(new Option(new[] {"--separate-dto"}, "Generate separate Create and Update DTO file")
+            AddOption(new Option(new[] {"--separate-dto"}, "Generate separate Create and Update DTO files")
             {
                 Argument = new Argument<bool>()
             });
