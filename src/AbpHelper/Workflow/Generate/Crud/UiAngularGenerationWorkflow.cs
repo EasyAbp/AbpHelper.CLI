@@ -4,7 +4,7 @@ using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Crud
+namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
     public static class UiAngularGenerationWorkflow
     {
@@ -51,7 +51,7 @@ namespace EasyAbp.AbpHelper.Workflow.Crud
                             @"`cd /d ${BaseDirectory}\\angular && yarn ng generate ngxs-schematic:state ${EntityInfo.NamespaceLastPart.toLowerCase()}`"
                         ))
                     /* Generate XXX.ts */
-                    .Then<TemplateGroupGenerationStep>(
+                    .Then<GroupGenerationStep>(
                         step => { step.GroupName = "UiAngular"; }
                     )
                 ;

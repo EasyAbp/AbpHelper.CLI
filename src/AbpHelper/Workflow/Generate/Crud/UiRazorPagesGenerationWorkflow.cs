@@ -3,7 +3,7 @@ using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Crud
+namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
     public static class UiRazorPagesGenerationWorkflow
     {
@@ -11,7 +11,7 @@ namespace EasyAbp.AbpHelper.Workflow.Crud
         {
             return builder
                     /* Generate razor pages ui files*/
-                    .Then<TemplateGroupGenerationStep>(
+                    .Then<GroupGenerationStep>(
                         step =>
                         {
                             step.GroupName = "UiRazor";

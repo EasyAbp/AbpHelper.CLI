@@ -13,7 +13,7 @@ using Scriban.Runtime;
 
 namespace EasyAbp.AbpHelper.Steps.Common
 {
-    public class TemplateGroupGenerationStep : Step
+    public class GroupGenerationStep : Step
     {
         private const string SkipGenerate = "SKIP_GENERATE";
 

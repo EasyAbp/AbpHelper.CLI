@@ -4,7 +4,7 @@ using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Crud
+namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
     public static class CustomRepositoryGenerationWorkflow
     {
@@ -12,7 +12,7 @@ namespace EasyAbp.AbpHelper.Workflow.Crud
         {
             return builder
                     /* Generate custom repository interface and class */
-                    .Then<TemplateGroupGenerationStep>(
+                    .Then<GroupGenerationStep>(
                         step =>
                         {
                             step.GroupName = "Repository"; 

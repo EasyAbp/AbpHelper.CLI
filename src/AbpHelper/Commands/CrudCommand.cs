@@ -7,7 +7,7 @@ using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
-using EasyAbp.AbpHelper.Workflow.Crud;
+using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;

@@ -2,7 +2,7 @@
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Crud
+namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
     public static class TestGenerationWorkflow
     {
@@ -10,7 +10,7 @@ namespace EasyAbp.AbpHelper.Workflow.Crud
         {
             return builder
                     /* Generate test files */
-                    .Then<TemplateGroupGenerationStep>(
+                    .Then<GroupGenerationStep>(
                         step =>
                         {
                             step.GroupName = "Test";
