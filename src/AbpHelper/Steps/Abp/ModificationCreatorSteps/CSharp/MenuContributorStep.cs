@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
@@ -13,19 +14,50 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
     {
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
+            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
             var model = context.GetVariable<object>("Model");
-            string contents = TextGenerator.GenerateByTemplateName("MenuContributor_AddMenuItem", model);
+            string addMenuItemContents = TextGenerator.GenerateByTemplateName("MenuContributor_AddMenuItem", model);
 
             CSharpSyntaxNode Func(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
-                    .Single(n => n.Identifier.ToString() == "ConfigureMainMenuAsync");
+                .Single(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
 
-            return new List<ModificationBuilder<CSharpSyntaxNode>>
+            if (projectInfo.TemplateType == TemplateType.Application)
             {
-                new InsertionBuilder<CSharpSyntaxNode>(root => Func(root).GetEndLine(),
-                    contents,
-                    modifyCondition: root => Func(root).NotContains(contents)
-                )
-            };
+                return new List<ModificationBuilder<CSharpSyntaxNode>>
+                {
+                    new InsertionBuilder<CSharpSyntaxNode>(
+                        root => Func(root).GetEndLine(),
+                        addMenuItemContents,
+                        modifyCondition: root => Func(root).NotContains(addMenuItemContents)
+                    )
+                };
+            }
+
+            if (projectInfo.TemplateType == TemplateType.Module)
+            {
+                string addUsingContents = TextGenerator.GenerateByTemplateName("MenuContributor_Using", model);
+                string addLocalizerContents = TextGenerator.GenerateByTemplateName("MenuContributor_Localizer", model);
+                return new List<ModificationBuilder<CSharpSyntaxNode>>
+                {
+                    new InsertionBuilder<CSharpSyntaxNode>(
+                        root => 2,
+                        addUsingContents,
+                        modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(addUsingContents)
+                    ),
+                    new InsertionBuilder<CSharpSyntaxNode>(
+                        root => Func(root).GetStartLine() + 2,
+                        addLocalizerContents,
+                        modifyCondition: root => Func(root).NotContains(addLocalizerContents)
+                    ),
+                    new InsertionBuilder<CSharpSyntaxNode>(
+                        root => Func(root).GetEndLine() - 1,    // Before `return Task.CompletedTask;`
+                        addMenuItemContents,
+                        modifyCondition: root => Func(root).NotContains(addMenuItemContents)
+                    )
+                };
+            }
+
+            throw new ArgumentException(projectInfo.TemplateType.ToString(), nameof(projectInfo.TemplateType));
         }
     }
 }

@@ -16,7 +16,6 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
                     /* Add entity property to DbContext class*/
                     .Then<FileFinderStep>(
                         step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); })
-                    .Then<TextGenerationStep>(step => { step.TemplateName = "DbContextClass_Property"; })
                     .Then<DbContextClassStep>()
                     .Then<FileModifierStep>()
                     .IfElse(
@@ -28,7 +27,6 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
                                 .When(OutcomeNames.True)
                                 .Then<FileFinderStep>(
                                     step => { step.SearchFileName = new JavaScriptExpression<string>("`I${ProjectInfo.Name}DbContext.cs`"); })
-                                .Then<TextGenerationStep>(step => { step.TemplateName = "DbContextInterface_Property"; })
                                 .Then<DbContextInterfaceStep>()
                                 .Then<FileModifierStep>()
                                 .Then("DbContextModel")

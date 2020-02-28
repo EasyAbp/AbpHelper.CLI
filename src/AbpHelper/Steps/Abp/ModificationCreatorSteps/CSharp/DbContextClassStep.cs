@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
+using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,8 +13,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
     {
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
-            var entityUsingText = context.GetVariable<string>("EntityUsingText");
-            var dbContextPropertyText = context.GetVariable<string>(TextGenerationStep.DefaultGeneratedTextParameterName);
+            var model = context.GetVariable<object>("Model");
+            string entityUsingText = context.GetVariable<string>("EntityUsingText");
+            string dbContextPropertyText = TextGenerator.GenerateByTemplateName("DbContextClass_Property", model);
 
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {

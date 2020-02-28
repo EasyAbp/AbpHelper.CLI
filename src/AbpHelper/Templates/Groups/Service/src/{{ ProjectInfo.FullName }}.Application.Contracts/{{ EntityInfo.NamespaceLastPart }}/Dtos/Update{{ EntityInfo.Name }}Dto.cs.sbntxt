@@ -7,7 +7,9 @@ namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos
     public class Update{{ EntityInfo.Name }}Dto
     {
         {{~ for prop in EntityInfo.Properties ~}}
-        {{ if !Option.SkipLocalization }}[DisplayName("{{ EntityInfo.Name + prop.Name}}")]{{ end }}
+        {{~ if !Option.SkipLocalization ~}}
+        [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
+        {{~ end ~}}
         public {{ prop.Type}} {{ prop.Name }} { get; set; }
         {{~ if !for.last ~}}
 

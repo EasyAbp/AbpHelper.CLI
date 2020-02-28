@@ -1,6 +1,5 @@
 ﻿using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Common;
-using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
@@ -21,14 +20,17 @@ namespace EasyAbp.AbpHelper.Workflow.Abp
                     )
                     /* Add menu */
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = new LiteralExpression("*MenuContributor.cs")
+                        step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MenuContributor.cs`")
                     )
                     .Then<MenuContributorStep>()
                     .Then<FileModifierStep>()
                     /* Add mapping */
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = new LiteralExpression<string>("*WebAutoMapperProfile.cs")
-                    )
+                        step =>
+                        {
+                            step.BaseDirectory = new JavaScriptExpression<string>("`${BaseDirectory}/src`");
+                            step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}WebAutoMapperProfile.cs`");
+                        })
                     .Then<WebAutoMapperProfileStep>()
                     .Then<FileModifierStep>()
                 ;

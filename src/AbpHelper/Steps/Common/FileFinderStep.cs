@@ -37,7 +37,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
             var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
-            LogInput(() => SearchFileName);
+            LogInput(() => searchFileName);
             var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
             var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();

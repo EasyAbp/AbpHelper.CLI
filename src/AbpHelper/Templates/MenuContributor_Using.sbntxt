@@ -1,0 +1,3 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using {{ ProjectInfo.Name }}.Localization;
