@@ -6,19 +6,36 @@ createDto = "CreateUpdate" + EntityInfo.Name + "Dto"
 updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
 end
 -}}
+{{- if Option.CustomRepository
+repository = "I" + EntityInfo.Name + "Repository"
+else
+repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + ">"
+end
+-}}
 using System;
 using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+{{~ if !Option.CustomRepository ~}}
 using Volo.Abp.Domain.Repositories;
+{{~ end ~}}
 
 namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
 {
     public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto, {{ createDto }}, {{ updateDto }}>,
         I{{ EntityInfo.Name }}AppService
     {
-        public {{ EntityInfo.Name }}AppService(IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> repository) : base(repository)
+        {{~ if Option.CustomRepository ~}}
+        private readonly {{ repository }} _repository;
+
+        public {{ EntityInfo.Name }}AppService({{ repository }} repository) : base(repository)
+        {
+            _repository = repository;
+        }
+        {{~ else ~}}
+        public {{ EntityInfo.Name }}AppService({{ repository }} repository) : base(repository)
         {
         }
+        {{~ end ~}}
     }
 }
