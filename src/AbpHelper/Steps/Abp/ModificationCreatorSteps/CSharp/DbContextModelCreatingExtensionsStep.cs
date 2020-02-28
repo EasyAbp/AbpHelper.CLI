@@ -15,8 +15,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         {
             var model = context.GetVariable<object>("Model");
             var entityUsingText = context.GetVariable<string>("EntityUsingText");
-            var modelingUsingText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_Using", model);
-            var entityConfigText = TextGenerator.GenerateByTemplateName("DbContextModelCreatingExtensions_EntityConfig", model);
+            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            var modelingUsingText = TextGenerator.GenerateByTemplateName(templateDir, "DbContextModelCreatingExtensions_Using", model);
+            var entityConfigText = TextGenerator.GenerateByTemplateName(templateDir, "DbContextModelCreatingExtensions_EntityConfig", model);
 
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {

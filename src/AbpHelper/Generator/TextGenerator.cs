@@ -7,15 +7,15 @@ namespace EasyAbp.AbpHelper.Generator
 {
     public static class TextGenerator
     {
-        public static string GenerateByTemplateName(string templateName, object model)
+        public static string GenerateByTemplateName(string templateDirectory, string templateName, object model)
         {
-            return GenerateByTemplateName(templateName, model, out _);
+            return GenerateByTemplateName(templateDirectory, templateName, model, out _);
         }
         
-        public static string GenerateByTemplateName(string templateName, object model, out TemplateContext context)
+        public static string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
         {
             var appDir = AppDomain.CurrentDomain.BaseDirectory!;
-            var templateFile = Path.Combine(appDir, "Templates", templateName + ".sbntxt");
+            var templateFile = Path.Combine(appDir, templateDirectory, templateName + ".sbntxt");
             var templateText = File.ReadAllText(templateFile);
             return GenerateByTemplateText(templateText, model, out context);
         }

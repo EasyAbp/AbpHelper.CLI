@@ -12,6 +12,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
     {
         public const string DefaultGeneratedTextParameterName = "GeneratedText";
 
+        public WorkflowExpression<string> TemplateDirectory
+        {
+            get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>("TemplateDirectory"));
+            set => SetState(value);
+        }
+        
         public string TemplateName
         {
             get => GetState<string>();
@@ -32,13 +38,15 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
+            string templateDir = await context.EvaluateAsync(TemplateDirectory, cancellationToken);
+            LogInput(() => templateDir);
             LogInput(() => TemplateName);
             var model = await context.EvaluateAsync(Model, cancellationToken);
             LogInput(() => model);
             var generatedTextKey = await context.EvaluateAsync(GeneratedTextKey, cancellationToken);
             LogInput(() => GeneratedTextKey);
 
-            var text = TextGenerator.GenerateByTemplateName(TemplateName, model);
+            var text = TextGenerator.GenerateByTemplateName(templateDir, TemplateName, model);
 
             context.SetLastResult(text);
             context.SetVariable(generatedTextKey, text);

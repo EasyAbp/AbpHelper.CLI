@@ -42,8 +42,6 @@
 
     <ItemGroup>
       <Folder Include="Parser" />
-      <Folder Include="Templates\Groups\Test" />
-      <Folder Include="Templates\Groups\UiAngular\angular" />
     </ItemGroup>
 
     <ItemGroup>

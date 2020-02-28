@@ -12,8 +12,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
             WorkflowExecutionContext context)
         {
             var model = context.GetVariable<object>("Model");
-            string importContents = TextGenerator.GenerateByTemplateName("RoutingModule_ImportList", model);
-            string moduleContents = TextGenerator.GenerateByTemplateName("RoutingModule_Routes", model);
+            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string importContents = TextGenerator.GenerateByTemplateName(templateDir, "RoutingModule_ImportList", model);
+            string moduleContents = TextGenerator.GenerateByTemplateName(templateDir, "RoutingModule_Routes", model);
 
             int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"const routes")).LineNumber;
 

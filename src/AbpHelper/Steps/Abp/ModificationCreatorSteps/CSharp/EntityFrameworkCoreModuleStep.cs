@@ -15,7 +15,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         {
             var model = context.GetVariable<object>("Model");
             string entityUsingText = context.GetVariable<string>("EntityUsingText");
-            string contents = TextGenerator.GenerateByTemplateName("EntityFrameworkCoreModule_AddRepository", model);
+            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string contents = TextGenerator.GenerateByTemplateName(templateDir, "EntityFrameworkCoreModule_AddRepository", model);
 
             CSharpSyntaxNode Func(CSharpSyntaxNode root) => root
                 .Descendants<ExpressionStatementSyntax>()

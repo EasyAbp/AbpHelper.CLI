@@ -16,7 +16,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         {
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
             var model = context.GetVariable<object>("Model");
-            string addMenuItemContents = TextGenerator.GenerateByTemplateName("MenuContributor_AddMenuItem", model);
+            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string addMenuItemContents = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
 
             CSharpSyntaxNode Func(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
                 .Single(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
@@ -35,8 +36,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 
             if (projectInfo.TemplateType == TemplateType.Module)
             {
-                string addUsingContents = TextGenerator.GenerateByTemplateName("MenuContributor_Using", model);
-                string addLocalizerContents = TextGenerator.GenerateByTemplateName("MenuContributor_Localizer", model);
+                string addUsingContents = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_Using", model);
+                string addLocalizerContents = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_Localizer", model);
                 return new List<ModificationBuilder<CSharpSyntaxNode>>
                 {
                     new InsertionBuilder<CSharpSyntaxNode>(

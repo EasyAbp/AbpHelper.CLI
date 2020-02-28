@@ -16,7 +16,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             var model = context.GetVariable<object>("Model");
             string entityUsingText = context.GetVariable<string>("EntityUsingText");
             string entityDtoUsingText = context.GetVariable<string>("EntityDtoUsingText");
-            string contents = TextGenerator.GenerateByTemplateName("ApplicationAutoMapperProfile_CreateMap", model);
+            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string contents = TextGenerator.GenerateByTemplateName(templateDir, "ApplicationAutoMapperProfile_CreateMap", model);
             
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {

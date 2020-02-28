@@ -2,7 +2,7 @@
 using Elsa.Expressions;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Abp
+namespace EasyAbp.AbpHelper.Workflow.Crud
 {
     public static class EntityUsingGenerationWorkflow
     {

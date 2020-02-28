@@ -13,8 +13,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
         {
             var model = context.GetVariable<object>("Model");
             var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            string importContents = TextGenerator.GenerateByTemplateName("AppRoutingModule_ImportApplicationLayoutComponent", model);
-            string routeContents = TextGenerator.GenerateByTemplateName("AppRoutingModule_Routing", model);
+            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string importContents = TextGenerator.GenerateByTemplateName(templateDir, "AppRoutingModule_ImportApplicationLayoutComponent", model);
+            string routeContents = TextGenerator.GenerateByTemplateName(templateDir, "AppRoutingModule_Routing", model);
 
             int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"{entityInfo.NamespaceLastPart.ToLower()}")).LineNumber;
 

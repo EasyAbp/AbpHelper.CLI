@@ -2,7 +2,7 @@
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Abp
+namespace EasyAbp.AbpHelper.Workflow.Crud
 {
     public static class TestGenerationWorkflow
     {

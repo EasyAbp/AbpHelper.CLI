@@ -17,6 +17,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
     {
         private const string SkipGenerate = "SKIP_GENERATE";
 
+        public WorkflowExpression<string> TemplateDirectory
+        {
+            get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>("TemplateDirectory"));
+            set => SetState(value);
+        }
+        
         public string GroupName
         {
             get => GetState<string>();
@@ -43,6 +49,8 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
+            string templateDir = await context.EvaluateAsync(TemplateDirectory, cancellationToken);
+            LogInput(() => templateDir);
             LogInput(() => GroupName);
             var targetDirectory = await context.EvaluateAsync(TargetDirectory, cancellationToken);
             LogInput(() => targetDirectory);
@@ -52,7 +60,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
             LogInput(() => model);
 
             var appDir = AppDomain.CurrentDomain.BaseDirectory!;
-            var groupDir = Path.Combine(appDir, "Templates", "Groups", GroupName);
+            var groupDir = Path.Combine(appDir, templateDir, "Groups", GroupName);
             if (!Directory.Exists(groupDir)) throw new DirectoryNotFoundException($"Template group directory {groupDir} is not exist.");
 
             await GenerateFile(groupDir, targetDirectory, model, overwrite);
