@@ -43,7 +43,6 @@
     <ItemGroup>
       <Folder Include="Parser" />
       <Folder Include="Templates\Service\Groups\Service\src\{{ ProjectInfo.FullName }}.Application.Contracts\{{ Option.Folder }}\Dtos" />
-      <Folder Include="Workflow\Generate\Service" />
     </ItemGroup>
 
     <ItemGroup>

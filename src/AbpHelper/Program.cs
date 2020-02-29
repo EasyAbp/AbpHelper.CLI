@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using Volo.Abp;
-using CommandLineBuilder = EasyAbp.AbpHelper.Commands.CommandLines.CommandLineBuilder;
+using CommandLineBuilder = EasyAbp.AbpHelper.Commands.CommandLineBuilder;
 
 namespace EasyAbp.AbpHelper
 {

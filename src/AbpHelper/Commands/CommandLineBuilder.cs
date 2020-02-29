@@ -3,7 +3,7 @@ using System.CommandLine;
 using System.CommandLine.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyAbp.AbpHelper.Commands.CommandLines
+namespace EasyAbp.AbpHelper.Commands
 {
     public class CommandLineBuilder : System.CommandLine.Builder.CommandLineBuilder
     {

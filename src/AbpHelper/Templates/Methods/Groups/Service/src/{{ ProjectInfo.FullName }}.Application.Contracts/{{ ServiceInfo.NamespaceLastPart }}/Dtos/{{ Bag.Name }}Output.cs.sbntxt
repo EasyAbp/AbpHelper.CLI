@@ -1,0 +1,7 @@
+{{- SKIP_GENERATE = Option.NoInput -}}
+namespace {{ ServiceInfo.Namespace }}.Dtos
+{
+    public class {{ Bag.Name }}Output
+    {
+    }
+}

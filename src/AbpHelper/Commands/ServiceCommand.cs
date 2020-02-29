@@ -15,7 +15,7 @@ namespace EasyAbp.AbpHelper.Commands
     {
         public ServiceCommand(IServiceProvider serviceProvider) : base(serviceProvider, "service", "Generate service interface and class files according to the specified name")
         {
-            AddArgument(new Argument<string>("name") {Description = "The service name"});
+            AddArgument(new Argument<string>("name") {Description = "The service name(without 'AppService' postfix)"});
             AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used.")
             {
                 Argument = new Argument<string>()

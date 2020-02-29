@@ -1,4 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Models;
 using Elsa.Results;
@@ -10,11 +14,25 @@ namespace EasyAbp.AbpHelper.Steps.Abp
     {
         protected override Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
             var option = context.GetVariable<object>("Option");
+            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
+            var serviceInfo = context.GetVariable<ServiceInfo>("ServiceInfo");
+            var variables = context.GetVariables().Where(v => v.Key.StartsWith("Bag."));
+            var bag = new ExpandoObject();
+            foreach (var variable in variables)
+            {
+                ((IDictionary<string, object>) bag)[variable.Key.RemovePreFix("Bag.")] = variable.Value.Value;
+            }
 
-            context.SetVariable("Model", new {EntityInfo = entityInfo, ProjectInfo = projectInfo, Option = option});
+            context.SetVariable("Model", new
+            {
+                ProjectInfo = projectInfo,
+                Option = option,
+                EntityInfo = entityInfo,
+                ServiceInfo = serviceInfo,
+                Bag = bag,
+            });
             return Task.FromResult(Done());
         }
     }
