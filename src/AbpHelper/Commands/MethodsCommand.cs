@@ -24,7 +24,7 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<string>()
             });
-            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used.")
+            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
             {
                 Argument = new Argument<string>()
             });

@@ -21,7 +21,7 @@ namespace EasyAbp.AbpHelper.Commands
         public CrudCommand(IServiceProvider serviceProvider) : base(serviceProvider, "crud", "Generate a set of CRUD related files according to the specified entity")
         {
             AddArgument(new Argument<string>("entity"){Description = "The entity class name"});
-            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used.")
+            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
             {
                 Argument = new Argument<string>()
             });
