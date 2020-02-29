@@ -9,13 +9,13 @@
         <Copyright>EasyAbp Team</Copyright>
         <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
         <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
-        <PackageVersion>0.1.0</PackageVersion>
+        <PackageVersion>0.1.1</PackageVersion>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>abphelper</ToolCommandName>
         <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
         <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
-        <AssemblyVersion>0.1.0</AssemblyVersion>
-        <FileVersion>0.1.0</FileVersion>
+        <AssemblyVersion>0.1.1</AssemblyVersion>
+        <FileVersion>0.1.1</FileVersion>
         <Authors>EasyAbp Team</Authors>
         <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
         <PackageTags>abp helper generator</PackageTags>
@@ -27,8 +27,8 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
         <PackageReference Include="Scriban" Version="2.1.1" />
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20104.2" />
-        <PackageReference Include="Volo.Abp.Autofac" Version="2.0.1" />
-        <PackageReference Include="Volo.Abp.Core" Version="2.0.1" />
+        <PackageReference Include="Volo.Abp.Autofac" Version="2.1.1" />
+        <PackageReference Include="Volo.Abp.Core" Version="2.1.1" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
@@ -50,4 +50,7 @@
       <Compile Remove="Steps\CSharp\InsertionStep.cs" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    </PropertyGroup>
 </Project>
