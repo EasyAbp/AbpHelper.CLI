@@ -12,6 +12,10 @@ AbpHelper is a tool help you with developing Abp vNext applications.
     
     > If you prefer GUI, there is also a tool with a fancy UI: [AbpHelper.GUI](https://github.com/EasyAbp/AbpHelper.GUI)
 
+1. If you have previously installed it, update it with the following command:
+
+    `dotnet tool update EasyAbp.AbpHelper -g`
+
 1. Use [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) to create a test application
 
     `abp new MyToDo`
@@ -29,10 +33,11 @@ AbpHelper is a tool help you with developing Abp vNext applications.
 
 1. Run AbpHelper
 
-    `abphelper generate -e Todo -d C:\MyTodo`
+    `abphelper generate crud Todo -d C:\MyTodo`
 
-    * `-e` specified the entity name (`Todo` in this example)
-    * `-d` specified the **root** directory of the ABP application, which is created by ABP CLI
+    * `generate crud` is a sub command to generate CRUD files
+    * `Todo` specified the entity name we created earlier
+    * `-d` specified the **root** directory of the ABP project, which is created by the ABP CLI
 
     AbpHelper will generate all the CRUD stuff , even include adding migration and database updating!
 
@@ -43,7 +48,25 @@ AbpHelper is a tool help you with developing Abp vNext applications.
 # Usage
 
 * Run `abphelper -h` to see the general help
-* Run `abphelper generate -h` to see the generate command help
+* Similarly, you can use `-h` or `--help` option to see detailed usage of each of the following commands
+
+## Commands
+
+* generate
+
+  Generate files for ABP projects. See 'abphelper generate --help' for details
+
+  * crud
+
+    Generate a set of CRUD related files according to the specified entity
+
+  * service
+
+    Generate service interface and class files according to the specified name
+
+  * methods
+
+    Generate service method(s) according to the specified name(s)
 
 # Extensibility
 
@@ -52,7 +75,7 @@ TODO: Describe how to custom the generating steps, and custom templates.
 # Roadmap
 
 - [ ] More CLI parameters
-- [ ] Support ABP module solutions
+- [x] Support ABP module solutions
 - [ ] Support MogoDB generation
 - [ ] Support Angular UI generation
 
