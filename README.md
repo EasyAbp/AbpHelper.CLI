@@ -60,13 +60,19 @@ AbpHelper is a tool help you with developing Abp vNext applications.
 
     Generate a set of CRUD related files according to the specified entity
 
+    [Demo GIF](doc/images/crud.gif)
+
   * service
 
     Generate service interface and class files according to the specified name
 
+    [Demo GIF](doc/images/service.gif)
+
   * methods
 
     Generate service method(s) according to the specified name(s)
+
+    [Demo GIF](doc/images/methods.gif)
 
 # Extensibility
 
