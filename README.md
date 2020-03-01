@@ -48,7 +48,7 @@ AbpHelper is a tool help you with developing Abp vNext applications.
 # Usage
 
 * Run `abphelper -h` to see the general help
-* Similarly, you can use `-h` or `--help` option to see detailed usage of each of the following commands
+* Similarly, you can use `-h` or `--help` option to see detailed usage of each of the following command
 
 ## Commands
 
