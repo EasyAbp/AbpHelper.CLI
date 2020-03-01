@@ -45,8 +45,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var interfaceDeclarationSyntax = root.Descendants<InterfaceDeclarationSyntax>().Single();
                 var interfaceName = interfaceDeclarationSyntax.Identifier.ToString();
+                int methodsCount = root.Descendants<MethodDeclarationSyntax>().Count();
 
-                var serviceInfo = new ServiceInfo(@namespace, interfaceName);
+                var serviceInfo = new ServiceInfo(@namespace, interfaceName, methodsCount);
 
                 context.SetLastResult(serviceInfo);
                 context.SetVariable("ServiceInfo", serviceInfo);
