@@ -33,7 +33,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
             var jsonText = await File.ReadAllTextAsync(targetFile);
             var jDoc = JObject.Parse(jsonText);
-            var jTexts = jDoc["texts"]!;
+            var jTexts = jDoc["texts"] ?? jDoc["Texts"]!;
 
             foreach (var kv in jNew)
                 if (jTexts[kv.Key] == null) // Prevent inserting duplicate localization
