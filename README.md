@@ -2,7 +2,7 @@
 
 AbpHelper is a tool help you with developing Abp vNext applications.
 
-**Make sure **backup** your source files before using it!**.
+**Make sure backup your source files before using it!**
 
 # Getting Started
 
