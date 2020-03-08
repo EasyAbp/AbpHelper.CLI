@@ -44,7 +44,14 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             if (Directory.EnumerateFiles(baseDirectory, "*.cshtml", SearchOption.AllDirectories).Any())
             {
                 uiFramework = UiFramework.RazorPages;
-                context.SetVariable("AspNetCoreDir", baseDirectory);
+                if (templateType == TemplateType.Application)
+                {
+                    context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
+                }
+                else
+                {
+                    context.SetVariable("AspNetCoreDir", baseDirectory);
+                }
             }
             else if (Directory.EnumerateFiles(baseDirectory, "app.module.ts", SearchOption.AllDirectories).Any())
             {

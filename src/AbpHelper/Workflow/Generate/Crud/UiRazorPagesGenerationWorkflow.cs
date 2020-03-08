@@ -28,7 +28,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                     .Then<FileFinderStep>(
                         step =>
                         {
-                            step.BaseDirectory = new JavaScriptExpression<string>("`${BaseDirectory}/src`");
+                            step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}\\src`");
                             step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}WebAutoMapperProfile.cs`");
                         })
                     .Then<WebAutoMapperProfileStep>()
