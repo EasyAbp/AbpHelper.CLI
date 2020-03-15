@@ -22,6 +22,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Parser\**" />
+      <EmbeddedResource Remove="Parser\**" />
+      <None Remove="Parser\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Elsa" Version="1.2.2.28" />
         <PackageReference Include="Humanizer.Core" Version="2.7.9" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
@@ -41,7 +47,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Parser" />
       <Folder Include="Templates\Service\Groups\Service\src\{{ ProjectInfo.FullName }}.Application.Contracts\{{ Option.Folder }}\Dtos" />
     </ItemGroup>
 
