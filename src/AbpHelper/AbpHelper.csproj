@@ -3,7 +3,8 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <Nullable>enable</Nullable>
+		<LangVersion>8.0</LangVersion>
+		<Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Description>AbpHelper is a tool to help you with developing Abp vNext applications.</Description>
         <Copyright>EasyAbp Team</Copyright>
@@ -20,6 +21,12 @@
         <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
         <PackageTags>abp helper generator</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Parser\**" />
+      <EmbeddedResource Remove="Parser\**" />
+      <None Remove="Parser\**" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Elsa" Version="1.2.2.28" />
@@ -41,13 +48,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Parser" />
       <Folder Include="Templates\Service\Groups\Service\src\{{ ProjectInfo.FullName }}.Application.Contracts\{{ Option.Folder }}\Dtos" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Steps\LoopStep.cs" />
-      <Compile Remove="Steps\CSharp\InsertionStep.cs" />
     </ItemGroup>
 
     <PropertyGroup>
