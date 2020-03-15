@@ -31,8 +31,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         public WorkflowExpression<string> NewLine
         {
-            // TODO: https://github.com/elsa-workflows/elsa-core/issues/250
-            get => GetState(() => new JavaScriptExpression<string>($"'{Environment.NewLine.Replace("\r", "\\r").Replace("\n", "\\n")}'"));
+            get => GetState(() => new LiteralExpression<string>("\r\n"));
             set => SetState(value);
         }
 
