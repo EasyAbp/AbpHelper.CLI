@@ -14,7 +14,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                     /* Add angular module */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>(
-                            @"`cd /d ${BaseDirectory}\\angular && yarn ng generate module ${EntityInfo.NamespaceLastPart.toLowerCase()} --route ${EntityInfo.NamespaceLastPart.toLowerCase()} --module app.module`"
+                            @"`cd /d ${BaseDirectory}/angular && yarn ng generate module ${EntityInfo.NamespaceLastPart.toLowerCase()} --route ${EntityInfo.NamespaceLastPart.toLowerCase()} --module app.module`"
                         ))
                     /* Modify app-routing.module.ts */
                     .Then<FileFinderStep>(
@@ -27,7 +27,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                     /* Add list component */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>(
-                            @"`cd /d ${BaseDirectory}\\angular && yarn ng generate component ${EntityInfo.NamespaceLastPart.toLowerCase()}/${EntityInfo.Name.toLowerCase()}-list`"
+                            @"`cd /d ${BaseDirectory}/angular && yarn ng generate component ${EntityInfo.NamespaceLastPart.toLowerCase()}/${EntityInfo.Name.toLowerCase()}-list`"
                         ))
                     /* Modify XXX.module.ts */
                     .Then<FileFinderStep>(
@@ -48,7 +48,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                     /* Create state */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>(
-                            @"`cd /d ${BaseDirectory}\\angular && yarn ng generate ngxs-schematic:state ${EntityInfo.NamespaceLastPart.toLowerCase()}`"
+                            @"`cd /d ${BaseDirectory}/angular && yarn ng generate ngxs-schematic:state ${EntityInfo.NamespaceLastPart.toLowerCase()}`"
                         ))
                     /* Generate XXX.ts */
                     .Then<GroupGenerationStep>(
