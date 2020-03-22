@@ -33,3 +33,4 @@ Desktop.ini
 .DS_Store
 
 src/Logs/logs.txt
+/**/*.nupkg
