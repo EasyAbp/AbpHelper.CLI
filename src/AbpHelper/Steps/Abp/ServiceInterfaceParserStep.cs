@@ -28,6 +28,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
         {
             var appServiceInterfaceFile = await context.EvaluateAsync(ServiceInterfaceFile, cancellationToken);
             LogInput(() => appServiceInterfaceFile);
+            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
 
             var sourceText = await File.ReadAllTextAsync(appServiceInterfaceFile);
 
@@ -43,11 +44,12 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 }
 
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
+                var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
                 var interfaceDeclarationSyntax = root.Descendants<InterfaceDeclarationSyntax>().Single();
                 var interfaceName = interfaceDeclarationSyntax.Identifier.ToString();
                 int methodsCount = root.Descendants<MethodDeclarationSyntax>().Count();
 
-                var serviceInfo = new ServiceInfo(@namespace, interfaceName, methodsCount);
+                var serviceInfo = new ServiceInfo(@namespace, interfaceName, methodsCount, relativeDirectory);
 
                 context.SetLastResult(serviceInfo);
                 context.SetVariable("ServiceInfo", serviceInfo);

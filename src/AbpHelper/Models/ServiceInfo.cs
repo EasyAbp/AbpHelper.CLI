@@ -10,12 +10,14 @@ namespace EasyAbp.AbpHelper.Models
         public string Name { get; }
         public string NamePluralized => Name.Pluralize();
         public int MethodsCount { get; }
+        public string RelativeDirectory { get; }
 
-        public ServiceInfo(string @namespace, string name, int methodsCount)
+        public ServiceInfo(string @namespace, string name, int methodsCount, string relativeDirectory)
         {
             Namespace = @namespace;
             Name = name;
             MethodsCount = methodsCount;
+            RelativeDirectory = relativeDirectory;
         }
     }
 }
