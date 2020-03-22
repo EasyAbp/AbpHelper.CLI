@@ -24,7 +24,7 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<bool>()
             });
-            AddOption(new Option(new[] {"-f", "--folder"}, "Specify the folder where the service files are generated")
+            AddOption(new Option(new[] {"-f", "--folder"}, "Specify the folder where the service files are generated. Multi-level(e.g., foo/bar) directory is supported")
             {
                 Argument = new Argument<string>()
             });
@@ -34,6 +34,7 @@ namespace EasyAbp.AbpHelper.Commands
         private async Task Run(CommandOption option)
         {
             string directory = GetBaseDirectory(option.Directory);
+            option.Folder = option.Folder.Replace('\\', '/');
             await RunWorkflow(builder => builder
                 .StartWith<SetVariable>(
                     step =>

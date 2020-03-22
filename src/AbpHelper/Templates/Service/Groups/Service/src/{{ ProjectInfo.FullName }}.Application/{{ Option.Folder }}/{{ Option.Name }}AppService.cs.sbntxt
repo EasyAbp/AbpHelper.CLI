@@ -1,5 +1,5 @@
 {{~ if Option.Folder ~}}
-namespace {{ ProjectInfo.FullName }}.{{ Option.Folder }}
+namespace {{ ProjectInfo.FullName }}.{{ Option.Folder | string.replace "/" "." }}
 {{~ else ~}}
 namespace {{ ProjectInfo.FullName }}
 {{~ end ~}}
