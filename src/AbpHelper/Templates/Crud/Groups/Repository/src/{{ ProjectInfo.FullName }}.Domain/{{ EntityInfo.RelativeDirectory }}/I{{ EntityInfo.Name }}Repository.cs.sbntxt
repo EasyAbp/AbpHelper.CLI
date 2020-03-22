@@ -1,7 +1,7 @@
 using System;
 using Volo.Abp.Domain.Repositories;
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
+namespace {{ EntityInfo.Namespace }}
 {
     public interface I{{ EntityInfo.Name }}Repository : IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}>
     {

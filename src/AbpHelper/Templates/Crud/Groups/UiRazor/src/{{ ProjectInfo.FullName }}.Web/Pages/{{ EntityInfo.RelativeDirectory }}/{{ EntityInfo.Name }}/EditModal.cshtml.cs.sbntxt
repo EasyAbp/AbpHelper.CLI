@@ -7,10 +7,10 @@ end
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }};
-using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
+using {{ EntityInfo.Namespace }};
+using {{ EntityInfo.Namespace }}.Dtos;
 
-namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamespaceLastPart }}.{{ EntityInfo.Name }}
+namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 {
     public class EditModalModel : {{ ProjectInfo.Name }}PageModel
     {

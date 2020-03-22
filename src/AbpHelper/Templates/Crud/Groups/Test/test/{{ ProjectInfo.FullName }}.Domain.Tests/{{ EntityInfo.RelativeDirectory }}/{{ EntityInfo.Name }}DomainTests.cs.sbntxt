@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
+namespace {{ EntityInfo.Namespace }}
 {
     public class {{ EntityInfo.Name }}DomainTests : {{ ProjectInfo.Name }}DomainTestBase
     {

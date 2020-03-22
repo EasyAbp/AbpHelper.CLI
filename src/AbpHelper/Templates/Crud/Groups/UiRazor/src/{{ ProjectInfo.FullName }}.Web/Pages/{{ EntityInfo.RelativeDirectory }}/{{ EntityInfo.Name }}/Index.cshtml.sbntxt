@@ -1,5 +1,5 @@
 @page
-@using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamespaceLastPart }}.{{ EntityInfo.Name }}
+@using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
 @model IndexModel
@@ -12,11 +12,11 @@
 
 @section scripts
 {
-    <abp-script src="/Pages/{{ EntityInfo.NamespaceLastPart }}/{{ EntityInfo.Name }}/index.js" />
+    <abp-script src="/Pages/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.js" />
 }
 @section styles
 {
-    <abp-style src="/Pages/{{ EntityInfo.NamespaceLastPart }}/{{ EntityInfo.Name }}/index.css"/>
+    <abp-style src="/Pages/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.css"/>
 }
 
 <abp-card>

@@ -1,10 +1,10 @@
-{{ SKIP_GENERATE = !Option.SeparateDto }}
+{{- SKIP_GENERATE = Option.SeparateDto -}}
 using System;
-using System.ComponentModel;
+{{~ if !Option.SkipLocalization }}using System.ComponentModel;{{ end ~}}
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos
+namespace {{ EntityInfo.Namespace }}.Dtos
 {
-    public class Create{{ EntityInfo.Name }}Dto
+    public class CreateUpdate{{ EntityInfo.Name }}Dto
     {
         {{~ for prop in EntityInfo.Properties ~}}
         {{~ if prop | abp.is_ignore_property; continue; end ~}}

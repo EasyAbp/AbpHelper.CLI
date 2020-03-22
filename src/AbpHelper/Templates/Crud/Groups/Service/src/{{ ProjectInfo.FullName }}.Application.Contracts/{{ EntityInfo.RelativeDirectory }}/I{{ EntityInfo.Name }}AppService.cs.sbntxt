@@ -7,11 +7,11 @@ updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
 end
 -}}
 using System;
-using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
+using {{ EntityInfo.Namespace }}.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
+namespace {{ EntityInfo.Namespace }}
 {
     public interface I{{ EntityInfo.Name }}AppService :
         ICrudAppService< 

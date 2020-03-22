@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamespaceLastPart }}.{{ EntityInfo.Name }}
+namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 {
     public class IndexModel : {{ ProjectInfo.Name }}PageModel
     {

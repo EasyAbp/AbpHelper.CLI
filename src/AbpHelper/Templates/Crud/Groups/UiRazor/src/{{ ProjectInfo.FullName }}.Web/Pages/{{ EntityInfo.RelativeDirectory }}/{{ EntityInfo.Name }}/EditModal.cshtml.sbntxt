@@ -1,14 +1,15 @@
 ﻿@page
 @inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
-@model {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.NamespaceLastPart }}.{{ EntityInfo.Name }}.CreateModalModel
+@model {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}.EditModalModel
 @{
     Layout = null;
 }
-<abp-dynamic-form abp-model="{{ EntityInfo.Name }}" data-ajaxForm="true" asp-page="/{{ EntityInfo.NamespaceLastPart }}/{{ EntityInfo.Name }}/CreateModal">
+<abp-dynamic-form abp-model="{{ EntityInfo.Name }}" data-ajaxForm="true" asp-page="EditModal">
     <abp-modal>
-        <abp-modal-header title="@L["Create{{ EntityInfo.Name }}"].Value"></abp-modal-header>
+        <abp-modal-header title="@L["Edit{{ EntityInfo.Name }}"].Value"></abp-modal-header>
         <abp-modal-body>
+            <abp-input asp-for="Id" />
             <abp-form-content />
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>

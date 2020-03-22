@@ -13,14 +13,14 @@ repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + "
 end
 -}}
 using System;
-using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos;
+using {{ EntityInfo.Namespace }}.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 {{~ if !Option.CustomRepository ~}}
 using Volo.Abp.Domain.Repositories;
 {{~ end ~}}
 
-namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}
+namespace {{ EntityInfo.Namespace }}
 {
     public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto, {{ createDto }}, {{ updateDto }}>,
         I{{ EntityInfo.Name }}AppService
