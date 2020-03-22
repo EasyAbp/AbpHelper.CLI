@@ -8,4 +8,7 @@
             {{~ end ~}}
         ){{ if EntityInfo.PrimaryKey }} :base(id){{ end }}
         {
+            {{~ for prop in EntityInfo.Properties ~}}
+            {{ prop.Name }} = {{ prop.Name | abp.camel_case }};
+            {{~ end ~}}
         }
