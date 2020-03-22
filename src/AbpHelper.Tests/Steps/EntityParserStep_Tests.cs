@@ -73,6 +73,7 @@ namespace Acme.BookStore.Books
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
                     info.Namespace.ShouldBe("Acme.BookStore.Books");
+                    info.RelativeNamespace.ShouldBe("Books");
                     info.NamespaceLastPart.ShouldBe("Books");
                     info.RelativeDirectory.ShouldBe("Books");
                     info.Name.ShouldBe("Book");
@@ -132,6 +133,7 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
                     info.Namespace.ShouldBe("Acme.BookStore.EasyAbp.BookStore.UserRoles");
+                    info.RelativeNamespace.ShouldBe("EasyAbp.BookStore.UserRoles");
                     info.NamespaceLastPart.ShouldBe("UserRoles");
                     info.RelativeDirectory.ShouldBe("EasyAbp/BookStore/UserRoles");
                     info.Name.ShouldBe("UserRole");

@@ -12,16 +12,17 @@ namespace EasyAbp.AbpHelper.Models
             Name = name;
             BaseType = baseType;
             PrimaryKey = primaryKey;
-            RelativeDirectory = relativeDirectory;
+            RelativeDirectory = relativeDirectory.Replace('\\', '/');
         }
 
         public string Namespace { get; }
+        public string RelativeNamespace => RelativeDirectory.Replace('/', '.');
+        public string RelativeDirectory { get; }
         public string NamespaceLastPart => Namespace.Split('.').Last();
         public string Name { get; }
         public string NamePluralized => Name.Pluralize();
         public string? BaseType { get; }
         public string? PrimaryKey { get; }
-        public string RelativeDirectory { get; }
         public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
     }
 
