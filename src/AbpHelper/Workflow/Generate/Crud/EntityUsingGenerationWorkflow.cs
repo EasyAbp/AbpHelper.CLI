@@ -6,7 +6,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
     public static class EntityUsingGenerationWorkflow
     {
-        public static IActivityBuilder AddEntityUsingGenerationWorkflow(this IActivityBuilder builder)
+        public static IActivityBuilder AddEntityUsingGenerationWorkflow(this IActivityBuilder builder, string name)
         {
             return builder
                     .Then<TextGenerationStep>(
@@ -15,7 +15,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                             step.TemplateName = "UsingEntityNamespace";
                             step.GeneratedTextKey = new LiteralExpression("EntityUsingText");
                         }
-                    )
+                    ).WithName(name)
                     .Then<TextGenerationStep>(
                         step =>
                         {

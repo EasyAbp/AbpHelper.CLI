@@ -62,6 +62,10 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<string>()
             });
+            AddOption(new Option(new[] {"--skip-entity-constructors"}, "Skip generating constructors for the entity")
+            {
+                Argument = new Argument<bool>()
+            });
             Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
@@ -100,7 +104,19 @@ namespace EasyAbp.AbpHelper.Commands
                     step => { step.SearchFileName = new LiteralExpression(entityFileName); })
                 .Then<EntityParserStep>()
                 .Then<SetModelVariableStep>()
-                .AddEntityUsingGenerationWorkflow()
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipEntityConstructors"),
+                    ifElse =>
+                    {
+                        ifElse.When(OutcomeNames.False)
+                            .AddEntityConstructorsGenerationWorkflow()
+                            .Then("EntityUsing")
+                            ;
+                        ifElse.When(OutcomeNames.True)
+                            .Then("EntityUsing")
+                            ;
+                    })
+                .AddEntityUsingGenerationWorkflow("EntityUsing")
                 .AddEfCoreConfigurationWorkflow()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.CustomRepository"),
@@ -205,6 +221,7 @@ namespace EasyAbp.AbpHelper.Commands
             public bool SkipLocalization { get; set; }
             public bool SkipTest { get; set; }
             public bool NoOverwrite { get; set; }
+            public bool SkipEntityConstructors { get; set; }
         }
     }
 }

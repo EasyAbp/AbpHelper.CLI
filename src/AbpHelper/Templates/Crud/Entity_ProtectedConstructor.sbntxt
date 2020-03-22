@@ -1,0 +1,4 @@
+
+        protected {{ EntityInfo.Name }}()
+        {
+        }
