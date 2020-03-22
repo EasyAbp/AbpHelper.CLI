@@ -1,5 +1,5 @@
 
-        protected {{ EntityInfo.Name }}(
+        public {{ EntityInfo.Name }}(
             {{~ if EntityInfo.PrimaryKey ~}}
             {{ EntityInfo.PrimaryKey }} id,
             {{~ end ~}}
