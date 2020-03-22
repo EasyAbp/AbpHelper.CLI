@@ -38,7 +38,6 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
             var fileName = Path.GetFileName(domainCsprojFile);
             var fullName = fileName.RemovePostFix(".Domain.csproj");
-            var name = fullName.Split('.').Last();
 
             UiFramework uiFramework;
             if (Directory.EnumerateFiles(baseDirectory, "*.cshtml", SearchOption.AllDirectories).Any())
@@ -67,7 +66,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             var tiered = false;
             if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(baseDirectory, "*.IdentityServer.csproj").Any();
 
-            var projectInfo = new ProjectInfo(baseDirectory, fullName, name, templateType, uiFramework, tiered);
+            var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
             context.SetLastResult(projectInfo);
             context.SetVariable("ProjectInfo", projectInfo);
             LogOutput(() => projectInfo);

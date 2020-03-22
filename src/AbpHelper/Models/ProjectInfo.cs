@@ -1,11 +1,12 @@
-﻿namespace EasyAbp.AbpHelper.Models
+﻿using System.Linq;
+
+namespace EasyAbp.AbpHelper.Models
 {
     public class ProjectInfo
     {
-        public ProjectInfo(string baseDirectory, string fullName, string name, TemplateType templateType, UiFramework uiFramework, bool tiered)
+        public ProjectInfo(string baseDirectory, string fullName, TemplateType templateType, UiFramework uiFramework, bool tiered)
         {
             BaseDirectory = baseDirectory;
-            Name = name;
             TemplateType = templateType;
             UiFramework = uiFramework;
             Tiered = tiered;
@@ -14,7 +15,7 @@
 
         public string BaseDirectory { get; }
         public string FullName { get; }
-        public string Name { get; }
+        public string Name => FullName.Split('.').Last();
         public TemplateType TemplateType { get; }
         public UiFramework UiFramework { get; }
         public bool Tiered { get; }

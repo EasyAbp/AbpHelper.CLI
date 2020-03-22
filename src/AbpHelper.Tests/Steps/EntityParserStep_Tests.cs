@@ -45,7 +45,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
 using System;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace Acme.BookStore
+namespace Acme.BookStore.Books
 {
     public class Book : AuditedAggregateRoot<Guid>
     {
@@ -65,14 +65,16 @@ namespace Acme.BookStore
                 {
                     // Arrange
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
+                    ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Application, UiFramework.RazorPages, false));
 
                     // Act
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
-                    info.Namespace.ShouldBe("Acme.BookStore");
-                    info.NamespaceLastPart.ShouldBe("BookStore");
+                    info.Namespace.ShouldBe("Acme.BookStore.Books");
+                    info.NamespaceLastPart.ShouldBe("Books");
+                    info.RelativeDirectory.ShouldBe("Books");
                     info.Name.ShouldBe("Book");
                     info.NamePluralized.ShouldBe("Books");
                     info.BaseType.ShouldBe("AuditedAggregateRoot");
@@ -94,7 +96,7 @@ namespace Acme.BookStore
         public async Task Parse_Entity_Without_PrimaryKey()
         {
             var code = @"
-namespace Acme.BookStore
+namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
 {
     public class UserRole : Entity
     {
@@ -122,13 +124,16 @@ namespace Acme.BookStore
                 {
                     // Arrange
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
+                    ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Module, UiFramework.RazorPages, false));
 
                     // Act
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
-                    info.Namespace.ShouldBe("Acme.BookStore");
+                    info.Namespace.ShouldBe("Acme.BookStore.EasyAbp.BookStore.UserRoles");
+                    info.NamespaceLastPart.ShouldBe("UserRoles");
+                    info.RelativeDirectory.ShouldBe("EasyAbp/BookStore/UserRoles");
                     info.Name.ShouldBe("UserRole");
                     info.NamePluralized.ShouldBe("UserRoles");
                     info.BaseType.ShouldBe("Entity");

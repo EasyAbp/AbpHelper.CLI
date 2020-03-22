@@ -28,6 +28,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
         {
             var entityFile = await context.EvaluateAsync(EntityFile, cancellationToken);
             LogInput(() => entityFile);
+            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
 
             var sourceText = await File.ReadAllTextAsync(entityFile);
 
@@ -43,6 +44,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 }
 
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
+                var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
                 var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
                 var className = classDeclarationSyntax.Identifier.ToString();
                 var baseList = classDeclarationSyntax.BaseList!;
@@ -68,7 +70,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 var properties = root.Descendants<PropertyDeclarationSyntax>()
                     .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()));
 
-                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey);
+                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
                 entityInfo.Properties.AddRange(properties);
 
                 context.SetLastResult(entityInfo);
