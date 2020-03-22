@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using EasyAbp.AbpHelper.Models;
 using Scriban.Runtime;
 
 namespace EasyAbp.AbpHelper.Generator
@@ -11,6 +12,12 @@ namespace EasyAbp.AbpHelper.Generator
             var parts = text.Split('.')
                 .Select(part => part.ToCamelCase());
             return string.Join('.', parts);
+        }
+        
+        public static bool IsIgnoreProperty(PropertyInfo propertyInfo)
+        {
+            if (propertyInfo.Type == "Guid?" && propertyInfo.Name == "TenantId") return true;
+            return false;
         }
     }
 }

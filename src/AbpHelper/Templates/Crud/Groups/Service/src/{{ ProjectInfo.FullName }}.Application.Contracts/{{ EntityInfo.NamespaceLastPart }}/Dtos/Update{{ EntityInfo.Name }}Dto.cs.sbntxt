@@ -7,6 +7,7 @@ namespace {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }}.Dtos
     public class Update{{ EntityInfo.Name }}Dto
     {
         {{~ for prop in EntityInfo.Properties ~}}
+        {{~ if prop | abp.is_ignore_property; continue; end ~}}
         {{~ if !Option.SkipLocalization ~}}
         [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
         {{~ end ~}}
