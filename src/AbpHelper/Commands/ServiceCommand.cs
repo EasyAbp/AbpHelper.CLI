@@ -62,7 +62,11 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<ProjectInfoProviderStep>()
                 .Then<SetModelVariableStep>()
                 .Then<GroupGenerationStep>(
-                    step => step.GroupName = "Service")
+                    step =>
+                    {
+                        step.GroupName = "Service";
+                        step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                    })
                 .Build()
             );
         }
