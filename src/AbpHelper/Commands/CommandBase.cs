@@ -28,7 +28,7 @@ namespace EasyAbp.AbpHelper.Commands
             var command = ServiceProvider.GetRequiredService<TCommand>();
             base.AddCommand(command);
         }
-        
+
         protected string GetBaseDirectory(string directory)
         {
             if (directory.IsNullOrEmpty())
@@ -55,8 +55,11 @@ namespace EasyAbp.AbpHelper.Commands
             // Start the workflow.
             Logger.LogInformation($"Command '{Name}' started.");
             var invoker = ServiceProvider.GetService<IWorkflowInvoker>();
-            await invoker.StartAsync(workflowDefinition);
-            Logger.LogInformation($"Command '{Name}' finished successfully.");
+            var ctx = await invoker.StartAsync(workflowDefinition);
+            if (ctx.Workflow.Status == WorkflowStatus.Finished)
+            {
+                Logger.LogInformation($"Command '{Name}' finished successfully.");
+            }
         }
     }
 }
