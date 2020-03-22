@@ -52,7 +52,7 @@ namespace EasyAbp.AbpHelper.Commands
                 option.MethodNames[i] = option.MethodNames[i].ToPascalCase();
             }
 
-            await RunWorkFlow(builder => builder
+            await RunWorkflow(builder => builder
                 .StartWith<SetVariable>(
                     step =>
                     {

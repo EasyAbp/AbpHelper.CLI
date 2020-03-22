@@ -34,7 +34,7 @@ namespace EasyAbp.AbpHelper.Commands
         private async Task Run(CommandOption option)
         {
             string directory = GetBaseDirectory(option.Directory);
-            await RunWorkFlow(builder => builder
+            await RunWorkflow(builder => builder
                 .StartWith<SetVariable>(
                     step =>
                     {

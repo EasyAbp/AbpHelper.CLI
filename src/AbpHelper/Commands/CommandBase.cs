@@ -46,15 +46,17 @@ namespace EasyAbp.AbpHelper.Commands
             return directory;
         }
 
-        protected async Task RunWorkFlow(Func<IWorkflowBuilder, WorkflowDefinitionVersion> builder)
+        protected async Task RunWorkflow(Func<IWorkflowBuilder, WorkflowDefinitionVersion> builder)
         {
             var workflowBuilderFactory = ServiceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
             var workflowBuilder = workflowBuilderFactory();
 
             var workflowDefinition = builder(workflowBuilder);
             // Start the workflow.
+            Logger.LogInformation($"Command '{Name}' started.");
             var invoker = ServiceProvider.GetService<IWorkflowInvoker>();
             await invoker.StartAsync(workflowDefinition);
+            Logger.LogInformation($"Command '{Name}' finished successfully.");
         }
     }
 }

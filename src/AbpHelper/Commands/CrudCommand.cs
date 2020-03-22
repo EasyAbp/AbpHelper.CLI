@@ -70,7 +70,7 @@ namespace EasyAbp.AbpHelper.Commands
             string directory = GetBaseDirectory(option.Directory);
             var entityFileName = option.Entity + ".cs";
 
-            await RunWorkFlow(builder => builder
+            await RunWorkflow(builder => builder
                 .StartWith<SetVariable>(
                     step =>
                     {
