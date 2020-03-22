@@ -8,6 +8,5 @@ namespace {{ ProjectInfo.FullName }}
 {
     public interface I{{ Option.Name }}AppService : IApplicationService
     {
-        
     }
 }
