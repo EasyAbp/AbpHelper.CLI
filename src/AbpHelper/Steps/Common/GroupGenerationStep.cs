@@ -61,7 +61,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
             var appDir = AppDomain.CurrentDomain.BaseDirectory!;
             var groupDir = Path.Combine(appDir, templateDir, "Groups", GroupName);
-            if (!Directory.Exists(groupDir)) throw new DirectoryNotFoundException($"Template group directory {groupDir} is not exist.");
+            if (!Directory.Exists(groupDir)) throw new DirectoryNotFoundException($"Template group directory {groupDir} does not exist.");
 
             await GenerateFile(groupDir, targetDirectory, model, overwrite);
 
@@ -77,7 +77,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
                 var targetFilePathName = TextGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model).RemovePostFix(".sbntxt");
                 if (File.Exists(targetFilePathName) && !overwrite)
                 {
-                    Logger.LogInformation($"File {targetFilePathName} already exist, skip generating.");
+                    Logger.LogInformation($"File {targetFilePathName} already exists, skip generating.");
                     continue;
                 }
 

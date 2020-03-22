@@ -47,10 +47,6 @@
         </None>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Templates\Service\Groups\Service\src\{{ ProjectInfo.FullName }}.Application.Contracts\{{ Option.Folder }}\Dtos" />
-    </ItemGroup>
-
     <PropertyGroup>
         <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
         <Version>0.1.3</Version>
