@@ -23,12 +23,12 @@ namespace EasyAbp.AbpHelper.Extensions
 
         public static bool DescendantsNotContain<T>(this SyntaxNode node, string text) where T : SyntaxNode
         {
-            return node.Descendants<T>().All(child => !child.ToFullString().Contains(text));
+            return node.Descendants<T>().All(child => !child.NormalizeWhitespace().ToFullString().Contains(text));
         }
-        
+
         public static bool NotContains(this SyntaxNode node, string text)
         {
-            return node.DescendantNodesAndSelf().All(child => !child.ToFullString().Contains(text));
+            return !node.NormalizeWhitespace().ToFullString().Contains(text);
         }
     }
 }
