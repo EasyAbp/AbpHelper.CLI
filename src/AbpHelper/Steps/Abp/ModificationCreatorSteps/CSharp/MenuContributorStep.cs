@@ -43,7 +43,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
                     new InsertionBuilder<CSharpSyntaxNode>(
                         root => 2,
                         addUsingContents,
-                        modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(addUsingContents)
+                        modifyCondition: root => root.NotContains(addUsingContents)
                     ),
                     new InsertionBuilder<CSharpSyntaxNode>(
                         root => Func(root).GetStartLine() + 2,
