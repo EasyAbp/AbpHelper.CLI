@@ -28,9 +28,9 @@ namespace EasyAbp.AbpHelper
 }
 ";
 
-        private static CompilationUnitSyntax GetRootNode()
+        private static CompilationUnitSyntax GetRootNode(string code)
         {
-            var node = CSharpSyntaxTree.ParseText(CSharpCode);
+            var node = CSharpSyntaxTree.ParseText(code);
             return node.GetCompilationUnitRoot();
         }
 
@@ -38,7 +38,7 @@ namespace EasyAbp.AbpHelper
         public void GetStartLine_GetEndLine_Test()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             var main = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
             
             // Act & Assert
@@ -50,7 +50,7 @@ namespace EasyAbp.AbpHelper
         public void Descendants_Test()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             
             // Act
             var main = root.Descendants<MethodDeclarationSyntax>().First();
@@ -63,7 +63,7 @@ namespace EasyAbp.AbpHelper
         public void DescendantsNotContain_True()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             
             // Act
             bool result = root.DescendantsNotContain<MethodDeclarationSyntax>("World");
@@ -76,7 +76,7 @@ namespace EasyAbp.AbpHelper
         public void DescendantsNotContain_NormalizeWhitespace()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             
             // Act
             bool result = root.DescendantsNotContain<MethodDeclarationSyntax>("int MethodA");
@@ -89,7 +89,7 @@ namespace EasyAbp.AbpHelper
         public void DescendantsNotContain_False()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             
             // Act
             bool result = root.DescendantsNotContain<MethodDeclarationSyntax>("Hello world");
@@ -102,7 +102,7 @@ namespace EasyAbp.AbpHelper
         public void NotContains_True()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             
             // Act
             bool result = root.NotContains("using System.Linq;");
@@ -115,7 +115,7 @@ namespace EasyAbp.AbpHelper
         public void NotContains_NormalizeWhitespace()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             
             // Act
             bool result = root.NotContains("public class Hello");
@@ -128,10 +128,37 @@ namespace EasyAbp.AbpHelper
         public void NotContains_False()
         {
             // Arrange
-            var root = GetRootNode();
+            var root = GetRootNode(CSharpCode);
             
             // Act
             bool result = root.NotContains("using System;");
+            
+            // Assert
+            result.ShouldBeFalse();
+        }
+        
+        /// <summary>
+        /// https://github.com/EasyAbp/AbpHelper.CLI/issues/43
+        /// </summary>
+        [Fact]
+        public void Issue_43()
+        {
+            // Arrange
+            string code = @"
+        public Todo(
+            Guid id,
+            string content,
+            bool done
+        ) : base(id)
+        {
+            Content = content;
+            Done = done;
+        }
+";
+            var root = GetRootNode(code);
+            
+            // Act
+            bool result = root.NotContains("public Todo(Guid id,string content,bool done):base(id ) {Content = content; Done=done;}");
             
             // Assert
             result.ShouldBeFalse();
