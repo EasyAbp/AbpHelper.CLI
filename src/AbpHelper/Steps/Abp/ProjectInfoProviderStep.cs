@@ -27,7 +27,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             TemplateType templateType;
             if (Directory.EnumerateFiles(baseDirectory, "*.DbMigrator.csproj", SearchOption.AllDirectories).Any())
                 templateType = TemplateType.Application;
-            else if (Directory.EnumerateFiles(baseDirectory, "*.Web.Unified.csproj", SearchOption.AllDirectories).Any())
+            else if (Directory.EnumerateFiles(baseDirectory, "*.Host.Shared.csproj", SearchOption.AllDirectories).Any())
                 templateType = TemplateType.Module;
             else
                 throw new NotSupportedException($"Unknown ABP project structure. Directory: {baseDirectory}");
