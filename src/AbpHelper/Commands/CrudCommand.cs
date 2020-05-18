@@ -41,6 +41,10 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<bool>()
             });
+            AddOption(new Option(new[] {"--skip-view-model"}, "Skip generating 'CreateUpdateViewModel`, use 'CreateUpdateDto' directly")
+            {
+                Argument = new Argument<bool>()
+            });
             AddOption(new Option(new[] {"--skip-localization"}, "Skip generating localization")
             {
                 Argument = new Argument<bool>()
@@ -218,6 +222,7 @@ namespace EasyAbp.AbpHelper.Commands
             public bool CustomRepository { get; set; }
             public bool SkipDbMigrations { get; set; }
             public bool SkipUi { get; set; }
+            public bool SkipViewModel { get; set; }
             public bool SkipLocalization { get; set; }
             public bool SkipTest { get; set; }
             public bool NoOverwrite { get; set; }

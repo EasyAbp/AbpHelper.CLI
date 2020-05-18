@@ -1,6 +1,29 @@
-{{~ if Option.SeparateDto ~}}
-            CreateMap<{{ EntityInfo.Name }}Dto, Create{{ EntityInfo.Name }}Dto>();
+{{- capture viewModelNamespace -}}
+{{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels
+{{- end -}}
+{{~ 
+    if Option.SeparateDto 
+        if Option.SkipViewModel
+~}}
             CreateMap<{{ EntityInfo.Name }}Dto, Update{{ EntityInfo.Name }}Dto>();
-{{~ else ~}}
+{{~
+        else
+~}}
+            CreateMap<{{ EntityInfo.Name }}Dto, {{ viewModelNamespace }}.EditViewModel>();
+            CreateMap<{{ viewModelNamespace }}.CreateViewModel, Create{{ EntityInfo.Name }}Dto>();
+            CreateMap<{{ viewModelNamespace }}.EditViewModel, Update{{ EntityInfo.Name }}Dto>();
+{{~
+        end 
+    else
+        if Option.SkipViewModel
+~}}
             CreateMap<{{ EntityInfo.Name }}Dto, CreateUpdate{{ EntityInfo.Name }}Dto>();
-{{~ end ~}}
+{{~
+        else
+~}}
+            CreateMap<{{ EntityInfo.Name }}Dto, {{ viewModelNamespace }}.CreateEditViewModel>();
+            CreateMap<{{ viewModelNamespace }}.CreateEditViewModel, CreateUpdate{{ EntityInfo.Name }}Dto>();
+{{~
+        end
+    end
+~}}

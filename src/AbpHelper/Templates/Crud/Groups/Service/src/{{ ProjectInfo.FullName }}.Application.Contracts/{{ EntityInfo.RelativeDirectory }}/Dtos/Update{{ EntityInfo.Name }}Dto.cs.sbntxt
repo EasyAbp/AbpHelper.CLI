@@ -1,4 +1,4 @@
-{{ SKIP_GENERATE = !Option.SeparateDto }}
+{{- SKIP_GENERATE = !Option.SeparateDto -}}
 using System;
 using System.ComponentModel;
 
@@ -8,7 +8,7 @@ namespace {{ EntityInfo.Namespace }}.Dtos
     {
         {{~ for prop in EntityInfo.Properties ~}}
         {{~ if prop | abp.is_ignore_property; continue; end ~}}
-        {{~ if !Option.SkipLocalization ~}}
+        {{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
         [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
         {{~ end ~}}
         public {{ prop.Type}} {{ prop.Name }} { get; set; }

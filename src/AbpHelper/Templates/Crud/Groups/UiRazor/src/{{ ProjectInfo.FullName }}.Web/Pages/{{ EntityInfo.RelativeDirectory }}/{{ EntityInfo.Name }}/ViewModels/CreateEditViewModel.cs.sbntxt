@@ -1,14 +1,14 @@
-{{- SKIP_GENERATE = Option.SeparateDto -}}
+{{- SKIP_GENERATE = Option.SeparateDto || Option.SkipViewModel -}}
 using System;
 {{~ if !Option.SkipLocalization }}using System.ComponentModel;{{ end ~}}
 
-namespace {{ EntityInfo.Namespace }}.Dtos
+namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels
 {
-    public class CreateUpdate{{ EntityInfo.Name }}Dto
+    public class CreateEditViewModel
     {
         {{~ for prop in EntityInfo.Properties ~}}
         {{~ if prop | abp.is_ignore_property; continue; end ~}}
-        {{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
+        {{~ if !Option.SkipLocalization ~}}
         [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
         {{~ end ~}}
         public {{ prop.Type}} {{ prop.Name }} { get; set; }

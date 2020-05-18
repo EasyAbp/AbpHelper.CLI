@@ -26,6 +26,15 @@
       <Compile Remove="Parser\**" />
       <EmbeddedResource Remove="Parser\**" />
       <None Remove="Parser\**" />
+      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\CreateEditViewModel.cs.sbntxt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\CreateViewModel.cs.sbntxt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\EditViewModel.cs.sbntxt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

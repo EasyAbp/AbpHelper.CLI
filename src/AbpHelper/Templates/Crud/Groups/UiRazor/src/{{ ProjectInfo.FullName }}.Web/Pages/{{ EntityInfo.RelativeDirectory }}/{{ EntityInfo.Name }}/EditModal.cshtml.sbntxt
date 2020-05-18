@@ -5,7 +5,7 @@
 @{
     Layout = null;
 }
-<abp-dynamic-form abp-model="{{ EntityInfo.Name }}" data-ajaxForm="true" asp-page="EditModal">
+<abp-dynamic-form abp-model="ViewModel" data-ajaxForm="true" asp-page="EditModal">
     <abp-modal>
         <abp-modal-header title="@L["Edit{{ EntityInfo.Name }}"].Value"></abp-modal-header>
         <abp-modal-body>

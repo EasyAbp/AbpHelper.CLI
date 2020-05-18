@@ -1,14 +1,26 @@
-{{- if Option.SeparateDto
-updateDto = "Update" + EntityInfo.Name + "Dto"
-else
-updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
-end
+{{-
+    if Option.SeparateDto
+        dtoType = "Update" + EntityInfo.Name + "Dto"
+        if Option.SkipViewModel
+            viewModelType = dtoType
+        else
+            viewModelType = "EditViewModel"
+        end
+    else
+        dtoType = "CreateEdit" + EntityInfo.Name + "Dto"
+        if Option.SkipViewModel
+            viewModelType = dtoType
+        else
+            viewModelType = "CreateEditViewModel"
+        end
+    end
 -}}
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using {{ EntityInfo.Namespace }};
 using {{ EntityInfo.Namespace }}.Dtos;
+{{~ if !Option.SkipViewModel }}using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;{{ end ~}}
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 {
@@ -19,7 +31,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }
         public {{ EntityInfo.PrimaryKey }} Id { get; set; }
 
         [BindProperty]
-        public {{ updateDto }} {{ EntityInfo.Name }} { get; set; }
+        public {{ viewModelType }} ViewModel { get; set; }
 
         private readonly I{{ EntityInfo.Name }}AppService _service;
 
@@ -31,12 +43,17 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }
         public async Task OnGetAsync()
         {
             var dto = await _service.GetAsync(Id);
-            {{ EntityInfo.Name }} = ObjectMapper.Map<{{ EntityInfo.Name }}Dto, {{ updateDto }}>(dto);
+            ViewModel = ObjectMapper.Map<{{ EntityInfo.Name }}Dto, {{ viewModelType }}>(dto);
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            await _service.UpdateAsync(Id, {{ EntityInfo.Name }});
+{{~ if Option.SkipViewModel ~}}    
+            await _service.UpdateAsync(Id, ViewModel);
+{{~ else ~}}
+            var dto = ObjectMapper.Map<{{ viewModelType }}, {{ dtoType }}>(ViewModel);
+            await _service.UpdateAsync(Id, dto);
+{{~ end ~}}
             return NoContent();
         }
     }
