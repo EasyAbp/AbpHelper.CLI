@@ -41,6 +41,12 @@
       <None Update="Templates\Localization\Localization.sbntxt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\Crud\Permissions_DefineNames.sbntxt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\Crud\Permissions_Definitions.sbntxt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

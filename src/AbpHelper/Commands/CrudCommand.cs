@@ -29,6 +29,10 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<bool>()
             });
+            AddOption(new Option(new[] {"--skip-permissions"}, "Skip generating crud permissions")
+            {
+                Argument = new Argument<bool>()
+            });
             AddOption(new Option(new[] {"--custom-repository"}, "Generate custom repository interface and class for the entity")
             {
                 Argument = new Argument<bool>()
@@ -218,6 +222,7 @@ namespace EasyAbp.AbpHelper.Commands
             public string Directory { get; set; } = null!;
             public string Entity { get; set; } = null!;
             public string MigrationProjectName { get; set; } = null!;
+            public bool SkipPermissions { get; set; }
             public bool SeparateDto { get; set; }
             public bool CustomRepository { get; set; }
             public bool SkipDbMigrations { get; set; }

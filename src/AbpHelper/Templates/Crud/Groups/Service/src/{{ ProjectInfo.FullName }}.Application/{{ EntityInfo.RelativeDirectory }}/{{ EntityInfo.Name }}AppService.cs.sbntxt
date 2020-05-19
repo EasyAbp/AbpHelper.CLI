@@ -4,14 +4,12 @@ updateDto = "Update" + EntityInfo.Name + "Dto"
 else
 createDto = "CreateUpdate" + EntityInfo.Name + "Dto"
 updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
-end
--}}
+end -}}
 {{- if Option.CustomRepository
 repository = "I" + EntityInfo.Name + "Repository"
 else
 repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + ">"
-end
--}}
+end -}}
 using System;
 using {{ EntityInfo.Namespace }}.Dtos;
 using Volo.Abp.Application.Dtos;
@@ -22,11 +20,22 @@ using Volo.Abp.Domain.Repositories;
 
 namespace {{ EntityInfo.Namespace }}
 {
+{{- if !Option.SkipPermissions 
+    permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.NamespaceLastPart
+end -}}
     public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto, {{ createDto }}, {{ updateDto }}>,
         I{{ EntityInfo.Name }}AppService
     {
         {{~ if Option.CustomRepository ~}}
         private readonly {{ repository }} _repository;
+        
+        {{~ if !Option.SkipPermissions ~}}
+        protected override string GetPolicyName { get; set; } = {{ permissionNamesPrefix }}.Default;
+        protected override string GetListPolicyName { get; set; } = {{ permissionNamesPrefix }}.Default;
+        protected override string CreatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Create;
+        protected override string UpdatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Update;
+        protected override string DeletePolicyName { get; set; } = {{ permissionNamesPrefix }}.Delete;
+        {{~ end ~}}
 
         public {{ EntityInfo.Name }}AppService({{ repository }} repository) : base(repository)
         {
