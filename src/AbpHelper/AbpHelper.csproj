@@ -23,33 +23,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="Parser\**" />
-      <EmbeddedResource Remove="Parser\**" />
-      <None Remove="Parser\**" />
-      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\CreateEdit{{ EntityInfo.Name }}ViewModel.cs.sbntxt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\Create{{ EntityInfo.Name }}ViewModel.cs.sbntxt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\Edit{{ EntityInfo.Name }}ViewModel.cs.sbntxt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Templates\Crud\WebAutoMapperProfile_Using.sbntxt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Templates\Localization\Localization.sbntxt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Templates\Crud\Permissions_Names.sbntxt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Templates\Crud\Permissions_Definitions.sbntxt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Elsa" Version="1.2.2.29" />
         <PackageReference Include="Humanizer.Core" Version="2.8.2" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.5.0" />
