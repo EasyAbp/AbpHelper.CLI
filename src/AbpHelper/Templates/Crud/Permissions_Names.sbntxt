@@ -1,3 +1,4 @@
+
         public class {{ EntityInfo.NamespaceLastPart }}
         {
             public const string Default = GroupName + ".{{ EntityInfo.NamespaceLastPart }}";
