@@ -24,7 +24,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
                 new InsertionBuilder<CSharpSyntaxNode>(
                     root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
                     usingText,
-                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(usingText)
+                    modifyCondition: root => root.NotContains(usingText)
                 ),
                 new InsertionBuilder<CSharpSyntaxNode>(
                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),

@@ -1,0 +1,4 @@
+{{~ if !Option.SkipPermissions ~}}
+using Microsoft.AspNetCore.Authorization;
+using {{ ProjectInfo.FullName }}.Permissions;
+{{~ end ~}}

@@ -1,9 +1,16 @@
 @page
+{{~ if !Option.SkipPermissions ~}}
+@using Microsoft.AspNetCore.Authorization
+@using {{ ProjectInfo.FullName }}.Permissions
+{{~ end ~}}
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
 @model IndexModel
 @inject IPageLayout PageLayout
+{{~ if !Option.SkipPermissions ~}}
+@inject IAuthorizationService Authorization
+{{~ end ~}}
 @{
     PageLayout.Content.Title = L["{{ EntityInfo.Name }}"].Value;
     PageLayout.Content.BreadCrumb.Add(L["Menu:{{ EntityInfo.Name }}"].Value);
@@ -26,10 +33,17 @@
                 <abp-card-title>@L["{{ EntityInfo.Name }}"]</abp-card-title>
             </abp-column>
             <abp-column size-md="_6" class="text-right">
+{{~ if !Option.SkipPermissions ~}}
+			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.NamespaceLastPart}}.Create))
+                { 
+{{~ end ~}}
                 <abp-button id="New{{ EntityInfo.Name }}Button"
                             text="@L["Create{{ EntityInfo.Name }}"].Value"
                             icon="plus"
                             button-type="Primary" />
+{{~ if !Option.SkipPermissions ~}}
+                }
+ {{~ end ~}}
             </abp-column>
         </abp-row>
     </abp-card-header>

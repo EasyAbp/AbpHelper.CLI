@@ -22,12 +22,18 @@ $(function () {
                         [
                             {
                                 text: l('Edit'),
+{{~ if !Option.SkipPermissions ~}}
+                                visible: abp.auth.isGranted('{{ ProjectInfo.Name }}.{{ EntityInfo.NamespaceLastPart }}.Update'),
+{{~ end ~}}
                                 action: function (data) {
                                     editModal.open({ id: data.record.id });
                                 }
                             },
                             {
                                 text: l('Delete'),
+ {{~ if !Option.SkipPermissions ~}}
+                                visible: abp.auth.isGranted('{{ ProjectInfo.Name }}.{{ EntityInfo.NamespaceLastPart }}.Delete'),
+ {{~ end ~}}
                                 confirmMessage: function (data) {
                                     return l('{{ EntityInfo.Name }}DeletionConfirmationMessage', data.record.id);
                                 },

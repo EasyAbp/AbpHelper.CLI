@@ -1,3 +1,12 @@
+{{~ if Option.SkipPermissions ~}}
             context.Menu.AddItem(
                 new ApplicationMenuItem("{{ EntityInfo.NamespaceLastPart}}", l["Menu:{{ EntityInfo.NamespaceLastPart}}"], "/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
             );
+{{~ else ~}}
+            if (await authorizationService.IsGrantedAsync({{ ProjectInfo.Name}}Permissions.{{ EntityInfo.NamespaceLastPart }}.Default))
+            {
+                context.Menu.AddItem(
+                    new ApplicationMenuItem("{{ EntityInfo.NamespaceLastPart}}", l["Menu:{{ EntityInfo.NamespaceLastPart}}"], "/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
+                );
+            }
+{{~ end ~}}
