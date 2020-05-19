@@ -14,16 +14,17 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
             var model = context.GetVariable<object>("Model");
-            var entityDtoUsingText = context.GetVariable<string>("EntityDtoUsingText");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
+
+            string usingText = TextGenerator.GenerateByTemplateName(templateDir, "WebAutoMapperProfile_Using", model);
 
             string contents = TextGenerator.GenerateByTemplateName(templateDir, "WebAutoMapperProfile_CreateMap", model);
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {
                 new InsertionBuilder<CSharpSyntaxNode>(
                     root => root.Descendants<UsingDirectiveSyntax>().Last().GetEndLine(),
-                    entityDtoUsingText,
-                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(entityDtoUsingText)
+                    usingText,
+                    modifyCondition: root => root.DescendantsNotContain<UsingDirectiveSyntax>(usingText)
                 ),
                 new InsertionBuilder<CSharpSyntaxNode>(
                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),

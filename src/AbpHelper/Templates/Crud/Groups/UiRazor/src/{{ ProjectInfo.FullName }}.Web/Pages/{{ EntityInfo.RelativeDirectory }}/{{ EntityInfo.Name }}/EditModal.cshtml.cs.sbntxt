@@ -4,14 +4,14 @@
         if Option.SkipViewModel
             viewModelType = dtoType
         else
-            viewModelType = "EditViewModel"
+            viewModelType = "Edit" + EntityInfo.Name + "ViewModel"
         end
     else
         dtoType = "CreateEdit" + EntityInfo.Name + "Dto"
         if Option.SkipViewModel
             viewModelType = dtoType
         else
-            viewModelType = "CreateEditViewModel"
+            viewModelType = "CreateEdit" + EntityInfo.Name + "ViewModel"
         end
     end
 -}}

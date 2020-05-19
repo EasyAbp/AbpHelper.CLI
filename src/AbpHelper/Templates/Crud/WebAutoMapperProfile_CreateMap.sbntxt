@@ -1,6 +1,3 @@
-{{- capture viewModelNamespace -}}
-{{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels
-{{- end -}}
 {{~ 
     if Option.SeparateDto 
         if Option.SkipViewModel
@@ -9,9 +6,9 @@
 {{~
         else
 ~}}
-            CreateMap<{{ EntityInfo.Name }}Dto, {{ viewModelNamespace }}.EditViewModel>();
-            CreateMap<{{ viewModelNamespace }}.CreateViewModel, Create{{ EntityInfo.Name }}Dto>();
-            CreateMap<{{ viewModelNamespace }}.EditViewModel, Update{{ EntityInfo.Name }}Dto>();
+            CreateMap<{{ EntityInfo.Name }}Dto, Edit{{ EntityInfo.Name }}ViewModel>();
+            CreateMap<Create{{ EntityInfo.Name }}ViewModel, Create{{ EntityInfo.Name }}Dto>();
+            CreateMap<Edit{{ EntityInfo.Name }}ViewModel, Update{{ EntityInfo.Name }}Dto>();
 {{~
         end 
     else
@@ -21,8 +18,8 @@
 {{~
         else
 ~}}
-            CreateMap<{{ EntityInfo.Name }}Dto, {{ viewModelNamespace }}.CreateEditViewModel>();
-            CreateMap<{{ viewModelNamespace }}.CreateEditViewModel, CreateUpdate{{ EntityInfo.Name }}Dto>();
+            CreateMap<{{ EntityInfo.Name }}Dto, CreateEdit{{ EntityInfo.Name }}ViewModel>();
+            CreateMap<CreateEdit{{ EntityInfo.Name }}ViewModel, CreateUpdate{{ EntityInfo.Name }}Dto>();
 {{~
         end
     end

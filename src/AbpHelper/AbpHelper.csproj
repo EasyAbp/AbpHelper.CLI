@@ -26,13 +26,16 @@
       <Compile Remove="Parser\**" />
       <EmbeddedResource Remove="Parser\**" />
       <None Remove="Parser\**" />
-      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\CreateEditViewModel.cs.sbntxt">
+      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\CreateEdit{{ EntityInfo.Name }}ViewModel.cs.sbntxt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\CreateViewModel.cs.sbntxt">
+      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\Create{{ EntityInfo.Name }}ViewModel.cs.sbntxt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\EditViewModel.cs.sbntxt">
+      <None Update="Templates\Crud\Groups\UiRazor\src\{{ ProjectInfo.FullName }}.Web\Pages\{{ EntityInfo.RelativeDirectory }}\{{ EntityInfo.Name }}\ViewModels\Edit{{ EntityInfo.Name }}ViewModel.cs.sbntxt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\Crud\WebAutoMapperProfile_Using.sbntxt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

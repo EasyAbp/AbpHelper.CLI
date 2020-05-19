@@ -1,0 +1,4 @@
+using {{ EntityInfo.Namespace}}.Dtos;
+{{~ if !Option.SkipViewModel ~}}
+using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;
+{{~ end ~}}
