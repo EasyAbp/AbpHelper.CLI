@@ -1,5 +1,5 @@
 {
-    "Menu:{{ EntityInfo.Name }}": "Menu{{ EntityInfo.Name }}",
+    "Menu:{{ EntityInfo.NamespaceLastPart }}": "Menu{{ EntityInfo.NamespaceLastPart }}",
     "{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
     {{~ for prop in EntityInfo.Properties ~}}
     {{~ if prop | abp.is_ignore_property; continue; end ~}}
