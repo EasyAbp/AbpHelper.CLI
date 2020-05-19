@@ -38,6 +38,9 @@
       <None Update="Templates\Crud\WebAutoMapperProfile_Using.sbntxt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\Localization\Localization.sbntxt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

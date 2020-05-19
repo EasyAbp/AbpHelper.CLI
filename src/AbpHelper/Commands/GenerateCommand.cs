@@ -10,6 +10,7 @@ namespace EasyAbp.AbpHelper.Commands
             AddCommand<CrudCommand>();
             AddCommand<ServiceCommand>();
             AddCommand<MethodsCommand>();
+            AddCommand<LocalizationCommand>();
         }
     }
 }
