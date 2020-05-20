@@ -2,8 +2,14 @@
 permissionVarName = EntityInfo.Name | abp.camel_case + "Permission"
 permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.NamespaceLastPart
 ~}}
+{{~ if ProjectInfo.TemplateType == "Application"
+        groupName = "myGroup"
+    else if ProjectInfo.TemplateType == "Module"
+        groupName = "moduleGroup"
+    end
+~}}
 
-            var {{ permissionVarName }} = myGroup.AddPermission({{ permissionNamesPrefix }}.Default, L("Permission:{{ EntityInfo.NamespaceLastPart }}"));
+            var {{ permissionVarName }} = {{ groupName }}.AddPermission({{ permissionNamesPrefix }}.Default, L("Permission:{{ EntityInfo.NamespaceLastPart }}"));
             {{ permissionVarName }}.AddChild({{ permissionNamesPrefix }}.Create, L("Permission:Create"));
             {{ permissionVarName }}.AddChild({{ permissionNamesPrefix }}.Update, L("Permission:Update"));
             {{ permissionVarName }}.AddChild({{ permissionNamesPrefix }}.Delete, L("Permission:Delete"));

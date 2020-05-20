@@ -12,10 +12,15 @@ repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + "
 end -}}
 using System;
 {{~ if !Option.SkipPermissions 
-    permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.NamespaceLastPart
+        permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.NamespaceLastPart
+        if ProjectInfo.TemplateType == "Application"
+            permissionNamespace = "Permissions"
+        else if ProjectInfo.TemplateType == "Module"
+            permissionNamespace = "Authorization"
+        end
+    end
 ~}}
-using {{ ProjectInfo.FullName }}.Permissions;
-{{~ end ~}}
+using {{ ProjectInfo.FullName }}.{{ permissionNamespace }};
 using {{ EntityInfo.Namespace }}.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;

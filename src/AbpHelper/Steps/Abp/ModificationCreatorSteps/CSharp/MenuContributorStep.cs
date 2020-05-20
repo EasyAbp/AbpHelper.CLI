@@ -19,23 +19,23 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             string authText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AuthorizationService", model);
             string addMenuItemText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
 
-            CSharpSyntaxNode Func(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
+            CSharpSyntaxNode MainMenu(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
                 .Single(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
 
             var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
 
             builders.Add(
                 new InsertionBuilder<CSharpSyntaxNode>(
-                    root => Func(root).GetStartLine() + 2,
+                    root => MainMenu(root).GetStartLine() + 2,
                     authText,
-                    modifyCondition: root => Func(root).NotContains(authText)
+                    modifyCondition: root => MainMenu(root).NotContains(authText)
                 )
             );
 
             if (projectInfo.TemplateType == TemplateType.Application)
             {
                 string usingForAppText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_UsingForApp", model);
-                
+
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
                         root => 2,
@@ -44,16 +44,24 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
                     ));
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
-                        root => Func(root).GetEndLine(),
+                        root => MainMenu(root).GetEndLine(),
                         addMenuItemText,
-                        modifyCondition: root => Func(root).NotContains(addMenuItemText)
+                        modifyCondition: root => MainMenu(root).NotContains(addMenuItemText)
                     )
                 );
             }
             else if (projectInfo.TemplateType == TemplateType.Module)
             {
+                string configureMainMenuText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_ConfigureMainMenu", model);
                 string usingForModuleText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_UsingForModule", model);
                 string localizerText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_Localizer", model);
+                builders.Add(
+                    new ReplacementBuilder<CSharpSyntaxNode>(
+                        root => MainMenu(root).GetStartLine(),
+                        root => MainMenu(root).GetStartLine(),
+                        configureMainMenuText,
+                        modifyCondition: root => root.NotContains(configureMainMenuText)
+                    ));
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
                         root => 2,
@@ -61,14 +69,19 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
                         modifyCondition: root => root.NotContains(usingForModuleText)
                     ));
                 builders.Add(new InsertionBuilder<CSharpSyntaxNode>(
-                    root => Func(root).GetStartLine() + 2,
+                    root => MainMenu(root).GetStartLine() + 2,
                     localizerText,
-                    modifyCondition: root => Func(root).NotContains(localizerText)
+                    modifyCondition: root => MainMenu(root).NotContains(localizerText)
+                ));
+                builders.Add(new DeletionBuilder<CSharpSyntaxNode>(
+                    root => MainMenu(root).GetEndLine() - 1,
+                    root => MainMenu(root).GetEndLine() - 1,
+                    modifyCondition: root => !root.NotContains("return Task.CompletedTask;")
                 ));
                 builders.Add(new InsertionBuilder<CSharpSyntaxNode>(
-                    root => Func(root).GetEndLine() - 1, // Before `return Task.CompletedTask;`
+                    root => MainMenu(root).GetEndLine(),
                     addMenuItemText,
-                    modifyCondition: root => Func(root).NotContains(addMenuItemText)
+                    modifyCondition: root => MainMenu(root).NotContains(addMenuItemText)
                 ));
             }
 

@@ -45,6 +45,12 @@
         <None Update="Templates\Crud\MenuContributor_UsingForApp.sbntxt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Templates\Crud\MenuContributor_ConfigureMainMenu.sbntxt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Templates\Crud\Permissions_AddGroup.sbntxt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <PropertyGroup>
