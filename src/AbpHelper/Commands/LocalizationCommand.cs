@@ -16,7 +16,7 @@ namespace EasyAbp.AbpHelper.Commands
 {
     public class LocalizationCommand : CommandBase
     {
-        public LocalizationCommand(IServiceProvider serviceProvider) : base(serviceProvider, "localization", "Generate localization items according to the specified names")
+        public LocalizationCommand(IServiceProvider serviceProvider) : base(serviceProvider, "localization", "Generate localization item(s) according to the specified name(s)")
         {
             AddArgument(new Argument<string[]>("names") {Description = "The localization item names, separated by the space char"});
             AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
