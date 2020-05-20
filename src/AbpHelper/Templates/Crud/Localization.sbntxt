@@ -13,6 +13,6 @@
 {{~ end ~}}
     "Create{{ EntityInfo.Name }}": "Create{{ EntityInfo.Name }}",
     "Edit{{ EntityInfo.Name }}": "Edit{{ EntityInfo.Name }}",
-    "{{ EntityInfo.Name }}DeletionConfirmationMessage": "Are you sure to delete the {{ EntityInfo.Name | string.downcase }} {0}?",
+    "{{ EntityInfo.Name }}DeletionConfirmationMessage": "Are you sure to delete the {{ EntityInfo.Name | abp.camel_case }} {0}?",
     "SuccessfullyDeleted": "Successfully deleted"
 }
