@@ -9,7 +9,7 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 1. Install AbpHelper CLI tool
 
     `dotnet tool install EasyAbp.AbpHelper -g`
-    
+
     > If you prefer GUI, there is also a tool with a fancy UI: [AbpHelper.GUI](https://github.com/EasyAbp/AbpHelper.GUI)
 
 1. If you have previously installed it, update it with the following command:
@@ -41,7 +41,9 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 
     AbpHelper will generate all the CRUD stuff , even include adding migration and database updating!
 
-1. Just rebuild your application and run. See the magic happens:)
+1. Just rebuild your application and run it
+1. Login with the admin user, then grant "Todo" permissions to the user
+1. Now you can see the "Todo" feature, with all the CRUD stuff!
 
     ![running_demo](doc/images/2020-02-10-14-09-22.png)
 
@@ -73,6 +75,12 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
     Generate service method(s) according to the specified name(s)
 
     [Demo GIF](doc/images/methods.gif)
+
+  * localization
+
+    Generate localization item(s) according to the specified name(s)
+
+    [Demo GIF](doc/images/localization.gif)
 
 # Extensibility
 
