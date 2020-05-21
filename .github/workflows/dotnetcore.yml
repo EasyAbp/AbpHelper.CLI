@@ -47,6 +47,8 @@ jobs:
         source-url: https://nuget.pkg.github.com/DosSEdo/index.json
       env:
         NUGET_AUTH_TOKEN:  ${{secrets.NUGET_API_KEY}}
+    - name: Build for Pack
+      run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
     - name: Create the package
       run: dotnet pack --no-restore --configuration Release --verbosity normal src/AbpHelper/AbpHelper.csproj 
     - name: Publish the package to GPR
