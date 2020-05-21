@@ -32,8 +32,8 @@ jobs:
         # toolVersion: # optional
     - name: Test
       run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
-    - name: Packging
-      run: dotnet pack src/AbpHelper/AbpHelper.csproj --no-restore --configuration Release --verbosity normal
+    - name: Packaging
+      run: dotnet pack src/AbpHelper.Tests/AbpHelper.Tests.csproj --no-restore --configuration Release --verbosity normal
     - name: Publish
       run: dotnet nuget push "src/bin/Release/AbpHelper.CLI.1.0.0.nupkg" --source "github"
     
