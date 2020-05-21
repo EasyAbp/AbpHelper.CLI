@@ -72,7 +72,7 @@ jobs:
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
 
         # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-        NUGET_SOURCE: https://nuget.pkg.github.com/dossedo/index.json
+        NUGET_SOURCE: https://nuget.pkg.github.com/dossedo/
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         # INCLUDE_SYMBOLS: false
