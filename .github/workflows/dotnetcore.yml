@@ -9,15 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet: [ '2.2.103', '3.0.100', '3.1.100', '3.1.101' ]
+#     strategy:
+#       matrix:
+#         dotnet: [ '2.2.103', '3.0.100', '3.1.100', '3.1.101' ]
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1.4.0
       with:
-        dotnet-version: ${{ matrix.dotnet }}
+#         dotnet-version: ${{ matrix.dotnet }}
+          dotnet-version: '3.1.101'
     - name: Install dependencies
       run: dotnet restore src/AbpHelper/AbpHelper.csproj
     - name: Build
@@ -42,7 +43,8 @@ jobs:
     # Authenticates packages to push to GPR
     - uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ matrix.dotnet }} # SDK Version to use.
+#         dotnet-version: ${{ matrix.dotnet }} # SDK Version to use.
+        dotnet-version: '3.1.101'
         source-url: https://nuget.pkg.github.com/DosSEdo/index.json
       env:
         NUGET_AUTH_TOKEN:  ${{secrets.NUGET_API_KEY}}
