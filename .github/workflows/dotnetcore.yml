@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
-    - uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
@@ -20,7 +20,7 @@ jobs:
     - name: Build
       run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
     - name: Nerdbank.GitVersioning
-    - uses: dotnet/nbgv@v0.3.1
+      uses: dotnet/nbgv@v0.3.1
       with:
         # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
         path: src/AbpHelper/
