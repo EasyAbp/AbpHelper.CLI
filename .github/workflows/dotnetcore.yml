@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -20,7 +18,18 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
+    - name: Nerdbank.GitVersioning
+    - uses: dotnet/nbgv@v0.3.1
+      with:
+        # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
+        path: src/AbpHelper/
+        # Defines ALL version variables as environment variables, with a "NBGV_" prefix.
+        # setAllVars: # optional
+        # Defines a few common version variables as environment variables, with a "Git" prefix (e.g. GitBuildVersion, GitBuildVersionSimple, GitAssemblyInformationalVersion).
+        # setCommonVars: # optional
+        # The version of the nbgv dotnet CLI tool to install and use. If not specified, the default is the latest stable version.
+        # toolVersion: # optional
     - name: Test
       run: dotnet test --no-restore --verbosity normal
 
@@ -28,11 +37,9 @@ jobs:
       #   uses: actions/setup-dotnet@v1
       #   with:
       #     dotnet-version: 3.1.200
-
-  publish:
     
+  publish:    
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: publish on version change
@@ -49,7 +56,7 @@ jobs:
         # VERSION_FILE_PATH: Directory.Build.props
 
         # Regex pattern to extract version info in a capturing group
-        VERSION_REGEX: <Version>(.*)<\/Version>
+        # VERSION_REGEX: <Version>(.*)<\/Version>
 
         # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
         # VERSION_STATIC: 1.0.0
@@ -64,7 +71,7 @@ jobs:
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
 
         # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-        NUGET_SOURCE: https://nuget.pkg.github.com/blyzer/index.json
+        NUGET_SOURCE: https://nuget.pkg.github.com/dossedo/index.json
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         # INCLUDE_SYMBOLS: false
