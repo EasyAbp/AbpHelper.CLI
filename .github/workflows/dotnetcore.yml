@@ -34,15 +34,7 @@ jobs:
         # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
         path: src/AbpHelper/
     - name: Test
-      run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
-    - name: Zipping
-      run: zip AbpHelper.zip AbpHelper/bin/Release/AbpHelper.nupkg
-    - name: Upload build result to artifact release-asset
-      uses: actions/upload-artifact@v2
-      with:
-        name: AbpHelper
-        path: AbpHelper.zip
-      
+      run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal      
   
   publish:    
     runs-on: ubuntu-latest
@@ -73,7 +65,14 @@ jobs:
         NUGET_SOURCE: https://nuget.pkg.github.com/DosSEdo/
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-        INCLUDE_SYMBOLS: true
+        INCLUDE_SYMBOLS: true    
+    - name: Zipping
+      run: zip AbpHelper.zip AbpHelper/bin/Release/AbpHelper.nupkg
+    - name: Upload build result to artifact release-asset
+      uses: actions/upload-artifact@v2
+      with:
+        name: AbpHelper
+        path: AbpHelper.zip
   
 #   Release:
 #     name: Upload Release Asset
