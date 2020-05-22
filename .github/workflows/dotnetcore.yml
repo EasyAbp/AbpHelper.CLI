@@ -23,16 +23,16 @@ jobs:
       uses: actions/setup-dotnet@v1.4.0
       with:
         dotnet-version: ${{ matrix.dotnet }}
-    - working-directory: src/
+#     - working-directory: src/
     - name: Install dependencies
-      run: dotnet restore AbpHelper/AbpHelper.csproj
+      run: dotnet restore src/AbpHelper/AbpHelper.csproj
     - name: Build
-      run: dotnet build AbpHelper/AbpHelper.csproj --configuration Release --no-restore
+      run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
     - name: Nerdbank.GitVersioning
       uses: dotnet/nbgv@v0.3.1
       with:
         # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
-        path: AbpHelper/
+        path: src/AbpHelper/
         # Defines ALL version variables as environment variables, with a "NBGV_" prefix.
         # setAllVars: # optional
         # Defines a few common version variables as environment variables, with a "Git" prefix (e.g. GitBuildVersion, GitBuildVersionSimple, GitAssemblyInformationalVersion).
@@ -40,7 +40,7 @@ jobs:
         # The version of the nbgv dotnet CLI tool to install and use. If not specified, the default is the latest stable version.
         toolVersion: ${{ matrix.dotnet }}
     - name: Test
-      run: dotnet test AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
+      run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
 #     - name: Zipping
 #       run: zip AbpHelper.zip AbpHelper/bin/Release/AbpHelper.nupkg
 #     - name: Upload build result to artifact release-asset
@@ -55,13 +55,13 @@ jobs:
     needs: [build]
     steps:
     - uses: actions/checkout@v2
-    - working-directory: src/
+#     - working-directory: src/
     - name: publish on version change
       id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: AbpHelper/AbpHelper.csproj
+        PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
 
         # NuGet package id, used for version detection & defaults to project name
         PACKAGE_NAME: AbpHelper.CLI
