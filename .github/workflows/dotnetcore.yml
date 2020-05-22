@@ -113,7 +113,7 @@ jobs:
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         INCLUDE_SYMBOLS: false
-#     - name: adding source
-#       run: dotnet nuget setapikey ${{secrets.GITHUB_TOKEN}} --source "https://nuget.pkg.github.com/DosSEdo/"
-    - name: push
+    - name: Building again
+      run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
+    - name: Push
       run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg --source "https://nuget.pkg.github.com/DosSEdo/" --api-key ${{secrets.GITHUB_TOKEN}}
