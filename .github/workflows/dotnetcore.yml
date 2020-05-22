@@ -33,12 +33,6 @@ jobs:
       with:
         # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
         path: src/AbpHelper/
-        # Defines ALL version variables as environment variables, with a "NBGV_" prefix.
-        # setAllVars: # optional
-        # Defines a few common version variables as environment variables, with a "Git" prefix (e.g. GitBuildVersion, GitBuildVersionSimple, GitAssemblyInformationalVersion).
-        # setCommonVars: # optional
-        # The version of the nbgv dotnet CLI tool to install and use. If not specified, the default is the latest stable version.
-        toolVersion: ${{ matrix.dotnet }}
     - name: Test
       run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
     - name: Zipping
