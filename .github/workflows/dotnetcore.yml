@@ -43,11 +43,11 @@ jobs:
       run: dotnet test AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
     - name: Zipping
       run: zip AbpHelper.zip AbpHelper/bin/Release/AbpHelper.nupkg
-    - name: Upload build result to artifact release-asset
-      uses: actions/upload-artifact@v2
-      with:
-        name: AbpHelper
-        path: AbpHelper.zip
+#     - name: Upload build result to artifact release-asset
+#       uses: actions/upload-artifact@v2
+#       with:
+#         name: AbpHelper
+#         path: AbpHelper.zip
       
   
   publish:    
