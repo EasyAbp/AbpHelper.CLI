@@ -48,6 +48,7 @@ jobs:
       with:
         name: AbpHelper
         path: AbpHelper.zip
+      
   
   publish:    
     runs-on: ubuntu-latest
@@ -88,11 +89,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - working-directory: src/
-      - name: Download artifact for Build
-        uses: actions/download-artifact@v2
-        with:
-          name: AbpHelper
-          path: AbpHelper.zip
+#       - name: Download artifact for Build
+#         uses: actions/download-artifact@v2
+#         with:
+#           name: AbpHelper
+#           path: AbpHelper.zip
       - name: Build project # This would actually build your project, using zip for an example artifact
         run: |
           zip --junk-paths AbpHelper README.md
