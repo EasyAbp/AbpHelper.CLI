@@ -111,3 +111,5 @@ jobs:
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         INCLUDE_SYMBOLS: false
+    - name: push
+      run: dotnet nuget push "bin/Release/*.nupkg" --source "github"
