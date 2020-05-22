@@ -5,7 +5,9 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
-
+env: 
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -112,4 +114,4 @@ jobs:
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         INCLUDE_SYMBOLS: false
     - name: push
-      run: dotnet nuget push "bin/Release/*.nupkg" --source "github"
+      run: dotnet nuget push "bin/Release/*.nupkg" --source "https://nuget.pkg.github.com/DosSEdo/"
