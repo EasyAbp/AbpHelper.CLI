@@ -36,7 +36,7 @@ jobs:
     - name: Test
       run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
     - name: Zipping
-      run: zip -r AbpHelper AbpHelper/bin/Release/*
+      run: zip -r AbpHelper . -i AbpHelper/bin/Release/*
       id: zipping
     - name: Upload build result to artifact release-asset
       if: steps.zipping.outcome == 'success'
