@@ -71,10 +71,10 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.2
     - name: Add GPR Source using nuget.exe
       run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/DosSEdo/index.json -Username blyzer -Password ${{ secrets.GITHUB_TOKEN }} 
-    - name: dotnet build src/AbpHelper/AbpHelper.csproj
+    - name: dotnet build src\AbpHelper\AbpHelper.csproj
       run: dotnet build
     - name: nuget push
-      run: nuget push src/AbpHelper/bin/Release/*.nupkg -source "GPR" -SkipDuplicate
+      run: nuget push src\AbpHelper\bin\Release\*.nupkg -source "GPR" -SkipDuplicate
       
   publish:    
     runs-on: ubuntu-latest
