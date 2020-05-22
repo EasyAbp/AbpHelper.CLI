@@ -95,8 +95,9 @@ jobs:
 #           name: AbpHelper
 #           path: AbpHelper.zip
       - name: Build project # This would actually build your project, using zip for an example artifact
-        run: |
-          zip --junk-paths AbpHelper README.md
+        run: dotnet build AbpHelper/AbpHelper.csproj --configuration release
+      - name: zipping 
+        run: zip AbpHelper/bin/Release/
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
