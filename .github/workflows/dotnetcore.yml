@@ -37,12 +37,13 @@ jobs:
       run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
     - name: Zipping
       run: zip AbpHelper.zip AbpHelper/bin/Release/
+      id: zipping
     - name: Upload build result to artifact release-asset
+      if: steps.zipping.outcome == "success"
       uses: actions/upload-artifact@v2
       with:
         name: AbpHelper
         path: AbpHelper.zip
-    if: job.status == success()
     
   publish:    
     runs-on: ubuntu-latest
