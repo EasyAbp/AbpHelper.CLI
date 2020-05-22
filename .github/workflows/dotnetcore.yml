@@ -113,6 +113,8 @@ jobs:
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         INCLUDE_SYMBOLS: false
+    - name: Install dependencies again
+      run: dotnet restore src/AbpHelper/AbpHelper.csproj
     - name: Building again
       run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
     - name: Push
