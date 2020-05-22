@@ -51,7 +51,7 @@ jobs:
     - name: Create the package
       run: dotnet pack --no-restore --configuration Release --verbosity normal src/AbpHelper/AbpHelper.csproj 
     - name: Publish the package to GPR
-      run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -k NUGET_AUTH_TOKEN -s https://nuget.pkg.github.com/DosSEdo/index.json
+      run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -k fb779e494eacbf1981c5a806fd1c64c6c2351427 -s https://nuget.pkg.github.com/DosSEdo/index.json
     
 #   publish:    
 #     runs-on: ubuntu-latest
