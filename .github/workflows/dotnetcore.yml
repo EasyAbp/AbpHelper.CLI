@@ -79,20 +79,18 @@ jobs:
   Release:
     name: Upload Release Asset
     runs-on: ubuntu-latest
-    needs: [publish]
+    needs: [build]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - working-directory: src/
+#       - working-directory: src/
       - name: Download artifact for Build
         uses: actions/download-artifact@v2
         with:
           name: AbpHelper
           path: AbpHelper.zip
-      - name: Build project # This would actually build your project, using zip for an example artifact
-        run: dotnet build AbpHelper/AbpHelper.csproj --configuration release
-      - name: zipping 
-        run: zip AbpHelper/bin/Release/
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -110,6 +108,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./${{github.repository}}.zip
-          asset_name: ${{github.repository}}.zip
+          asset_path: ./AbpHelper.zip
+          asset_name: AbpHelper.zip
           asset_content_type: application/zip
