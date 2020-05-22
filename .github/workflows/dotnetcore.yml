@@ -116,4 +116,4 @@ jobs:
 #     - name: adding source
 #       run: dotnet nuget setapikey ${{secrets.GITHUB_TOKEN}} --source "https://nuget.pkg.github.com/DosSEdo/"
     - name: push
-      run: dotnet nuget push "bin/Release/*.nupkg" --source "https://nuget.pkg.github.com/DosSEdo/" --api-key ${{secrets.GITHUB_TOKEN}}
+      run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg --source "https://nuget.pkg.github.com/DosSEdo/" --api-key ${{secrets.GITHUB_TOKEN}}
