@@ -9,16 +9,17 @@ on:
 jobs:
   Packaging:
     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         dotnet: [ '2.2.103', '3.0.100', '3.1.100', '3.1.101' ]
+    strategy:
+      matrix:
+        dotnet: [ '3.0.100', '3.1.100', '3.1.101' ]
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1.4.0
       with:
-#         dotnet-version: ${{ matrix.dotnet }}
-          dotnet-version: '3.1.101'
+        dotnet-version: ${{ matrix.dotnet }}
+#           dotnet-version: '3.1.101'
+#     - working-directory: src/
     - name: Install dependencies
       run: dotnet restore src/AbpHelper/AbpHelper.csproj
     - name: Build
@@ -43,17 +44,35 @@ jobs:
     # Authenticates packages to push to GPR
     - uses: actions/setup-dotnet@v1
       with:
-#         dotnet-version: ${{ matrix.dotnet }} # SDK Version to use.
-        dotnet-version: '3.1.101'
+        dotnet-version: ${{ matrix.dotnet }} # SDK Version to use.
+#         dotnet-version: '3.1.101'
         source-url: https://nuget.pkg.github.com/DosSEdo
       env:
 #         NUGET_AUTH_TOKEN:  ${{secrets.NUGET_API_KEY}}
           NUGET_AUTH_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+    - name: adding source  
+      run: dotnet nuget add source https://nuget.pkg.github.com/DosSEdo/index.json -n GPR -u blyzer -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
     - name: Create the package
       run: dotnet pack --no-restore --configuration Release --verbosity normal src/AbpHelper/AbpHelper.csproj 
-    - name: Publish the package to GPR
-      run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -u blyzer -p ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/DosSEdo/index.json
+    - name: Publish the package to GPR  
+      run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -source "GPR" -SkipDuplicate
+      
+#       run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -u blyzer -p ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/DosSEdo/index.json
+  
+#   Publishing:
+#     needs: [Packaging]
+#     runs-on: windows-latest
     
+#     steps:
+#     - uses: actions/checkout@v1
+#     - name: Setup NuGet.exe for use with actions
+#       uses: NuGet/setup-nuget@v1.0.2
+#     - name: Add GPR Source using nuget.exe
+#       run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/DosSEdo/index.json -Username anangaur -Password ${{ secrets.GITHUB_TOKEN }} 
+#     - name: dotnet build src\
+#       run: dotnet build
+#     - name: nuget push
+#       run: nuget push my.sample.lib\**\*.nupkg -source "GPR" -SkipDuplicate
 #   publish:    
 #     runs-on: ubuntu-latest
 #     needs: [build]
