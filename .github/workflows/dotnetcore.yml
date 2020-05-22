@@ -7,7 +7,7 @@ on:
     branches: [ develop ]
 
 jobs:
-  Packaging:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -42,20 +42,20 @@ jobs:
 #     - name: Publish
 #       run: dotnet nuget push "src/bin/Release/AbpHelper.CLI.1.0.0.nupkg" --source "github"
     # Authenticates packages to push to GPR
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ matrix.dotnet }} # SDK Version to use.
-#         dotnet-version: '3.1.101'
-        source-url: https://nuget.pkg.github.com/DosSEdo
-      env:
-#         NUGET_AUTH_TOKEN:  ${{secrets.NUGET_API_KEY}}
-          NUGET_AUTH_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-    - name: adding source  
-      run: dotnet nuget add source https://nuget.pkg.github.com/DosSEdo/index.json -n GPR -u blyzer -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
-    - name: Create the package
-      run: dotnet pack --no-restore --configuration Release --verbosity normal src/AbpHelper/AbpHelper.csproj 
-    - name: Publish the package to GPR  
-      run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -source "GPR" -SkipDuplicate
+#     - uses: actions/setup-dotnet@v1
+#       with:
+#         dotnet-version: ${{ matrix.dotnet }} # SDK Version to use.
+# #         dotnet-version: '3.1.101'
+#         source-url: https://nuget.pkg.github.com/DosSEdo
+#       env:
+# #         NUGET_AUTH_TOKEN:  ${{secrets.NUGET_API_KEY}}
+#           NUGET_AUTH_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+#     - name: adding source  
+#       run: dotnet nuget add source https://nuget.pkg.github.com/DosSEdo/index.json -n GPR -u blyzer -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+#     - name: Create the package
+#       run: dotnet pack --no-restore --configuration Release --verbosity normal src/AbpHelper/AbpHelper.csproj 
+#     - name: Publish the package to GPR  
+#       run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -source "GPR" -SkipDuplicate
       
 #       run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -u blyzer -p ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/DosSEdo/index.json
   
@@ -73,41 +73,41 @@ jobs:
 #       run: dotnet build
 #     - name: nuget push
 #       run: nuget push my.sample.lib\**\*.nupkg -source "GPR" -SkipDuplicate
-#   publish:    
-#     runs-on: ubuntu-latest
-#     needs: [build]
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: publish on version change
-#       id: publish_nuget
-#       uses: rohith/publish-nuget@v2
-#       with:
-#         # Filepath of the project to be packaged, relative to root of repository
-#         PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
+  publish:    
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+    - uses: actions/checkout@v2
+    - name: publish on version change
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        # Filepath of the project to be packaged, relative to root of repository
+        PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
 
-#         # NuGet package id, used for version detection & defaults to project name
-#         PACKAGE_NAME: AbpHelper.CLI
+        # NuGet package id, used for version detection & defaults to project name
+        PACKAGE_NAME: AbpHelper.CLI
 
-#         # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
-#         # VERSION_FILE_PATH: Directory.Build.props
+        # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
+        # VERSION_FILE_PATH: Directory.Build.props
 
-#         # Regex pattern to extract version info in a capturing group
-#         # VERSION_REGEX: <Version>(.*)<\/Version>
+        # Regex pattern to extract version info in a capturing group
+        # VERSION_REGEX: <Version>(.*)<\/Version>
 
-#         # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-#         # VERSION_STATIC: 1.0.0
+        # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
+        # VERSION_STATIC: 1.0.0
 
-#         # Flag to toggle git tagging, enabled by default
-#         TAG_COMMIT: true
+        # Flag to toggle git tagging, enabled by default
+        TAG_COMMIT: true
 
-#         # Format of the git tag, [*] gets replaced with actual version
-#         # TAG_FORMAT: v*
+        # Format of the git tag, [*] gets replaced with actual version
+        # TAG_FORMAT: v*
 
-#         # API key to authenticate with NuGet server
-#         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+        # API key to authenticate with NuGet server
+        NUGET_KEY: ${{secrets.GITHUB_TOKEN}}
 
-#         # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-#         NUGET_SOURCE: https://nuget.pkg.github.com/dossedo/
+        # NuGet server uri hosting the packages, defaults to https://api.nuget.org
+        NUGET_SOURCE: https://nuget.pkg.github.com/DosSEdo/
 
-#         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-#         # INCLUDE_SYMBOLS: false
+        # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
+        INCLUDE_SYMBOLS: false
