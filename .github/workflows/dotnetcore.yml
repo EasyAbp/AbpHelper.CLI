@@ -71,7 +71,7 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.2
     - name: Add GPR Source using nuget.exe
       run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/DosSEdo/index.json -Username blyzer -Password ${{ secrets.GITHUB_TOKEN }} 
-    - name: dotnet build src/AbpHelper
+    - name: dotnet build src/AbpHelper/AbpHelper.csproj
       run: dotnet build
     - name: nuget push
       run: nuget push src/AbpHelper/bin/Release/*.nupkg -source "GPR" -SkipDuplicate
@@ -95,7 +95,7 @@ jobs:
         # VERSION_FILE_PATH: Directory.Build.props
 
         # Regex pattern to extract version info in a capturing group
-        VERSION_REGEX: <Version>(.*)<//Version>
+        # VERSION_REGEX: <Version>(.*)<//Version>
 
         # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
         # VERSION_STATIC: 1.0.0
