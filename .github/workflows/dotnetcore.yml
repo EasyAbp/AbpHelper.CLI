@@ -3,6 +3,9 @@ name: .NET Core
 on:
   push:
     branches: [ develop ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   pull_request:
     branches: [ develop ]
 env: 
@@ -20,17 +23,16 @@ jobs:
       uses: actions/setup-dotnet@v1.4.0
       with:
         dotnet-version: ${{ matrix.dotnet }}
-#           dotnet-version: '3.1.101'
-#     - working-directory: src/
+    - working-directory: src/
     - name: Install dependencies
-      run: dotnet restore src/AbpHelper/AbpHelper.csproj
+      run: dotnet restore AbpHelper/AbpHelper.csproj
     - name: Build
-      run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
+      run: dotnet build AbpHelper/AbpHelper.csproj --configuration Release --no-restore
     - name: Nerdbank.GitVersioning
       uses: dotnet/nbgv@v0.3.1
       with:
         # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
-        path: src/AbpHelper/
+        path: AbpHelper/
         # Defines ALL version variables as environment variables, with a "NBGV_" prefix.
         # setAllVars: # optional
         # Defines a few common version variables as environment variables, with a "Git" prefix (e.g. GitBuildVersion, GitBuildVersionSimple, GitAssemblyInformationalVersion).
@@ -38,71 +40,27 @@ jobs:
         # The version of the nbgv dotnet CLI tool to install and use. If not specified, the default is the latest stable version.
         # toolVersion: # optional
     - name: Test
-      run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
-#     - name: Packaging
-#       run: dotnet pack src/AbpHelper/AbpHelper.csproj --no-restore --configuration Release --verbosity normal
-#     - name: Publish
-#       run: dotnet nuget push "src/bin/Release/AbpHelper.CLI.1.0.0.nupkg" --source "github"
-    # Authenticates packages to push to GPR
-#     - uses: actions/setup-dotnet@v1
-#       with:
-#         dotnet-version: ${{ matrix.dotnet }} # SDK Version to use.
-# #         dotnet-version: '3.1.101'
-#         source-url: https://nuget.pkg.github.com/DosSEdo
-#       env:
-# #         NUGET_AUTH_TOKEN:  ${{secrets.NUGET_API_KEY}}
-#           NUGET_AUTH_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-#     - name: adding source  
-#       run: dotnet nuget add source https://nuget.pkg.github.com/DosSEdo/index.json -n GPR -u blyzer -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
-#     - name: Create the package
-#       run: dotnet pack --no-restore --configuration Release --verbosity normal src/AbpHelper/AbpHelper.csproj 
-#     - name: Publish the package to GPR  
-#       run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -source "GPR" -SkipDuplicate
-      
-#       run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg -u blyzer -p ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/DosSEdo/index.json
-  nuget:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@master
-    # Authenticates packages to push to GPR
-    - uses: actions/setup-dotnet@v1
+      run: dotnet test AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
+    - name: Zipping
+      run: zip AbpHelper.zip AbpHelper/bin/Release/AbpHelper.nupkg
+    - name: Upload build result to artifact release-asset
+      uses: actions/upload-artifact@v2
       with:
-        dotnet-version: '3.1.100' # SDK Version to use.
-        source-url: https://nuget.pkg.github.com/DosSEdo/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - run: dotnet build src/AbpHelper/AbpHelper.csproj
-    - name: Create the package
-      run: dotnet pack --configuration src/AbpHelper/AbpHelper.csproj
-    - name: Publish the package to GPR  
-      run: dotnet nuget push src/AbpHelper/bin/Release/*.nupkg
-    
-  packaging:
-#     needs: [Packaging]
-    runs-on: windows-latest
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.2
-    - name: Add GPR Source using nuget.exe
-      run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/DosSEdo/index.json -Username blyzer -Password ${{ secrets.GITHUB_TOKEN }} 
-    - name: dotnet build src\AbpHelper\AbpHelper.csproj
-      run: dotnet build
-    - name: nuget push
-      run: nuget push src\AbpHelper\bin\Release\*.nupkg -source "GPR" -SkipDuplicate
-      
+        name: AbpHelper
+        path: AbpHelper.zip   
+  
   publish:    
-    runs-on: windows-latest
-#     needs: [build]
+    runs-on: ubuntu-latest
+    needs: [build]
     steps:
     - uses: actions/checkout@v2
+    - working-directory: src/
     - name: publish on version change
       id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
+        PROJECT_FILE_PATH: AbpHelper/AbpHelper.csproj
 
         # NuGet package id, used for version detection & defaults to project name
         PACKAGE_NAME: AbpHelper.CLI
@@ -129,4 +87,40 @@ jobs:
         NUGET_SOURCE: https://nuget.pkg.github.com/DosSEdo/
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-        INCLUDE_SYMBOLS: false
+        INCLUDE_SYMBOLS: true
+  
+  Release:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    needs: [publish]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - working-directory: src/
+      - name: Download math result for Build
+        uses: actions/download-artifact@v2
+        with:
+          name: AbpHelper
+      - name: Build project # This would actually build your project, using zip for an example artifact
+        run: |
+          zip --junk-paths AbpHelper README.md
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./${{github.repository}}.zip
+          asset_name: ${{github.repository}}.zip
+          asset_content_type: application/zip
