@@ -113,5 +113,7 @@ jobs:
 
         # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
         INCLUDE_SYMBOLS: false
+    - name: adding source
+      run: dotnet nuget setapikey ${{secrets.GITHUB_TOKEN}} --source "https://nuget.pkg.github.com/DosSEdo/"
     - name: push
       run: dotnet nuget push "bin/Release/*.nupkg" --source "https://nuget.pkg.github.com/DosSEdo/"
