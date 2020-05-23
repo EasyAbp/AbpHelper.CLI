@@ -38,7 +38,7 @@ jobs:
     - name: Create the package
       run: dotnet pack --configuration Release AbpHelper/AbpHelper.CLI.csproj
     - name: moving
-      run: cd AbpHelper/      
+      run: cd AbpHelper/
       id: moving
     - name: Publish the package to GPR
       run: dotnet nuget push "bin/Release/EasyAbp.AbpHelper.0.3.0.nupkg" --source "github" --skip-duplicate
