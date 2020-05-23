@@ -23,18 +23,27 @@ jobs:
       uses: actions/setup-dotnet@v1.4.0
       with:
         dotnet-version: ${{ matrix.dotnet }}
-#     - working-directory: src/
+    - working-directory: src/
     - name: Install dependencies
-      run: dotnet restore src/AbpHelper/AbpHelper.csproj
+      run: dotnet restore AbpHelper/AbpHelper.csproj "nuget.org"
     - name: Build
-      run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
+      run: dotnet build AbpHelper/AbpHelper.csproj --configuration Release --no-restore
     - name: Nerdbank.GitVersioning
       uses: dotnet/nbgv@v0.3.1
       with:
         # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
-        path: src/AbpHelper/
+        path: AbpHelper/
     - name: Test
-      run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
+      run: dotnet test AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
+    - name: Create the package
+      run: dotnet pack --configuration Release AbpHelper/AbpHelper.CLI.csproj
+    - name: moving
+      id: moving
+      run: cd AbpHelper/
+    - name: Publish the package to GPR
+      run: dotnet nuget push "bin/Release/EasyAbp.AbpHelper.0.3.0.nupkg" --source "github" --skip-duplicate
+    - name: returning base
+      run: cd ..
     - name: Zipping
       run: zip -r AbpHelper . -i AbpHelper/bin/Release/*
       id: zipping
@@ -50,13 +59,13 @@ jobs:
     needs: [build]
     steps:
     - uses: actions/checkout@v2
-#     - working-directory: src/
+    - working-directory: src/
     - name: publish on version change
       id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
+        PROJECT_FILE_PATH: AbpHelper/AbpHelper.csproj
 
         # NuGet package id, used for version detection & defaults to project name
         PACKAGE_NAME: AbpHelper.CLI
@@ -83,7 +92,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-#       - working-directory: src/
+      - working-directory: src/
       - name: Download artifact for Build
         uses: actions/download-artifact@v2
         with:
