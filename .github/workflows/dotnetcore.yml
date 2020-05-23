@@ -25,7 +25,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet }}
 #     - working-directory: src/
     - name: Install dependencies
-      run: dotnet restore src/AbpHelper/AbpHelper.csproj -s "nuget.org"
+      run: dotnet restore src/AbpHelper/AbpHelper.csproj
     - name: Build
       run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
     - name: Nerdbank.GitVersioning
