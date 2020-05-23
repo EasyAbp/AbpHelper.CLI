@@ -9,7 +9,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}
         {{~ for prop in EntityInfo.Properties ~}}
         {{~ if prop | abp.is_ignore_property; continue; end ~}}
         {{~ if !Option.SkipLocalization ~}}
-        [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
+        [Display(Name = "{{ EntityInfo.Name + prop.Name}}")]
         {{~ end ~}}
         public {{ prop.Type}} {{ prop.Name }} { get; set; }
         {{~ if !for.last ~}}
