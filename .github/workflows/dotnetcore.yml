@@ -35,6 +35,14 @@ jobs:
         path: src/AbpHelper/
     - name: Test
       run: dotnet test src/AbpHelper/AbpHelper.csproj --no-restore --verbosity normal
+    - name: moving
+      run: cd src/AbpHelper/
+    - name: Create the package
+      run: dotnet pack --configuration Release AbpHelper.CLI.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push "bin/Release/EasyAbp.AbpHelper.0.3.0.nupkg" --source "github" --skip-duplicate
+    - name: returning base
+      run: cd ..
     - name: Zipping
       run: zip -r AbpHelper . -i src/AbpHelper/bin/Release/*
       id: zipping
