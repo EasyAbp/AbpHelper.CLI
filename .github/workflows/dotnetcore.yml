@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-dotnet@v1.4.0
       with:
         dotnet-version: ${{ matrix.dotnet }}
-    - working-directory: src/
+    #- working-directory: src/
     - name: Install dependencies
       run: dotnet restore AbpHelper/AbpHelper.csproj
     - name: Build
@@ -50,7 +50,7 @@ jobs:
     needs: [build]
     steps:
     - uses: actions/checkout@v2
-    - working-directory: src/AbpHelper/
+   # - working-directory: src/AbpHelper/
     - name: publish on version change
       id: publish_nuget
       uses: rohith/publish-nuget@v2
@@ -83,7 +83,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - working-directory: src/
+      #- working-directory: src/
       - name: Download artifact for Build
         uses: actions/download-artifact@v2
         with:
