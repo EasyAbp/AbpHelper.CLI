@@ -16,7 +16,7 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 
     `dotnet tool update EasyAbp.AbpHelper -g`
 
-1. Use [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) to create a test application
+1. Use [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) to create an ABP application
 
     `abp new MyToDo`
 
@@ -39,13 +39,15 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
     * `Todo` specified the entity name we created earlier
     * `-d` specified the **root** directory of the ABP project, which is created by the ABP CLI
 
-    AbpHelper will generate all the CRUD stuff , even include adding migration and database updating!
+    AbpHelper will generate all the CRUD stuffs , even include adding migration and database updating!
 
-1. Just rebuild your application and run it
-1. Login with the admin user, then grant "Todo" permissions to the user
-1. Now you can see the "Todo" feature, with all the CRUD stuff!
+1. Run the `DbMigrator` to seed the database
+1. Startup your application 
+1. Login with the default admin account, and see the magic happens!
 
     ![running_demo](doc/images/2020-02-10-14-09-22.png)
+    
+    > If you don't see the TODO menu, check your permissions and make sure the TODO related permissions are granted
 
 # Usage
 
