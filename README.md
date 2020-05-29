@@ -1,4 +1,7 @@
-# AbpHelper
+# AbpHelper.CLI
+
+[![NuGet](https://img.shields.io/nuget/v/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
+[![NuGet Download](https://img.shields.io/nuget/dt/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
 
 AbpHelper is a tool that help you with developing Abp vNext applications.
 
