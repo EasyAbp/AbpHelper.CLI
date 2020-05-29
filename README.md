@@ -7,7 +7,7 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 
 **Make sure to backup your source files before using it!**
 
-# Getting Started
+## Getting Started
 
 1. Install AbpHelper CLI tool
 
@@ -52,12 +52,12 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
     
     > If you don't see the TODO menu, check your permissions and make sure the TODO related permissions are granted
 
-# Usage
+## Usage
 
 * Run `abphelper -h` to see the general help
 * Similarly, you can use `-h` or `--help` option to see detailed usage of each of the following commands
 
-## Commands
+### Commands
 
 * generate
 
@@ -87,11 +87,11 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 
     [Demo GIF](doc/images/localization.gif)
 
-# Extensibility
+## Extensibility
 
 TODO: Describe how to custom the generating steps, and custom templates.
 
-# Roadmap
+## Roadmap
 
 - [ ] More CLI parameters
 - [x] Support ABP module solutions
