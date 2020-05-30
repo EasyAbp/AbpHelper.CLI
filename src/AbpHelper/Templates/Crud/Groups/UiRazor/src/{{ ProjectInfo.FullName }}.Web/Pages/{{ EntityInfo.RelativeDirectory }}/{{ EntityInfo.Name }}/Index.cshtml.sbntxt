@@ -12,7 +12,7 @@
 {{~ end ~}}
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
-@using Abp.{{ ProjectInfo.Name }}.Localization
+@using {{ ProjectInfo.FullName }}.Localization
 @using Microsoft.AspNetCore.Mvc.Localization
 @model IndexModel
 @inject IPageLayout PageLayout

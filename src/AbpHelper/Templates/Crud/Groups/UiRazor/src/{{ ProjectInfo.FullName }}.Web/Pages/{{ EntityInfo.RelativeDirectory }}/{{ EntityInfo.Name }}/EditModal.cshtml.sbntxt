@@ -1,5 +1,5 @@
 ﻿@page
-@using Abp.{{ ProjectInfo.Name }}.Localization
+@using {{ ProjectInfo.FullName }}.Localization
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
 @inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
