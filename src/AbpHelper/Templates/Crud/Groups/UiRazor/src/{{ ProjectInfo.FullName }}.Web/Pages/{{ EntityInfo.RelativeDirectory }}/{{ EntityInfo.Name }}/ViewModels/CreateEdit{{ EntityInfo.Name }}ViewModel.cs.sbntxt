@@ -1,6 +1,6 @@
 {{- SKIP_GENERATE = Option.SeparateDto || Option.SkipViewModel -}}
 using System;
-{{~ if !Option.SkipLocalization }}using System.ComponentModel;{{ end ~}}
+{{~ if !Option.SkipLocalization }}using System.ComponentModel.DataAnnotations;{{ end ~}}
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels
 {
