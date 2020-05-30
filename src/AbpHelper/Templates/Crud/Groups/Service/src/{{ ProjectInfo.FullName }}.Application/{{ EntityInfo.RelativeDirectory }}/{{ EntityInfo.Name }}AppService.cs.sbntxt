@@ -18,9 +18,11 @@ using System;
         else if ProjectInfo.TemplateType == "Module"
             permissionNamespace = "Authorization"
         end
-    end
 ~}}
 using {{ ProjectInfo.FullName }}.{{ permissionNamespace }};
+{{~
+    end
+~}}
 using {{ EntityInfo.Namespace }}.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
