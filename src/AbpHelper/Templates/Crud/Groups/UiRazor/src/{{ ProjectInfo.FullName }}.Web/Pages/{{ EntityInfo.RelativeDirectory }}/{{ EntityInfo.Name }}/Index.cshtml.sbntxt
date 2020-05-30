@@ -12,9 +12,11 @@
 {{~ end ~}}
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
-@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
+@using Abp.{{ ProjectInfo.Name }}.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
 @model IndexModel
 @inject IPageLayout PageLayout
+@inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
 {{~ if !Option.SkipPermissions ~}}
 @inject IAuthorizationService Authorization
 {{~ end ~}}

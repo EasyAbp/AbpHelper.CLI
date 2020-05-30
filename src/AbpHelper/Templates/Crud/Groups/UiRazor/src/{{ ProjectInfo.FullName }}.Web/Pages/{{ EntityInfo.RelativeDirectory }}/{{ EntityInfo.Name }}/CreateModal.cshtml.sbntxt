@@ -1,6 +1,8 @@
 ﻿@page
-@inherits {{ ProjectInfo.FullName }}.Web.Pages.{{ ProjectInfo.Name }}Page
+@using Abp.{{ ProjectInfo.Name }}.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
 @model {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}.CreateModalModel
 @{
     Layout = null;
