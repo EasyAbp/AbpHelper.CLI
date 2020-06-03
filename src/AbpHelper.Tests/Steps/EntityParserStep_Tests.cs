@@ -139,7 +139,7 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
                     info.Name.ShouldBe("UserRole");
                     info.NamePluralized.ShouldBe("UserRoles");
                     info.BaseType.ShouldBe("Entity");
-                    info.PrimaryKey.ShouldBe("UserRoleKey");
+                    info.PrimaryKey.ShouldBeNull();
                     info.Properties.Count.ShouldBe(3);
                     info.Properties[0].Type.ShouldBe("Guid");
                     info.Properties[1].Type.ShouldBe("Guid");
@@ -147,6 +147,7 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
                     info.Properties[0].Name.ShouldBe("UserId");
                     info.Properties[1].Name.ShouldBe("RoleId");
                     info.Properties[2].Name.ShouldBe("CreationTime");
+                    info.CompositeKeyName.ShouldBe("UserRoleKey");
                     info.CompositeKeys[0].Name.ShouldBe("UserId");
                     info.CompositeKeys[1].Name.ShouldBe("RoleId");
                 });

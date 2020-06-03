@@ -55,13 +55,13 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     .FirstOrDefault();
 
                 string baseType;
-                string primaryKey;
+                string? primaryKey;
                 IEnumerable<string>? keyNames = null;
                 if (genericNameSyntax == null)
                 {
                     // No generic parameter -> Entity with Composite Keys
                     baseType = baseList.Descendants<SimpleBaseTypeSyntax>().Single().Type.ToString();
-                    primaryKey = $"{className}Key";
+                    primaryKey = null;
 
                     // Get composite keys
                     var getKeysMethod = root.Descendants<MethodDeclarationSyntax>().Single(m => m.Identifier.ToString() == "GetKeys");
@@ -87,6 +87,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 entityInfo.Properties.AddRange(properties);
                 if (keyNames != null)
                 {
+                    entityInfo.CompositeKeyName = $"{className}Key";
                     entityInfo.CompositeKeys.AddRange(
                         keyNames.Select(k => properties.Single(prop => prop.Name == k)));
                 }
