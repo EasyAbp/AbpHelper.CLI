@@ -6,7 +6,7 @@ namespace EasyAbp.AbpHelper.Models
 {
     public class EntityInfo
     {
-        public EntityInfo(string @namespace, string name, string? baseType, string? primaryKey, string relativeDirectory)
+        public EntityInfo(string @namespace, string name, string? baseType, string primaryKey, string relativeDirectory)
         {
             Namespace = @namespace;
             Name = name;
@@ -22,8 +22,9 @@ namespace EasyAbp.AbpHelper.Models
         public string Name { get; }
         public string NamePluralized => Name.Pluralize();
         public string? BaseType { get; }
-        public string? PrimaryKey { get; }
+        public string PrimaryKey { get; }
         public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
+        public List<PropertyInfo> CompositeKeys  { get; } = new List<PropertyInfo>();
     }
 
     public class PropertyInfo
