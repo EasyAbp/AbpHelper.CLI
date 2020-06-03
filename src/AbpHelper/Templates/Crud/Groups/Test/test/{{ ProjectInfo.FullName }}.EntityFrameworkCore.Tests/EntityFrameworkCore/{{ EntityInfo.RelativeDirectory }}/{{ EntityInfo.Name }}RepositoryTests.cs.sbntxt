@@ -1,3 +1,12 @@
+{{- if Option.CustomRepository
+repository = "I" + EntityInfo.Name + "Repository"
+else
+    if EntityInfo.CompositeKeyName
+        repository = "IRepository<" + EntityInfo.Name + ">"
+    else
+        repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + ">"
+    end
+end ~}}
 using System;
 using System.Threading.Tasks;
 using {{ EntityInfo.Namespace }};
@@ -8,11 +17,11 @@ namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.RelativeN
 {
     public class {{ EntityInfo.Name }}RepositoryTests : {{ ProjectInfo.Name }}EntityFrameworkCoreTestBase
     {
-        private readonly IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}> _{{ EntityInfo.Name | abp.camel_case }}Repository;
+        private readonly {{ repository }} _{{ EntityInfo.Name | abp.camel_case }}Repository;
 
         public {{ EntityInfo.Name }}RepositoryTests()
         {
-            _{{ EntityInfo.Name | abp.camel_case }}Repository = GetRequiredService<IRepository<{{ EntityInfo.Name }}, {{ EntityInfo.PrimaryKey }}>>();
+            _{{ EntityInfo.Name | abp.camel_case }}Repository = GetRequiredService<{{ repository }}>();
         }
 
         [Fact]

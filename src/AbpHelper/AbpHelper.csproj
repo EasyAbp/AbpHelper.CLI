@@ -52,6 +52,9 @@
         <None Update="Templates\Crud\Permissions_AddGroup.sbntxt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Templates\Crud\Groups\Service\src\{{ ProjectInfo.FullName }}.Application.Contracts\{{ EntityInfo.RelativeDirectory }}\Dtos\{{ EntityInfo.CompositeKeyName }}.cs.sbntxt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <PropertyGroup>

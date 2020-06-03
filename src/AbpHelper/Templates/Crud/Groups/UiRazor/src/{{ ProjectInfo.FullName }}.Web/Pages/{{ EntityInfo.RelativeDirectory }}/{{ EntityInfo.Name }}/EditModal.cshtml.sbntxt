@@ -11,8 +11,18 @@
     <abp-modal>
         <abp-modal-header title="@L["Edit{{ EntityInfo.Name }}"].Value"></abp-modal-header>
         <abp-modal-body>
+        {{~ if EntityInfo.CompositeKeyName ~}}
+            {{~ for prop in EntityInfo.CompositeKeys ~}}
+            <abp-input type="hidden" asp-for="Id.{{ prop.Name }}" />
+            {{~ end ~}}
+            {{~ for prop in EntityInfo.Properties ~}}
+            {{~ if EntityInfo.CompositeKeys | array.contains prop; continue; end ~}}
+            <abp-input asp-for="ViewModel.{{ prop.Name }}" />
+            {{~ end ~}}
+        {{~ else ~}}
             <abp-input asp-for="Id" />
             <abp-form-content />
+        {{~ end ~}}     
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
     </abp-modal>

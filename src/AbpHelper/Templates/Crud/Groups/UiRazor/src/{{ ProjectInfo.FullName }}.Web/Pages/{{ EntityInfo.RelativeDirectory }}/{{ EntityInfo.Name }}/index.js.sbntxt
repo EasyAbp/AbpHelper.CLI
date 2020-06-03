@@ -26,7 +26,15 @@ $(function () {
                                 visible: abp.auth.isGranted('{{ ProjectInfo.Name }}.{{ EntityInfo.NamespaceLastPart }}.Update'),
 {{~ end ~}}
                                 action: function (data) {
+{{~ if EntityInfo.CompositeKeyName ~}}
+                                    editModal.open({
+    {{~ for prop in EntityInfo.CompositeKeys ~}}
+                                        {{ prop.Name | abp.camel_case}}: data.record.{{ prop.Name | abp.camel_case}}{{if !for.last}},{{end}}
+    {{~ end ~}}
+                                    });
+{{~ else ~}}
                                     editModal.open({ id: data.record.id });
+{{~ end ~}}
                                 }
                             },
                             {

@@ -16,7 +16,7 @@ namespace {{ EntityInfo.Namespace }}
     public interface I{{ EntityInfo.Name }}AppService :
         ICrudAppService< 
             {{ EntityInfo.Name }}Dto, 
-            {{ EntityInfo.PrimaryKey }}, 
+            {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, 
             PagedAndSortedResultRequestDto,
             {{ createDto }},
             {{ updateDto }}>

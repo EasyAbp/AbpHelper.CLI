@@ -8,9 +8,21 @@ end -}}
 {{- if Option.CustomRepository
 repository = "I" + EntityInfo.Name + "Repository"
 else
-repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + ">"
-end -}}
+    if EntityInfo.CompositeKeyName
+        repository = "IRepository<" + EntityInfo.Name + ">"
+    else
+        repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + ">"
+    end
+end ~}}
 using System;
+{{~ if !EntityInfo.CompositeKeyName
+crudClassName = "CrudAppService"
+else
+crudClassName = "AbstractKeyCrudAppService"
+~}}
+using System.Linq;
+using System.Threading.Tasks;
+{{~ end -}}
 {{~ if !Option.SkipPermissions 
         permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.NamespaceLastPart
         if ProjectInfo.TemplateType == "Application"
@@ -32,7 +44,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace {{ EntityInfo.Namespace }}
 {
-    public class {{ EntityInfo.Name }}AppService : CrudAppService<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey }}, PagedAndSortedResultRequestDto, {{ createDto }}, {{ updateDto }}>,
+    public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, PagedAndSortedResultRequestDto, {{ createDto }}, {{ updateDto }}>,
         I{{ EntityInfo.Name }}AppService
     {
         {{~ if !Option.SkipPermissions ~}}
@@ -55,5 +67,29 @@ namespace {{ EntityInfo.Namespace }}
         {
         }
         {{~ end ~}}
+        {{~ if EntityInfo.CompositeKeyName ~}}
+        
+        protected override Task DeleteByIdAsync({{ EntityInfo.CompositeKeyName }} id)
+        {
+            // TODO: AbpHelper generated
+            return Repository.DeleteAsync(e =>
+            {{~ for prop in EntityInfo.CompositeKeys ~}}
+                e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
+            {{~ end ~}}
+            );
+        }
+
+        protected override async Task<{{ EntityInfo.Name }}> GetEntityByIdAsync({{ EntityInfo.CompositeKeyName }} id)
+        {
+            // TODO: AbpHelper generated
+            return await AsyncQueryableExecuter.FirstOrDefaultAsync(
+                Repository.Where(e =>
+                {{~ for prop in EntityInfo.CompositeKeys ~}}
+                    e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
+                {{~ end ~}}
+                )
+            ); 
+        }
+       {{~ end ~}} 
     }
 }

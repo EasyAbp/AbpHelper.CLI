@@ -28,7 +28,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }
     {
         [HiddenInput]
         [BindProperty(SupportsGet = true)]
-        public {{ EntityInfo.PrimaryKey }} Id { get; set; }
+        public {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }} Id { get; set; }
 
         [BindProperty]
         public {{ viewModelType }} ViewModel { get; set; }
