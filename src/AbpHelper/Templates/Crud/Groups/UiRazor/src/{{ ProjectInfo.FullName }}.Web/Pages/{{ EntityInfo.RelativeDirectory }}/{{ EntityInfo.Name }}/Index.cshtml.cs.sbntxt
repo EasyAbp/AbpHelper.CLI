@@ -4,7 +4,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }
 {
     public class IndexModel : {{ ProjectInfo.Name }}PageModel
     {
-        public async Task OnGetAsync()
+        public virtual async Task OnGetAsync()
         {
             await Task.CompletedTask;
         }

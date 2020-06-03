@@ -40,13 +40,13 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }
             _service = service;
         }
 
-        public async Task OnGetAsync()
+        public virtual async Task OnGetAsync()
         {
             var dto = await _service.GetAsync(Id);
             ViewModel = ObjectMapper.Map<{{ EntityInfo.Name }}Dto, {{ viewModelType }}>(dto);
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public virtual async Task<IActionResult> OnPostAsync()
         {
 {{~ if Option.SkipViewModel ~}}    
             await _service.UpdateAsync(Id, ViewModel);
