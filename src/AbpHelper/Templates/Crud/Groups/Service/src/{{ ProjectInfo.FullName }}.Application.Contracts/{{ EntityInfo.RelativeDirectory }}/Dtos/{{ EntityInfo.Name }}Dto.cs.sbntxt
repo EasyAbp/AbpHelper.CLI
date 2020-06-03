@@ -3,6 +3,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace {{ EntityInfo.Namespace }}.Dtos
 {
+    [Serializable]
     public class {{ EntityInfo.Name }}Dto : {{ EntityInfo.BaseType | string.replace "AggregateRoot" "Entity"}}Dto{{ if EntityInfo.PrimaryKey }}<{{ EntityInfo.PrimaryKey}}>{{ end }}
     {
         {{~ for prop in EntityInfo.Properties ~}}

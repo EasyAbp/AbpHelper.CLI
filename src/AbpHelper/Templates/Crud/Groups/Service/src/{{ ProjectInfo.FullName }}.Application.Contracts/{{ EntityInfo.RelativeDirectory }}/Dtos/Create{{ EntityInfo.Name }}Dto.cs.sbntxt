@@ -4,6 +4,7 @@ using System;
 
 namespace {{ EntityInfo.Namespace }}.Dtos
 {
+    [Serializable]
     public class Create{{ EntityInfo.Name }}Dto
     {
         {{~ for prop in EntityInfo.Properties ~}}
