@@ -6,7 +6,7 @@
             if (await authorizationService.IsGrantedAsync({{ ProjectInfo.Name}}Permissions.{{ EntityInfo.NamespaceLastPart }}.Default))
             {
                 context.Menu.AddItem(
-                    new ApplicationMenuItem("{{ EntityInfo.NamespaceLastPart}}", l["Menu:{{ EntityInfo.NamespaceLastPart}}"], "/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
+                    new ApplicationMenuItem("{{ EntityInfo.Name }}", l["Menu:{{ EntityInfo.Name }}"], "/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
                 );
             }
 {{~ end ~}}
