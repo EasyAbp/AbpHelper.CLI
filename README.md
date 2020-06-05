@@ -1,6 +1,8 @@
-# AbpHelper
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/DosSEdo/AbpHelper.CLI)
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/EasyAbp/AbpHelper.CLI)
+
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/DosSEdo/AbpHelper.CLI)
+
+# AbpHelper
 AbpHelper is a tool that help you with developing Abp vNext applications.
 
 **Make sure backup your source files before using it!**
