@@ -1,7 +1,7 @@
 
         public class {{ EntityInfo.NamespaceLastPart }}
         {
-            public const string Default = GroupName + ".{{ EntityInfo.NamespaceLastPart }}";
+            public const string Default = GroupName + ".{{ EntityInfo.Name }}";
             public const string Update = Default + ".Update";
             public const string Create = Default + ".Create";
             public const string Delete = Default + ".Delete";
