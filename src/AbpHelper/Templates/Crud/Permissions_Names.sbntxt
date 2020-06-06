@@ -1,5 +1,5 @@
 
-        public class {{ EntityInfo.NamespaceLastPart }}
+        public class {{ EntityInfo.Name }}
         {
             public const string Default = GroupName + ".{{ EntityInfo.Name }}";
             public const string Update = Default + ".Update";

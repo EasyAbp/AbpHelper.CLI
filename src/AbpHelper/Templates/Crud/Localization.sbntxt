@@ -1,11 +1,11 @@
 {
 {{~ if !Option.SkipPermissions ~}}
-    "Permission:{{ EntityInfo.NamespaceLastPart }}": "{{ EntityInfo.NamespaceLastPart }}",
+    "Permission:{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
     "Permission:Create": "Create",
     "Permission:Update": "Update",
     "Permission:Delete": "Delete",
 {{~ end ~}}
-    "Menu:{{ EntityInfo.NamespaceLastPart }}": "Menu{{ EntityInfo.NamespaceLastPart }}",
+    "Menu:{{ EntityInfo.Name }}": "Menu{{ EntityInfo.Name }}",
     "{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
 {{~ for prop in EntityInfo.Properties ~}}
 {{~ if prop | abp.is_ignore_property; continue; end ~}}

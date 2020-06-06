@@ -38,7 +38,7 @@
             </abp-column>
             <abp-column size-md="_6" class="text-right">
 {{~ if !Option.SkipPermissions ~}}
-			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.NamespaceLastPart }}.Create))
+			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Create))
                 { 
 {{~ end ~}}
                 <abp-button id="New{{ EntityInfo.Name }}Button"

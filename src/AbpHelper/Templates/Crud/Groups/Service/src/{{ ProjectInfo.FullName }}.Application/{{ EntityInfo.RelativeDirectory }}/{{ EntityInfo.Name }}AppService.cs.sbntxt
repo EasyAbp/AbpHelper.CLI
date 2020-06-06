@@ -27,7 +27,7 @@ using System.Linq;
 using System.Threading.Tasks;
 {{~ end -}}
 {{~ if !Option.SkipPermissions 
-    permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.NamespaceLastPart
+    permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.Name
 ~}}
 using {{ ProjectInfo.FullName }}.Permissions;
 {{~ end ~}}
