@@ -4,7 +4,7 @@
                 new ApplicationMenuItem("{{ EntityInfo.Name}}", l["Menu:{{ EntityInfo.Name}}"], "/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
             );
 {{~ else ~}}
-            if (await authorizationService.IsGrantedAsync({{ ProjectInfo.Name}}Permissions.{{ EntityInfo.Name }}.Default))
+            if (await context.IsGrantedAsync({{ ProjectInfo.Name}}Permissions.{{ EntityInfo.Name }}.Default))
             {
                 context.Menu.AddItem(
                     new ApplicationMenuItem("{{ EntityInfo.Name }}", l["Menu:{{ EntityInfo.Name }}"], "/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")

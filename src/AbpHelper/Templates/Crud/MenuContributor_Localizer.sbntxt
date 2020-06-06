@@ -1,2 +1,2 @@
-            var l = context.ServiceProvider.GetRequiredService<IStringLocalizer<{{ ProjectInfo.Name }}Resource>>();
+            var l = context.GetLocalizer<{{ ProjectInfo.Name }}Resource>();
  
