@@ -1,14 +1,7 @@
 @page
 {{~ if !Option.SkipPermissions ~}}
 @using Microsoft.AspNetCore.Authorization
-{{~
-    if ProjectInfo.TemplateType == "Application"
-        permissionNamespace = "Permissions"
-    else if ProjectInfo.TemplateType == "Module"
-        permissionNamespace = "Authorization"
-    end
-~}}
-@using {{ ProjectInfo.FullName }}.{{ permissionNamespace }}
+@using {{ ProjectInfo.FullName }}.Permissions
 {{~ end ~}}
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
