@@ -5,7 +5,14 @@ using Volo.Abp.EntityFrameworkCore;
 
 namespace {{ EntityInfo.Namespace }}
 {
-    public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ ProjectInfo.Name }}DbContext, {{ EntityInfo.Name }}, Guid>, I{{ EntityInfo.Name }}Repository
+{{~
+    if EntityInfo.CompositeKeyName
+        primaryKeyText = ""
+    else
+        primaryKeyText = ", " + EntityInfo.PrimaryKey
+    end
+~}}
+    public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ ProjectInfo.Name }}DbContext, {{ EntityInfo.Name }}{{ primaryKeyText }}>, I{{ EntityInfo.Name }}Repository
     {
         public {{ EntityInfo.Name }}Repository(IDbContextProvider<{{ ProjectInfo.Name }}DbContext> dbContextProvider) : base(dbContextProvider)
         {
