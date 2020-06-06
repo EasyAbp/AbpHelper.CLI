@@ -20,9 +20,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using {{ EntityInfo.Namespace }};
 using {{ EntityInfo.Namespace }}.Dtos;
-{{~ if !Option.SkipViewModel }}using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;{{ end ~}}
+{{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+{{~ if !Option.SkipViewModel ~}}
+using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;
+{{~ end ~}}
 
-namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
+namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 {
     public class EditModalModel : {{ ProjectInfo.Name }}PageModel
     {

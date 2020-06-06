@@ -3,7 +3,8 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
 @inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
-@model {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}.EditModalModel
+{{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+@model {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}.EditModalModel
 @{
     Layout = null;
 }

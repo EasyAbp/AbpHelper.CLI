@@ -1,12 +1,13 @@
+{{~ if Bag.PagesFolder; pagesFolder = Bag.PagesFolder + "/"; end ~}}
 {{~ if Option.SkipPermissions ~}}
             context.Menu.AddItem(
-                new ApplicationMenuItem("{{ EntityInfo.NamespaceLastPart}}", l["Menu:{{ EntityInfo.NamespaceLastPart}}"], "/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
+                new ApplicationMenuItem("{{ EntityInfo.NamespaceLastPart}}", l["Menu:{{ EntityInfo.NamespaceLastPart}}"], "/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
             );
 {{~ else ~}}
             if (await authorizationService.IsGrantedAsync({{ ProjectInfo.Name}}Permissions.{{ EntityInfo.NamespaceLastPart }}.Default))
             {
                 context.Menu.AddItem(
-                    new ApplicationMenuItem("{{ EntityInfo.Name }}", l["Menu:{{ EntityInfo.Name }}"], "/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
+                    new ApplicationMenuItem("{{ EntityInfo.Name }}", l["Menu:{{ EntityInfo.Name }}"], "/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}")
                 );
             }
 {{~ end ~}}

@@ -3,7 +3,8 @@
 @using Microsoft.AspNetCore.Authorization
 @using {{ ProjectInfo.FullName }}.Permissions
 {{~ end ~}}
-@using {{ ProjectInfo.FullName }}.Web.Pages.{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
+{{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+@using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using {{ ProjectInfo.FullName }}.Localization
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -13,6 +14,7 @@
 {{~ if !Option.SkipPermissions ~}}
 @inject IAuthorizationService Authorization
 {{~ end ~}}
+{{~ if Bag.PagesFolder; pagesFolder = Bag.PagesFolder + "/"; end ~}}
 @{
     PageLayout.Content.Title = L["{{ EntityInfo.Name }}"].Value;
     PageLayout.Content.BreadCrumb.Add(L["Menu:{{ EntityInfo.Name }}"].Value);
@@ -21,11 +23,11 @@
 
 @section scripts
 {
-    <abp-script src="/Pages/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.js" />
+    <abp-script src="/Pages/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.js" />
 }
 @section styles
 {
-    <abp-style src="/Pages/{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.css"/>
+    <abp-style src="/Pages/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.css"/>
 }
 
 <abp-card>
@@ -36,7 +38,7 @@
             </abp-column>
             <abp-column size-md="_6" class="text-right">
 {{~ if !Option.SkipPermissions ~}}
-			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.NamespaceLastPart}}.Create))
+			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.NamespaceLastPart }}.Create))
                 { 
 {{~ end ~}}
                 <abp-button id="New{{ EntityInfo.Name }}Button"
