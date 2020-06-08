@@ -19,7 +19,6 @@
         <FileVersion>0.4.0</FileVersion>
         <Authors>EasyAbp Team</Authors>
         <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
-        <NoWarn>NU5123,NU5125</NoWarn>
         <PackageTags>abp helper generator</PackageTags>
     </PropertyGroup>
 
