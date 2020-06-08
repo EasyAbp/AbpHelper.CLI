@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+defaults:
+  working-directory: src
+
 jobs:
   build:
 
@@ -17,6 +20,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+    - name:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
