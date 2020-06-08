@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Expressions;
@@ -14,6 +15,13 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
 {
     public abstract class TypeScriptModificationCreatorStep : Step
     {
+        protected TextGenerator TextGenerator;
+
+        protected TypeScriptModificationCreatorStep(TextGenerator textGenerator)
+        {
+            TextGenerator = textGenerator;
+        }
+
         public WorkflowExpression<string> SourceFile
         {
             get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));

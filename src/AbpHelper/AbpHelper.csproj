@@ -33,12 +33,12 @@
         <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageReference Include="Volo.Abp.VirtualFileSystem" Version="2.9.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Templates\**">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
+        <EmbeddedResource Include="Templates\**\*.*" />
+        <Content Remove="Templates\**\*.*" />
     </ItemGroup>
 
     <PropertyGroup>
