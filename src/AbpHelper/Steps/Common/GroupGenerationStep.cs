@@ -1,12 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Runtime;
@@ -15,6 +16,8 @@ namespace EasyAbp.AbpHelper.Steps.Common
 {
     public class GroupGenerationStep : Step
     {
+        private readonly TextGenerator _textGenerator;
+        private readonly IFileProvider _fileProvider;
         private const string SkipGenerate = "SKIP_GENERATE";
 
         public WorkflowExpression<string> TemplateDirectory
@@ -47,6 +50,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
             set => SetState(value);
         }
 
+        public GroupGenerationStep(TextGenerator textGenerator, IFileProvider fileProvider)
+        {
+            _textGenerator = textGenerator;
+            _fileProvider = fileProvider;
+        }
+
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
             string templateDir = await context.EvaluateAsync(TemplateDirectory, cancellationToken);
@@ -59,10 +68,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
             var model = await context.EvaluateAsync(Model, cancellationToken);
             LogInput(() => model);
 
-            var appDir = AppDomain.CurrentDomain.BaseDirectory!;
-            var groupDir = Path.Combine(appDir, templateDir, "Groups", GroupName);
-            if (!Directory.Exists(groupDir)) throw new DirectoryNotFoundException($"Template group directory {groupDir} does not exist.");
-
+            var groupDir = Path.Combine(templateDir, "Groups", GroupName).NormalizePath();
             await GenerateFile(groupDir, targetDirectory, model, overwrite);
 
             return Done();
@@ -70,19 +76,19 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         private async Task GenerateFile(string groupDirectory, string targetDirectory, object model, bool overwrite)
         {
-            foreach (var file in Directory.EnumerateFiles(groupDirectory, "*.sbntxt", SearchOption.AllDirectories))
+            foreach (var (path, file) in _fileProvider.GetFilesRecursively(groupDirectory))
             {
-                Logger.LogDebug($"Generating using template file: {file}");
-                var targetFilePathNameTemplate = file.Replace(groupDirectory, targetDirectory);
-                var targetFilePathName = TextGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model).RemovePostFix(".sbntxt");
+                Logger.LogDebug($"Generating using template file: {path}");
+                var targetFilePathNameTemplate = path.Replace(groupDirectory, targetDirectory);
+                var targetFilePathName = _textGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model);
                 if (File.Exists(targetFilePathName) && !overwrite)
                 {
                     Logger.LogInformation($"File {targetFilePathName} already exists, skip generating.");
                     continue;
                 }
 
-                var templateText = await File.ReadAllTextAsync(file);
-                var contents = TextGenerator.GenerateByTemplateText(templateText, model, out TemplateContext context);
+                var templateText = await file.ReadAsStringAsync();
+                var contents = _textGenerator.GenerateByTemplateText(templateText, model, out TemplateContext context);
 
                 context.CurrentGlobal.TryGetValue(SkipGenerate, out object value);
                 if (value is bool skipGenerate && skipGenerate)

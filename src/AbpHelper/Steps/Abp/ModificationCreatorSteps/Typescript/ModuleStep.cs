@@ -3,6 +3,7 @@ using System.Linq;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
 using Elsa.Services.Models;
+using JetBrains.Annotations;
 
 namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
 {
@@ -34,6 +35,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
                     lines => lines.All(l => !l.LineContent.Contains(sharedModuleContents))
                 )
             };
+        }
+
+        public ModuleStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        {
         }
     }
 }

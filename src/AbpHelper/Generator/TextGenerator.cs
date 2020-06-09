@@ -1,31 +1,41 @@
 ﻿using System;
 using System.IO;
+using EasyAbp.AbpHelper.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Scriban;
 using Scriban.Runtime;
+using Volo.Abp.DependencyInjection;
 
 namespace EasyAbp.AbpHelper.Generator
 {
-    public static class TextGenerator
+    public class TextGenerator : ISingletonDependency
     {
-        public static string GenerateByTemplateName(string templateDirectory, string templateName, object model)
+        private readonly IFileProvider _fileProvider;
+
+        public TextGenerator(IFileProvider fileProvider)
+        {
+            _fileProvider = fileProvider;
+        }
+
+        public string GenerateByTemplateName(string templateDirectory, string templateName, object model)
         {
             return GenerateByTemplateName(templateDirectory, templateName, model, out _);
         }
         
-        public static string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
+        public string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
         {
-            var appDir = AppDomain.CurrentDomain.BaseDirectory!;
-            var templateFile = Path.Combine(appDir, templateDirectory, templateName + ".sbntxt");
-            var templateText = File.ReadAllText(templateFile);
+            string path = Path.Combine(templateDirectory, templateName).NormalizePath();
+            var templateFile = _fileProvider.GetFileInfo(path);
+            var templateText = templateFile.ReadAsString();
             return GenerateByTemplateText(templateText, model, out context);
         }
 
-        public static string GenerateByTemplateText(string templateText, object model)
+        public string GenerateByTemplateText(string templateText, object model)
         {
             return GenerateByTemplateText(templateText, model, out _);
         }
 
-        public static string GenerateByTemplateText(string templateText, object model, out TemplateContext context)
+        public string GenerateByTemplateText(string templateText, object model, out TemplateContext context)
         {
             context = new TemplateContext();
             var scriptObject = new ScriptObject();

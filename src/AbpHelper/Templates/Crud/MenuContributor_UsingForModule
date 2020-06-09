@@ -1,0 +1,4 @@
+using {{ ProjectInfo.FullName }}.Localization;
+{{~ if !Option.SkipPermissions ~}}
+using {{ ProjectInfo.FullName }}.Permissions;
+{{~ end ~}}

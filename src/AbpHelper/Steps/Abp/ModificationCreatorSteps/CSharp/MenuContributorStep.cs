@@ -4,6 +4,7 @@ using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
 using Elsa.Services.Models;
+using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -16,21 +17,12 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
             var model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
-            string authText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AuthorizationService", model);
             string addMenuItemText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
 
             CSharpSyntaxNode MainMenu(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
                 .Single(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
 
             var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
-
-            builders.Add(
-                new InsertionBuilder<CSharpSyntaxNode>(
-                    root => MainMenu(root).GetStartLine() + 2,
-                    authText,
-                    modifyCondition: root => MainMenu(root).NotContains(authText)
-                )
-            );
 
             if (projectInfo.TemplateType == TemplateType.Application)
             {
@@ -86,6 +78,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             }
 
             return builders;
+        }
+
+        public MenuContributorStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        {
         }
     }
 }
