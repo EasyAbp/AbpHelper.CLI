@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
@@ -12,14 +11,13 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Runtime;
-using Volo.Abp.VirtualFileSystem;
 
 namespace EasyAbp.AbpHelper.Steps.Common
 {
     public class GroupGenerationStep : Step
     {
         private readonly TextGenerator _textGenerator;
-        private readonly IVirtualFileProvider _fileProvider;
+        private readonly IFileProvider _fileProvider;
         private const string SkipGenerate = "SKIP_GENERATE";
 
         public WorkflowExpression<string> TemplateDirectory
@@ -52,7 +50,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
             set => SetState(value);
         }
 
-        public GroupGenerationStep(TextGenerator textGenerator, IVirtualFileProvider fileProvider)
+        public GroupGenerationStep(TextGenerator textGenerator, IFileProvider fileProvider)
         {
             _textGenerator = textGenerator;
             _fileProvider = fileProvider;
@@ -78,12 +76,11 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         private async Task GenerateFile(string groupDirectory, string targetDirectory, object model, bool overwrite)
         {
-            foreach (var file in _fileProvider.GetFilesRecursively(groupDirectory))
+            foreach (var (path, file) in _fileProvider.GetFilesRecursively(groupDirectory))
             {
-                string path = file.GetCorrectPath();
                 Logger.LogDebug($"Generating using template file: {path}");
                 var targetFilePathNameTemplate = path.Replace(groupDirectory, targetDirectory);
-                var targetFilePathName = _textGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model).RemovePostFix(".sbntxt");
+                var targetFilePathName = _textGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model);
                 if (File.Exists(targetFilePathName) && !overwrite)
                 {
                     Logger.LogInformation($"File {targetFilePathName} already exists, skip generating.");

@@ -1,48 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-		<LangVersion>8.0</LangVersion>
-		<Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Description>AbpHelper is a tool to help you with developing Abp vNext applications.</Description>
-        <Copyright>EasyAbp Team</Copyright>
-        <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
-        <PackageVersion>0.4.0</PackageVersion>
-        <PackAsTool>true</PackAsTool>
-        <ToolCommandName>abphelper</ToolCommandName>
-        <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
-        <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
-        <AssemblyVersion>0.4.0</AssemblyVersion>
-        <FileVersion>0.4.0</FileVersion>
-        <Authors>EasyAbp Team</Authors>
-        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
-        <PackageTags>abp helper generator</PackageTags>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <Description>AbpHelper is a tool to help you with developing Abp vNext applications.</Description>
+    <Copyright>EasyAbp Team</Copyright>
+    <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
+    <PackageVersion>0.4.0</PackageVersion>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>abphelper</ToolCommandName>
+    <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
+    <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
+    <AssemblyVersion>0.4.0</AssemblyVersion>
+    <FileVersion>0.4.0</FileVersion>
+    <Authors>EasyAbp Team</Authors>
+    <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+    <PackageTags>abp helper generator</PackageTags>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Elsa" Version="1.2.2.29" />
-        <PackageReference Include="Humanizer.Core" Version="2.8.2" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.5.0" />
-        <PackageReference Include="Scriban" Version="2.1.2" />
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20104.2" />
-        <PackageReference Include="Volo.Abp.Autofac" Version="2.9.0" />
-        <PackageReference Include="Volo.Abp.Core" Version="2.9.0" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-        <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-        <PackageReference Include="Volo.Abp.VirtualFileSystem" Version="2.9.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Elsa" Version="1.2.2.29" />
+    <PackageReference Include="Humanizer.Core" Version="2.8.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.5.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.4" />
+    <PackageReference Include="Scriban" Version="2.1.2" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20104.2" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="2.9.0" />
+    <PackageReference Include="Volo.Abp.Core" Version="2.9.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <EmbeddedResource Include="Templates\**\*.*" />
-        <Content Remove="Templates\**\*.*" />
-    </ItemGroup>
-
-    <PropertyGroup>
-        <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
-        <Version>0.4.0</Version>
-    </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\**\*.*" />
+    <Content Remove="Templates\**\*.*" />
+    <Compile Remove="Templates\**\*.*" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
 </Project>

@@ -1,7 +1,5 @@
 ﻿@page
 @using {{ ProjectInfo.FullName }}.Localization
-@using Microsoft.AspNetCore.Mvc.Localization
-@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
 @inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
 {{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
 @model {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}.EditModalModel

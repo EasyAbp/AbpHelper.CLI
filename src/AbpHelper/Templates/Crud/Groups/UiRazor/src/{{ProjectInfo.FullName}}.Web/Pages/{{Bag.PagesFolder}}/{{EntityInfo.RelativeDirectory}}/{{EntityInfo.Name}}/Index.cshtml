@@ -1,13 +1,11 @@
 @page
 {{~ if !Option.SkipPermissions ~}}
-@using Microsoft.AspNetCore.Authorization
 @using {{ ProjectInfo.FullName }}.Permissions
 {{~ end ~}}
 {{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
-@using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using {{ ProjectInfo.FullName }}.Localization
-@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Authorization
 @model IndexModel
 @inject IPageLayout PageLayout
 @inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L

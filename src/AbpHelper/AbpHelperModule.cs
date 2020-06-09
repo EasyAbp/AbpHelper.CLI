@@ -1,13 +1,13 @@
-﻿using EasyAbp.AbpHelper.Extensions;
+﻿using System.Reflection;
+using EasyAbp.AbpHelper.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
-using Volo.Abp.VirtualFileSystem;
 
 namespace EasyAbp.AbpHelper
 {
     [DependsOn(typeof(AbpAutofacModule))]
-    [DependsOn(typeof(AbpVirtualFileSystemModule))]
     public class AbpHelperModule : AbpModule
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
@@ -26,10 +26,7 @@ namespace EasyAbp.AbpHelper
 
         private void ConfigureTemplateFiles(ServiceConfigurationContext context)
         {
-            Configure<AbpVirtualFileSystemOptions>(options =>
-            {
-                options.FileSets.AddEmbedded<AbpHelperModule>("EasyAbp.AbpHelper");
-            });
+            context.Services.AddSingleton<IFileProvider>(sp => new ManifestEmbeddedFileProvider(Assembly.GetExecutingAssembly()));
         }
     }
 }
