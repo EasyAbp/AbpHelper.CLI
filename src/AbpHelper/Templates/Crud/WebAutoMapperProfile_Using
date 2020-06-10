@@ -1,0 +1,5 @@
+using {{ EntityInfo.Namespace}}.Dtos;
+{{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+{{~ if !Option.SkipViewModel ~}}
+using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;
+{{~ end ~}}

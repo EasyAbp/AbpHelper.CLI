@@ -1,0 +1,29 @@
+{{func configCompositeKey}}
+{{~ if EntityInfo.CompositeKeyName ~}}
+                b.HasKey(e => new
+                {
+                    {{~ for prop in EntityInfo.CompositeKeys ~}}
+                    e.{{ prop.Name }},
+                    {{~ end ~}}
+                });
+{{~ end ~}}
+{{end}}
+{{~ if ProjectInfo.TemplateType == "Application" ~}}
+
+            builder.Entity<{{ EntityInfo.Name }}>(b =>
+            {
+                b.ToTable({{ ProjectInfo.Name }}Consts.DbTablePrefix + "{{ EntityInfo.NamePluralized }}", {{ ProjectInfo.Name }}Consts.DbSchema);
+                b.ConfigureByConvention(); 
+                {{ configCompositeKey }}
+                /* Configure more properties here */
+            });
+{{~ else if ProjectInfo.TemplateType == "Module" ~}}
+
+            builder.Entity<{{ EntityInfo.Name }}>(b =>
+            {
+                b.ToTable(options.TablePrefix + "{{ EntityInfo.NamePluralized }}", options.Schema);
+                b.ConfigureByConvention(); 
+                {{ configCompositeKey }}
+                /* Configure more properties here */
+            });
+{{~ end ~}}
