@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
 [![NuGet Download](https://img.shields.io/nuget/dt/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
 
-AbpHelper is a tool that help you with developing [Abp vNext](https://abp.io/) applications.
+AbpHelper is a tool that helps you with developing [Abp vNext](https://abp.io/) applications.
 
 **Make sure to backup your source files before using it!**
 
