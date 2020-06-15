@@ -38,9 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Templates\**\*.*" />
-    <Content Remove="Templates\**\*.*" />
     <Compile Remove="Templates\**\*.*" />
+    <Content Remove="Templates\**\*.*" />
+    <EmbeddedResource Include="Templates\**\*.*" />
   </ItemGroup>
   
   <PropertyGroup>
