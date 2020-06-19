@@ -25,6 +25,7 @@ namespace EasyAbp.AbpHelper.Models
         public string? PrimaryKey { get; }
         public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
         public string? CompositeKeyName { get; set; }
+        public string Summer { get; set; }
         public List<PropertyInfo> CompositeKeys { get; } = new List<PropertyInfo>();
     }
 
@@ -35,7 +36,7 @@ namespace EasyAbp.AbpHelper.Models
             Type = type;
             Name = name;
         }
-
+        public string Summer { get; set; }
         public string Type { get; }
         public string Name { get; }
     }

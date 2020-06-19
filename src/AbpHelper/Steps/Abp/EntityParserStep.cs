@@ -83,8 +83,20 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                         .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()))
                         .ToList()
                     ;
+
+                var allLine = File.ReadAllLines(entityFile);
+                var popDic = getPoperLine(allLine);
+                var summer = getClassSummer(allLine);
+
+                foreach (var item in properties)
+                {
+                    if (popDic.ContainsKey(item.Name))
+                        item.Summer = popDic[item.Name];
+                }
+
                 var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
                 entityInfo.Properties.AddRange(properties);
+                entityInfo.Summer = summer;
                 if (keyNames != null)
                 {
                     entityInfo.CompositeKeyName = $"{className}Key";
@@ -106,6 +118,62 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                         Logger.LogError(error);
                 throw;
             }
+        }
+
+        private static Dictionary<string, string> getPoperLine(string[] allLine)
+        {
+
+
+            List<string> list = new List<string>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+
+            foreach (var str in allLine)
+            {
+
+                if (str.Contains("public") && str.Contains("get") && str.Contains("set"))
+                {
+                    list.Add(str.Trim());
+                }
+                else if (str.Contains("///") && !str.Contains("summary"))
+                {
+                    list.Add(str.Trim());
+                }
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Contains("///") && (i + 1) < list.Count)
+                {
+                    if (list[i + 1].Contains("get"))
+                        dic.Add(list[i + 1].Split(" ")[2], list[i].Trim('/'));
+                }
+            }
+
+            return dic;
+        }
+
+        private static string getClassSummer(string[] allLine)
+        {
+            string summer = "";
+
+            List<string> list = new List<string>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+
+            foreach (var str in allLine)
+            {
+
+
+                if (str.Contains("///") && !str.Contains("summary"))
+                {
+                    summer = str.Trim().Trim('/').Trim();
+                    break;
+                }
+
+
+            }
+
+
+            return summer;
         }
     }
 }

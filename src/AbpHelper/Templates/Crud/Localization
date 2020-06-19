@@ -1,18 +1,18 @@
 {
 {{~ if !Option.SkipPermissions ~}}
-    "Permission:{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
-    "Permission:Create": "Create",
-    "Permission:Update": "Update",
-    "Permission:Delete": "Delete",
+    "Permission:{{ EntityInfo.Name }}": "{{ EntityInfo.Summer }}",
+    "Permission:Create": "创建",
+    "Permission:Update": "更新",
+    "Permission:Delete": "删除",
 {{~ end ~}}
-    "Menu:{{ EntityInfo.Name }}": "Menu{{ EntityInfo.Name }}",
-    "{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
+    "Menu:{{ EntityInfo.Name }}": "{{ EntityInfo.Summer }}",
+    "{{ EntityInfo.Name }}": "{{ EntityInfo.Summer }}",
 {{~ for prop in EntityInfo.Properties ~}}
 {{~ if prop | abp.is_ignore_property; continue; end ~}}
-    "{{ EntityInfo.Name + prop.Name}}": "{{ EntityInfo.Name + prop.Name}}",
+    "{{ EntityInfo.Name + prop.Name}}": "{{ prop.Summer}}",
 {{~ end ~}}
-    "Create{{ EntityInfo.Name }}": "Create{{ EntityInfo.Name }}",
-    "Edit{{ EntityInfo.Name }}": "Edit{{ EntityInfo.Name }}",
-    "{{ EntityInfo.Name }}DeletionConfirmationMessage": "Are you sure to delete the {{ EntityInfo.Name | abp.camel_case }} {0}?",
-    "SuccessfullyDeleted": "Successfully deleted"
+    "Create{{ EntityInfo.Name }}": "创建{{ EntityInfo.Summer }}",
+    "Edit{{ EntityInfo.Name }}": "编辑{{ EntityInfo.Summer }}",
+    "{{ EntityInfo.Name }}DeletionConfirmationMessage": "你确定要删除吗?",
+    "SuccessfullyDeleted": "删除成功"
 }
