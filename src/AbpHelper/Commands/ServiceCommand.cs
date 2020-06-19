@@ -58,7 +58,7 @@ namespace EasyAbp.AbpHelper.Commands
                     step =>
                     {
                         step.VariableName = "TemplateDirectory";
-                        step.ValueExpression = new LiteralExpression<string>("Templates/Service");
+                        step.ValueExpression = new LiteralExpression<string>("/Templates/Service");
                     })
                 .Then<ProjectInfoProviderStep>()
                 .Then<SetModelVariableStep>()

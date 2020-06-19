@@ -4,6 +4,7 @@ using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
 using Elsa.Services.Models;
+using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -45,6 +46,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             }
 
             return builders;
+        }
+
+        public PermissionDefinitionProviderStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        {
         }
     }
 }

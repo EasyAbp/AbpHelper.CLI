@@ -1,7 +1,0 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-using {{ ProjectInfo.FullName }}.Localization;
-{{~ if !Option.SkipPermissions ~}}
-using Microsoft.AspNetCore.Authorization;
-using {{ ProjectInfo.FullName }}.Authorization;
-{{~ end ~}}

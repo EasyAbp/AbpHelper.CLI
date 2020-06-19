@@ -1,9 +1,0 @@
-{{- name = EntityInfo.NamespaceLastPart ~}}
-{{- name_list = EntityInfo.Name ~}}
-const routes: Routes = [
-  {
-    path: '',
-    component: {{ name }}Component,
-    children: [{ path: '', component: {{ name_list }}ListComponent }],
-  },
-];

@@ -1,0 +1,18 @@
+{
+{{~ if !Option.SkipPermissions ~}}
+    "Permission:{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
+    "Permission:Create": "Create",
+    "Permission:Update": "Update",
+    "Permission:Delete": "Delete",
+{{~ end ~}}
+    "Menu:{{ EntityInfo.Name }}": "Menu{{ EntityInfo.Name }}",
+    "{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
+{{~ for prop in EntityInfo.Properties ~}}
+{{~ if prop | abp.is_ignore_property; continue; end ~}}
+    "{{ EntityInfo.Name + prop.Name}}": "{{ EntityInfo.Name + prop.Name}}",
+{{~ end ~}}
+    "Create{{ EntityInfo.Name }}": "Create{{ EntityInfo.Name }}",
+    "Edit{{ EntityInfo.Name }}": "Edit{{ EntityInfo.Name }}",
+    "{{ EntityInfo.Name }}DeletionConfirmationMessage": "Are you sure to delete the {{ EntityInfo.Name | abp.camel_case }} {0}?",
+    "SuccessfullyDeleted": "Successfully deleted"
+}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -49,16 +50,27 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 var className = classDeclarationSyntax.Identifier.ToString();
                 var baseList = classDeclarationSyntax.BaseList!;
                 var genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>()
-                    .First(node => !node.ToFullString().StartsWith("I"))    // Not interface
+                    .First(node => !node.ToFullString().StartsWith("I")) // Not interface
                     .Descendants<GenericNameSyntax>()
                     .FirstOrDefault();
+
                 string baseType;
                 string? primaryKey;
+                IEnumerable<string>? keyNames = null;
                 if (genericNameSyntax == null)
                 {
                     // No generic parameter -> Entity with Composite Keys
                     baseType = baseList.Descendants<SimpleBaseTypeSyntax>().Single().Type.ToString();
                     primaryKey = null;
+
+                    // Get composite keys
+                    var getKeysMethod = root.Descendants<MethodDeclarationSyntax>().Single(m => m.Identifier.ToString() == "GetKeys");
+                    keyNames = getKeysMethod
+                            .Descendants<InitializerExpressionSyntax>()
+                            .First()
+                            .Descendants<IdentifierNameSyntax>()
+                            .Select(id => id.Identifier.ToString())
+                        ;
                 }
                 else
                 {
@@ -68,10 +80,17 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 }
 
                 var properties = root.Descendants<PropertyDeclarationSyntax>()
-                    .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()));
-
+                        .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()))
+                        .ToList()
+                    ;
                 var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
                 entityInfo.Properties.AddRange(properties);
+                if (keyNames != null)
+                {
+                    entityInfo.CompositeKeyName = $"{className}Key";
+                    entityInfo.CompositeKeys.AddRange(
+                        keyNames.Select(k => properties.Single(prop => prop.Name == k)));
+                }
 
                 context.SetLastResult(entityInfo);
                 context.SetVariable("EntityInfo", entityInfo);

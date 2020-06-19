@@ -147,6 +147,9 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
                     info.Properties[0].Name.ShouldBe("UserId");
                     info.Properties[1].Name.ShouldBe("RoleId");
                     info.Properties[2].Name.ShouldBe("CreationTime");
+                    info.CompositeKeyName.ShouldBe("UserRoleKey");
+                    info.CompositeKeys[0].Name.ShouldBe("UserId");
+                    info.CompositeKeys[1].Name.ShouldBe("RoleId");
                 });
             });
         }

@@ -1,0 +1,5 @@
+{
+    {{~ for name in Option.Names ~}}
+    "{{ name }}": "{{ name }}"{{~ if !for.last ~}},{{~ end ~}}
+    {{~ end ~}}
+}

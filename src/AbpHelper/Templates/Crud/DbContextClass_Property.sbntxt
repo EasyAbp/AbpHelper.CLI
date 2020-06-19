@@ -1,1 +1,0 @@
-        public DbSet<{{ EntityInfo.Name }}> {{ EntityInfo.NamePluralized }} { get; set; }
