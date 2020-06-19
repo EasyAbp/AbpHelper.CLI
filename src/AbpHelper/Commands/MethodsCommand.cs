@@ -75,7 +75,7 @@ namespace EasyAbp.AbpHelper.Commands
                     step =>
                     {
                         step.VariableName = "TemplateDirectory";
-                        step.ValueExpression = new LiteralExpression<string>("Templates/Methods");
+                        step.ValueExpression = new LiteralExpression<string>("/Templates/Methods");
                     })
                 .Then<ProjectInfoProviderStep>()
                 .Then<FileFinderStep>(

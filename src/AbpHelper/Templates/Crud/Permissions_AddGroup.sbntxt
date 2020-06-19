@@ -1,1 +1,0 @@
-            var moduleGroup = context.AddGroup({{ ProjectInfo.Name }}Permissions.GroupName, L("Permission:{{ ProjectInfo.Name }}"));

@@ -1,0 +1,3 @@
+{{~ if !Option.SkipPermissions ~}}
+            var authorizationService = context.ServiceProvider.GetRequiredService<IAuthorizationService>();
+{{~ end ~}}

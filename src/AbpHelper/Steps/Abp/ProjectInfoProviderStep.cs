@@ -64,7 +64,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             }
 
             var tiered = false;
-            if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(baseDirectory, "*.IdentityServer.csproj").Any();
+            if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(baseDirectory, "*.IdentityServer.csproj", SearchOption.AllDirectories).Any();
 
             var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
             context.SetLastResult(projectInfo);
