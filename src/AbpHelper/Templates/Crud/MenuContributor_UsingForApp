@@ -1,0 +1,3 @@
+{{~ if !Option.SkipPermissions ~}}
+using {{ ProjectInfo.FullName }}.Permissions;
+{{~ end ~}}
