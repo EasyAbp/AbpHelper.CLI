@@ -16,19 +16,19 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo
         {{~ end ~}}
         {{~ if string.ends_with prop.Type ">" ~}} 
         public {{
-        stRgex = prop.Name | regex.replace "s" "." "$"
-        stStart = "<" | string.append stRgex
-        stFinal = stStart | string.append "ViewModels."
-        stFinalEx = stFinal | string.append "Create"
-        stRgexTwo = prop.Name | regex.replace "s" "ViewModel" "$"
-        stFinalNoEx = stFinalEx | string.append stRgexTwo
-        stAppend = stFinalNoEx | string.append ">"
+        stNameRgex = prop.Name | regex.replace "s" "." "$"
+        stStart = "<" | string.append stNameRgex
+        stViewModels = stStart | string.append "ViewModels."
+        stCreate = stViewModels | string.append "Create"
+        stNameVMAdded = prop.Name | regex.replace "s" "ViewModel" "$"
+        stArrangeName = stCreate | string.append stNameVMAdded
+        stAppendAtEnd = stArrangeName | string.append ">"
         stRegexFind = prop.Name | regex.replace "s" ">" "$"
 
         stFind = "<" | string.append stRegexFind
 
 
-        prop.Type | string.replace stFind stAppend
+        prop.Type | string.replace stFind stAppendAtEnd
 
         }} Create{{ prop.Name }}ViewModel { get; set; }
         {{~ else ~}}
