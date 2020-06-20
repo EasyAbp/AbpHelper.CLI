@@ -41,7 +41,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
         [Fact]
         public async Task Parse_Entity_With_PrimaryKey()
         {
-            var code = @"
+            string code = @"
 using System;
 using Volo.Abp.Domain.Entities.Auditing;
 
@@ -71,7 +71,7 @@ namespace Acme.BookStore.Books
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var info = ctx.GetVariable<EntityInfo>("EntityInfo");
+                    EntityInfo info = ctx.GetVariable<EntityInfo>("EntityInfo");
                     info.Namespace.ShouldBe("Acme.BookStore.Books");
                     info.RelativeNamespace.ShouldBe("Books");
                     info.NamespaceLastPart.ShouldBe("Books");
@@ -96,7 +96,7 @@ namespace Acme.BookStore.Books
         [Fact]
         public async Task Parse_Entity_Without_PrimaryKey()
         {
-            var code = @"
+            string code = @"
 namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
 {
     public class UserRole : Entity
@@ -131,7 +131,7 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var info = ctx.GetVariable<EntityInfo>("EntityInfo");
+                    EntityInfo info = ctx.GetVariable<EntityInfo>("EntityInfo");
                     info.Namespace.ShouldBe("Acme.BookStore.EasyAbp.BookStore.UserRoles");
                     info.RelativeNamespace.ShouldBe("EasyAbp.BookStore.UserRoles");
                     info.NamespaceLastPart.ShouldBe("UserRoles");
@@ -165,7 +165,7 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<ParseException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    ParseException ex = await Assert.ThrowsAsync<ParseException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
 
                     // Arrange
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));

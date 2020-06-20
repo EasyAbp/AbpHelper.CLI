@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AbpHelper": {
+      "commandName": "Project",
+      "commandLineArgs": "generate crud InvoiceDetail -d C:\\DosSE\\MyAbpApp1"
+    }
+  }
+}

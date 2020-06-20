@@ -14,13 +14,13 @@ namespace EasyAbp.AbpHelper.Steps.Abp
     {
         protected override Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-            var option = context.GetVariable<object>("Option");
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            var serviceInfo = context.GetVariable<ServiceInfo>("ServiceInfo");
-            var variables = context.GetVariables().Where(v => v.Key.StartsWith("Bag."));
-            var bag = new ExpandoObject();
-            foreach (var variable in variables)
+            ProjectInfo projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
+            object option = context.GetVariable<object>("Option");
+            EntityInfo entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
+            ServiceInfo serviceInfo = context.GetVariable<ServiceInfo>("ServiceInfo");
+            IEnumerable<KeyValuePair<string, Elsa.Models.Variable>> variables = context.GetVariables().Where(v => v.Key.StartsWith("Bag."));
+            ExpandoObject bag = new ExpandoObject();
+            foreach (KeyValuePair<string, Elsa.Models.Variable> variable in variables)
             {
                 ((IDictionary<string, object>) bag)[variable.Key.RemovePreFix("Bag.")] = variable.Value.Value;
             }

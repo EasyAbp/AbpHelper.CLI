@@ -37,37 +37,37 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
+            string targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
             LogInput(() => targetFile);
 
-            var modifications = await context.EvaluateAsync(Modifications, cancellationToken);
+            IList<Modification> modifications = await context.EvaluateAsync(Modifications, cancellationToken);
             LogInput(() => modifications, $"Modifications count: {modifications.Count}");
 
-            var newLine = await context.EvaluateAsync(NewLine, cancellationToken);
+            string newLine = await context.EvaluateAsync(NewLine, cancellationToken);
 
-            var lines = await File.ReadAllLinesAsync(targetFile);
-            var errors = CheckModifications(modifications, lines).ToArray();
+            string[] lines = await File.ReadAllLinesAsync(targetFile);
+            string[] errors = CheckModifications(modifications, lines).ToArray();
             if (errors.Length > 0)
             {
-                foreach (var error in errors) Logger.LogError(error);
+                foreach (string error in errors) Logger.LogError(error);
 
                 throw new InvalidModificationException(errors);
             }
 
-            var newFile = new StringBuilder();
-            var beforeContents = new StringBuilder();
-            var afterContents = new StringBuilder();
-            for (var line = 1; line <= lines.Length; line++)
+            StringBuilder newFile = new StringBuilder();
+            StringBuilder beforeContents = new StringBuilder();
+            StringBuilder afterContents = new StringBuilder();
+            for (int line = 1; line <= lines.Length; line++)
             {
-                var lineText = lines[line - 1];
-                var lineModifications = modifications
+                string lineText = lines[line - 1];
+                Modification[] lineModifications = modifications
                     .Where(mod => mod.StartLine == line || // Positive line number
                                   mod.StartLine == line - lines.Length - 1 // Negative  line number
                     )
                     .ToArray();
                 beforeContents.Clear();
                 afterContents.Clear();
-                foreach (var modification in lineModifications)
+                foreach (Modification modification in lineModifications)
                     switch (modification)
                     {
                         case Insertion insertion:
@@ -87,7 +87,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
                     }
 
                 // We don't need these modifications anymore
-                foreach (var modification in lineModifications) modifications.Remove(modification);
+                foreach (Modification modification in lineModifications) modifications.Remove(modification);
 
                 newFile.AppendWithControlChar(beforeContents)
                     .AppendLineWithControlChar(lineText, newLine)
@@ -102,32 +102,32 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         private IEnumerable<string> CheckModifications(IList<Modification> modifications, string[] lines)
         {
-            var insertions = modifications.OfType<Insertion>().ToArray();
-            var deletionsAndReplacements = modifications.OfType<Deletion>()
+            Insertion[] insertions = modifications.OfType<Insertion>().ToArray();
+            IRange[] deletionsAndReplacements = modifications.OfType<Deletion>()
                     .Concat(modifications.OfType<Replacement>().Cast<IRange>())
                     .ToArray()
                 ;
 
-            var errors = CheckLinesInRange(modifications, lines).ToArray();
-            foreach (var error in errors) yield return error;
+            string[] errors = CheckLinesInRange(modifications, lines).ToArray();
+            foreach (string error in errors) yield return error;
 
             if (errors.Any()) yield break; // No need to perform following check if out of range
 
-            foreach (var error in CheckOverlap(deletionsAndReplacements, insertions)) yield return error;
+            foreach (string error in CheckOverlap(deletionsAndReplacements, insertions)) yield return error;
         }
 
         private static IEnumerable<string> CheckLinesInRange(IList<Modification> modifications, string[] lines)
         {
             // Check StartLine and EndLine are in range
-            foreach (var modification in modifications)
+            foreach (Modification modification in modifications)
             {
-                var actualStartLine = modification.StartLine >= 0 ? modification.StartLine : lines.Length + modification.StartLine;
+                int actualStartLine = modification.StartLine >= 0 ? modification.StartLine : lines.Length + modification.StartLine;
 
                 if (actualStartLine <= 0 || actualStartLine > lines.Length) yield return $"StartLine out of range: {modification}. {nameof(actualStartLine)}: {actualStartLine}";
 
                 if (modification is IRange range)
                 {
-                    var actualEndLine = range.EndLine >= 0 ? range.EndLine : lines.Length + range.EndLine;
+                    int actualEndLine = range.EndLine >= 0 ? range.EndLine : lines.Length + range.EndLine;
                     if (actualEndLine <= 0 || actualEndLine > lines.Length) yield return $"EndLine out of range: {modification}. {nameof(actualEndLine)}: {actualEndLine}";
 
                     if (actualStartLine > actualEndLine) yield return $"StartLine grater than EndLine: {modification}. {nameof(actualStartLine)}: {actualStartLine} {nameof(actualEndLine)}: {actualEndLine}";
@@ -138,18 +138,18 @@ namespace EasyAbp.AbpHelper.Steps.Common
         private static IEnumerable<string> CheckOverlap(IRange[] deletionsAndReplacements, Insertion[] insertions)
         {
             // Check if deletions and replacements overlap with insertion
-            foreach (var range in deletionsAndReplacements)
-            foreach (var insertion in insertions)
+            foreach (IRange range in deletionsAndReplacements)
+            foreach (Insertion insertion in insertions)
                 if (insertion.StartLine >= range.StartLine && insertion.StartLine <= range.EndLine)
                     yield return $"Overlap modifications: [{range}] - [{insertion}]";
 
             // Check if deletions and replacements overlap with each other
-            for (var i = 0; i < deletionsAndReplacements.Length; i++)
+            for (int i = 0; i < deletionsAndReplacements.Length; i++)
             {
-                var range1 = deletionsAndReplacements[i];
-                for (var j = i + 1; j < deletionsAndReplacements.Length; j++)
+                IRange range1 = deletionsAndReplacements[i];
+                for (int j = i + 1; j < deletionsAndReplacements.Length; j++)
                 {
-                    var range2 = deletionsAndReplacements[j];
+                    IRange range2 = deletionsAndReplacements[j];
                     if (
                         range1.StartLine >= range2.StartLine && range1.StartLine <= range2.EndLine ||
                         range1.EndLine >= range2.StartLine && range1.EndLine <= range2.EndLine

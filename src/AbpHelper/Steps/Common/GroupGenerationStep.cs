@@ -61,14 +61,14 @@ namespace EasyAbp.AbpHelper.Steps.Common
             string templateDir = await context.EvaluateAsync(TemplateDirectory, cancellationToken);
             LogInput(() => templateDir);
             LogInput(() => GroupName);
-            var targetDirectory = await context.EvaluateAsync(TargetDirectory, cancellationToken);
+            string targetDirectory = await context.EvaluateAsync(TargetDirectory, cancellationToken);
             LogInput(() => targetDirectory);
-            var overwrite = await context.EvaluateAsync(Overwrite, cancellationToken);
+            bool overwrite = await context.EvaluateAsync(Overwrite, cancellationToken);
             LogInput(() => Overwrite);
-            var model = await context.EvaluateAsync(Model, cancellationToken);
+            object model = await context.EvaluateAsync(Model, cancellationToken);
             LogInput(() => model);
 
-            var groupDir = Path.Combine(templateDir, "Groups", GroupName).NormalizePath();
+            string groupDir = Path.Combine(templateDir, "Groups", GroupName).NormalizePath();
             await GenerateFile(groupDir, targetDirectory, model, overwrite);
 
             return Done();
@@ -76,19 +76,19 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         private async Task GenerateFile(string groupDirectory, string targetDirectory, object model, bool overwrite)
         {
-            foreach (var (path, file) in _fileProvider.GetFilesRecursively(groupDirectory))
+            foreach ((string path, IFileInfo file) in _fileProvider.GetFilesRecursively(groupDirectory))
             {
                 Logger.LogDebug($"Generating using template file: {path}");
-                var targetFilePathNameTemplate = path.Replace(groupDirectory, targetDirectory);
-                var targetFilePathName = _textGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model);
+                string targetFilePathNameTemplate = path.Replace(groupDirectory, targetDirectory);
+                string targetFilePathName = _textGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model);
                 if (File.Exists(targetFilePathName) && !overwrite)
                 {
                     Logger.LogInformation($"File {targetFilePathName} already exists, skip generating.");
                     continue;
                 }
 
-                var templateText = await file.ReadAsStringAsync();
-                var contents = _textGenerator.GenerateByTemplateText(templateText, model, out TemplateContext context);
+                string templateText = await file.ReadAsStringAsync();
+                string contents = _textGenerator.GenerateByTemplateText(templateText, model, out TemplateContext context);
 
                 context.CurrentGlobal.TryGetValue(SkipGenerate, out object value);
                 if (value is bool skipGenerate && skipGenerate)
@@ -97,7 +97,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
                     continue;
                 }
 
-                var dir = Path.GetDirectoryName(targetFilePathName);
+                string? dir = Path.GetDirectoryName(targetFilePathName);
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                 await File.WriteAllTextAsync(targetFilePathName, contents);

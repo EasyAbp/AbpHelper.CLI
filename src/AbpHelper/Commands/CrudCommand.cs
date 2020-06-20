@@ -80,7 +80,7 @@ namespace EasyAbp.AbpHelper.Commands
         private async Task Run(CommandOption option)
         {
             string directory = GetBaseDirectory(option.Directory);
-            var entityFileName = option.Entity + ".cs";
+            string entityFileName = option.Entity + ".cs";
 
             await RunWorkflow(builder => builder
                 .StartWith<SetVariable>(

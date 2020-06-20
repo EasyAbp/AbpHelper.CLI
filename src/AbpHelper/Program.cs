@@ -23,7 +23,7 @@ namespace EasyAbp.AbpHelper
                 .CreateLogger();
 
 
-            using (var application = AbpApplicationFactory.Create<AbpHelperModule>(options =>
+            using (IAbpApplicationWithInternalServiceProvider application = AbpApplicationFactory.Create<AbpHelperModule>(options =>
             {
                 options.UseAutofac();
                 options.Services.AddLogging(c => c.AddSerilog());
@@ -31,7 +31,7 @@ namespace EasyAbp.AbpHelper
             {
                 application.Initialize();
 
-                var parser = new CommandLineBuilder(application.ServiceProvider, "abphelper")
+                Parser parser = new CommandLineBuilder(application.ServiceProvider, "abphelper")
                     .AddCommand<GenerateCommand>()
                     .UseDefaults()
                     .Build();

@@ -27,29 +27,29 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var entityFile = await context.EvaluateAsync(EntityFile, cancellationToken);
+            string entityFile = await context.EvaluateAsync(EntityFile, cancellationToken);
             LogInput(() => entityFile);
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
+            ProjectInfo projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
 
-            var sourceText = await File.ReadAllTextAsync(entityFile);
+            string sourceText = await File.ReadAllTextAsync(entityFile);
 
             try
             {
-                var tree = CSharpSyntaxTree.ParseText(sourceText);
-                var root = tree.GetCompilationUnitRoot();
+                Microsoft.CodeAnalysis.SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceText);
+                CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
                 if (root.ContainsDiagnostics)
                 {
                     // source contains syntax error
-                    var ex = new ParseException(root.GetDiagnostics().Select(diag => diag.ToString()));
+                    ParseException ex = new ParseException(root.GetDiagnostics().Select(diag => diag.ToString()));
                     throw ex;
                 }
 
-                var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
-                var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
-                var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
-                var className = classDeclarationSyntax.Identifier.ToString();
-                var baseList = classDeclarationSyntax.BaseList!;
-                var genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>()
+                string @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
+                string relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
+                ClassDeclarationSyntax classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
+                string className = classDeclarationSyntax.Identifier.ToString();
+                BaseListSyntax baseList = classDeclarationSyntax.BaseList!;
+                GenericNameSyntax genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>()
                     .First(node => !node.ToFullString().StartsWith("I")) // Not interface
                     .Descendants<GenericNameSyntax>()
                     .FirstOrDefault();
@@ -64,7 +64,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     primaryKey = null;
 
                     // Get composite keys
-                    var getKeysMethod = root.Descendants<MethodDeclarationSyntax>().Single(m => m.Identifier.ToString() == "GetKeys");
+                    MethodDeclarationSyntax getKeysMethod = root.Descendants<MethodDeclarationSyntax>().Single(m => m.Identifier.ToString() == "GetKeys");
                     keyNames = getKeysMethod
                             .Descendants<InitializerExpressionSyntax>()
                             .First()
@@ -79,11 +79,12 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     primaryKey = genericNameSyntax.Descendants<TypeArgumentListSyntax>().Single().Arguments[0].ToString();
                 }
 
-                var properties = root.Descendants<PropertyDeclarationSyntax>()
+                List<PropertyInfo> properties = root.Descendants<PropertyDeclarationSyntax>()
                         .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()))
                         .ToList()
                     ;
-                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
+
+                EntityInfo entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
                 entityInfo.Properties.AddRange(properties);
                 if (keyNames != null)
                 {
@@ -102,7 +103,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             {
                 Logger.LogError(e, "Parsing entity failed.");
                 if (e is ParseException pe)
-                    foreach (var error in pe.Errors)
+                    foreach (string error in pe.Errors)
                         Logger.LogError(error);
                 throw;
             }

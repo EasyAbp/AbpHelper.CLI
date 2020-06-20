@@ -47,12 +47,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
             string templateDir = await context.EvaluateAsync(TemplateDirectory, cancellationToken);
             LogInput(() => templateDir);
             LogInput(() => TemplateName);
-            var model = await context.EvaluateAsync(Model, cancellationToken);
+            object model = await context.EvaluateAsync(Model, cancellationToken);
             LogInput(() => model);
-            var generatedTextKey = await context.EvaluateAsync(GeneratedTextKey, cancellationToken);
+            string generatedTextKey = await context.EvaluateAsync(GeneratedTextKey, cancellationToken);
             LogInput(() => GeneratedTextKey);
 
-            var text = _textGenerator.GenerateByTemplateName(templateDir, TemplateName, model);
+            string text = _textGenerator.GenerateByTemplateName(templateDir, TemplateName, model);
 
             context.SetLastResult(text);
             context.SetVariable(generatedTextKey, text);
