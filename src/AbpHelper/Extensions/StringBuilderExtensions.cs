@@ -25,7 +25,7 @@ namespace EasyAbp.AbpHelper.Extensions
         {
             if (str.Contains('\b'))
             {
-                foreach (var c in str)
+                foreach (char c in str)
                 {
                     if (c == '\b')
                     {

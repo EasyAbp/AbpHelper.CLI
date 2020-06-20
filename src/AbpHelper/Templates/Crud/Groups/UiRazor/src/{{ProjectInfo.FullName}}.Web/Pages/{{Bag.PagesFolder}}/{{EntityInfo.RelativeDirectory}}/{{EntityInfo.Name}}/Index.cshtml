@@ -6,6 +6,8 @@
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using {{ ProjectInfo.FullName }}.Localization
 @using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
 @model IndexModel
 @inject IPageLayout PageLayout
 @inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L

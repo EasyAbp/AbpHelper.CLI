@@ -26,16 +26,16 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
+            string targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
             LogInput(() => targetFile);
-            var localizations = await context.EvaluateAsync(LocalizationJson, cancellationToken);
-            var jNew = JObject.Parse(localizations);
+            string localizations = await context.EvaluateAsync(LocalizationJson, cancellationToken);
+            JObject jNew = JObject.Parse(localizations);
 
-            var jsonText = await File.ReadAllTextAsync(targetFile);
-            var jDoc = JObject.Parse(jsonText);
-            var jTexts = jDoc["texts"] ?? jDoc["Texts"]!;
+            string jsonText = await File.ReadAllTextAsync(targetFile);
+            JObject jDoc = JObject.Parse(jsonText);
+            JToken jTexts = jDoc["texts"] ?? jDoc["Texts"]!;
 
-            foreach (var kv in jNew)
+            foreach (System.Collections.Generic.KeyValuePair<string, JToken?> kv in jNew)
                 if (jTexts[kv.Key] == null) // Prevent inserting duplicate localization
                     jTexts[kv.Key] = kv.Value;
 

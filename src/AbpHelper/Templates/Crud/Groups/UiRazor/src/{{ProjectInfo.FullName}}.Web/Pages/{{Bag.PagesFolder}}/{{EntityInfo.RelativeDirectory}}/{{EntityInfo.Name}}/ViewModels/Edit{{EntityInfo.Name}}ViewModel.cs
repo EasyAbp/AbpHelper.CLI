@@ -14,7 +14,11 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo
         {{~ if !Option.SkipLocalization ~}}
         [Display(Name = "{{ EntityInfo.Name + prop.Name}}")]
         {{~ end ~}}
+        {{~ if string.ends_with prop.Type ">" ~}}     
+        public {{ prop.Type | string.replace "<" "<Edit" | string.replace ">" "ViewModel>"}} Edit{{ prop.Name }}ViewModel { get; set; }
+        {{~ else ~}}
         public {{ prop.Type}} {{ prop.Name }} { get; set; }
+        {{~end ~}}
         {{~ if !for.last ~}}
 
         {{~ end ~}}

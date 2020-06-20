@@ -14,12 +14,12 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
     {
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-            var model = context.GetVariable<object>("Model");
+            ProjectInfo projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
+            object model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
             string permissionDefinitionsText = TextGenerator.GenerateByTemplateName(templateDir, "Permissions_Definitions", model);
 
-            var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
+            List<ModificationBuilder<CSharpSyntaxNode>> builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
 
             builders.Add(new InsertionBuilder<CSharpSyntaxNode>(
                 root => root.Descendants<MethodDeclarationSyntax>().First().GetEndLine(),

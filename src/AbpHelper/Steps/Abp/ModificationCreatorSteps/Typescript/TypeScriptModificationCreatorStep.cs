@@ -31,16 +31,16 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context,
             CancellationToken cancellationToken)
         {
-            var file = await context.EvaluateAsync(SourceFile, cancellationToken);
+            string file = await context.EvaluateAsync(SourceFile, cancellationToken);
             LogInput(() => file);
 
-            var lines = (await File.ReadAllLinesAsync(file, cancellationToken))
+            IEnumerable<LineNode> lines = (await File.ReadAllLinesAsync(file, cancellationToken))
                     .Select((l, s) => new LineNode(l, s + 1))
                 ;
 
-            var builders = CreateModifications(context);
+            IList<ModificationBuilder<IEnumerable<LineNode>>> builders = CreateModifications(context);
 
-            var modifications = builders
+            List<Modification> modifications = builders
                     .Where(builder => builder.ModifyCondition(lines))
                     .Select(builder => builder.Build(lines))
                     .ToList()
