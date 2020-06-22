@@ -9,13 +9,13 @@
     <Copyright>EasyAbp Team</Copyright>
     <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
-    <PackageVersion>0.4.1</PackageVersion>
+    <PackageVersion>0.4.2</PackageVersion>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>abphelper</ToolCommandName>
     <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
     <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
-    <AssemblyVersion>0.4.1</AssemblyVersion>
-    <FileVersion>0.4.1</FileVersion>
+    <AssemblyVersion>0.4.2</AssemblyVersion>
+    <FileVersion>0.4.2</FileVersion>
     <Authors>EasyAbp Team</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>abp helper generator</PackageTags>
@@ -38,12 +38,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Templates\**\*.*" />
-    <Content Remove="Templates\**\*.*" />
     <Compile Remove="Templates\**\*.*" />
+    <Content Remove="Templates\**\*.*" />
+    <EmbeddedResource Include="Templates\**\*.*" />
   </ItemGroup>
   
   <PropertyGroup>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Version>0.4.2</Version>
   </PropertyGroup>
 </Project>
