@@ -27,8 +27,8 @@ namespace EasyAbp.AbpHelper.Steps
 
         private void LogParameter<TParameter>(string parameterType, Expression<Func<TParameter>> parameterExpression, object? customValue = null)
         {
-            var memberExpr = (MemberExpression) parameterExpression.Body;
-            var value = customValue ?? $"'{parameterExpression.Compile().Invoke()}'";
+            MemberExpression memberExpr = (MemberExpression) parameterExpression.Body;
+            object value = customValue ?? $"'{parameterExpression.Compile().Invoke()}'";
             Logger.LogDebug($"{Type} {parameterType} [{memberExpr.Member.Name}]: {value}");
         }
     }

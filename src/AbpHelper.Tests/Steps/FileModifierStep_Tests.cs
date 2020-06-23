@@ -54,7 +54,7 @@ namespace AbpHelper.Tests.Parsers
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification> {new Deletion(1, 3)};
+                    List<Modification> modifications = new List<Modification> {new Deletion(1, 3)};
                     ctx.SetVariable("Modifications", modifications);
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
@@ -62,7 +62,7 @@ namespace AbpHelper.Tests.Parsers
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var contents = await File.ReadAllTextAsync(file);
+                    string contents = await File.ReadAllTextAsync(file);
                     contents.ShouldBe(@"4
 5
 ");
@@ -78,7 +78,7 @@ namespace AbpHelper.Tests.Parsers
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification> {new Insertion(5, "abc\r\n", InsertPosition.After)};
+                    List<Modification> modifications = new List<Modification> {new Insertion(5, "abc\r\n", InsertPosition.After)};
                     ctx.SetVariable("Modifications", modifications);
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
@@ -86,7 +86,7 @@ namespace AbpHelper.Tests.Parsers
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var contents = await File.ReadAllTextAsync(file);
+                    string contents = await File.ReadAllTextAsync(file);
                     contents.ShouldBe(@"1
 2
 3
@@ -106,7 +106,7 @@ abc
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>{new Insertion(1, "abc\r\n")};
+                    List<Modification> modifications = new List<Modification>{new Insertion(1, "abc\r\n")};
                     ctx.SetVariable("Modifications", modifications);
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
@@ -114,7 +114,7 @@ abc
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var contents = await File.ReadAllTextAsync(file);
+                    string contents = await File.ReadAllTextAsync(file);
                     contents.ShouldBe(@"abc
 1
 2
@@ -134,7 +134,7 @@ abc
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Insertion(1, "abc\r\n"),
                         new Insertion(1, "def\r\n")
@@ -146,7 +146,7 @@ abc
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var contents = await File.ReadAllTextAsync(file);
+                    string contents = await File.ReadAllTextAsync(file);
                     contents.ShouldBe(@"abc
 def
 1
@@ -167,7 +167,7 @@ def
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Insertion(1, "a\r\n"),
                         new Deletion(2, 3),
@@ -181,7 +181,7 @@ def
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var contents = await File.ReadAllTextAsync(file);
+                    string contents = await File.ReadAllTextAsync(file);
                     contents.ShouldBe(@"a
 1
 b
@@ -199,7 +199,7 @@ c");
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Insertion(-4, "a\r\n"),
                         new Deletion(-3, -2),
@@ -212,7 +212,7 @@ c");
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var contents = await File.ReadAllTextAsync(file);
+                    string contents = await File.ReadAllTextAsync(file);
                     contents.ShouldBe(@"1
 a
 2
@@ -230,7 +230,7 @@ b
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Insertion(0, "a\r\n"),
                         new Insertion(-6, "a\r\n"),
@@ -243,7 +243,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    InvalidModificationException ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -260,7 +260,7 @@ b
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Deletion(1, 3),
                         new Replacement(2, 4, "abc")
@@ -269,7 +269,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    InvalidModificationException ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -286,7 +286,7 @@ b
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Insertion(1, "a\r\n"),
                         new Deletion(1, 2)
@@ -295,7 +295,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    InvalidModificationException ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -312,7 +312,7 @@ b
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Insertion(1, "a\r\n"),
                         new Replacement(1, 2, "abc")
@@ -321,7 +321,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    InvalidModificationException ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -338,7 +338,7 @@ b
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification> {new Replacement(1, 3, "abc\r\n")};
+                    List<Modification> modifications = new List<Modification> {new Replacement(1, 3, "abc\r\n")};
                     ctx.SetVariable("Modifications", modifications);
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
@@ -346,7 +346,7 @@ b
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
 
                     // Assert
-                    var contents = await File.ReadAllTextAsync(file);
+                    string contents = await File.ReadAllTextAsync(file);
                     contents.ShouldBe(@"abc
 4
 5
@@ -363,7 +363,7 @@ b
                 await UsingTempFile(DefaultFileContents, async file =>
                 {
                     // Arrange
-                    var modifications = new List<Modification>
+                    List<Modification> modifications = new List<Modification>
                     {
                         new Deletion(2, 1),
                         new Deletion(-1, -2),
@@ -374,7 +374,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, new CancellationToken()));
+                    InvalidModificationException ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, new CancellationToken()));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));

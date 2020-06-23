@@ -16,7 +16,7 @@ namespace EasyAbp.AbpHelper.Commands
 
         public CommandLineBuilder AddCommand<TCommand>() where TCommand : CommandBase
         {
-            var command = _serviceProvider.GetRequiredService<TCommand>();
+            TCommand command = _serviceProvider.GetRequiredService<TCommand>();
             return this.AddCommand(command);
         }
     }

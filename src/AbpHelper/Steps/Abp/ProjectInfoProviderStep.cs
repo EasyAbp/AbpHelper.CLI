@@ -21,7 +21,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
+            string baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
 
             TemplateType templateType;
@@ -33,11 +33,11 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 throw new NotSupportedException($"Unknown ABP project structure. Directory: {baseDirectory}");
 
             // Assume the domain project must be existed for an ABP project
-            var domainCsprojFile = Directory.EnumerateFiles(baseDirectory, "*.Domain.csproj", SearchOption.AllDirectories).FirstOrDefault();
+            string domainCsprojFile = Directory.EnumerateFiles(baseDirectory, "*.Domain.csproj", SearchOption.AllDirectories).FirstOrDefault();
             if (domainCsprojFile == null) throw new NotSupportedException($"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {baseDirectory}");
 
-            var fileName = Path.GetFileName(domainCsprojFile);
-            var fullName = fileName.RemovePostFix(".Domain.csproj");
+            string fileName = Path.GetFileName(domainCsprojFile);
+            string fullName = fileName.RemovePostFix(".Domain.csproj");
 
             UiFramework uiFramework;
             if (Directory.EnumerateFiles(baseDirectory, "*.cshtml", SearchOption.AllDirectories).Any())
@@ -63,10 +63,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 context.SetVariable("AspNetCoreDir", baseDirectory);
             }
 
-            var tiered = false;
+            bool tiered = false;
             if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(baseDirectory, "*.IdentityServer.csproj", SearchOption.AllDirectories).Any();
 
-            var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
+            ProjectInfo projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
             context.SetLastResult(projectInfo);
             context.SetVariable("ProjectInfo", projectInfo);
             LogOutput(() => projectInfo);

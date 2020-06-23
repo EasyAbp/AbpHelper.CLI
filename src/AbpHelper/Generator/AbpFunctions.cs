@@ -9,7 +9,7 @@ namespace EasyAbp.AbpHelper.Generator
     {
         public static string CamelCase(string text)
         {
-            var parts = text.Split('.')
+            System.Collections.Generic.IEnumerable<string> parts = text.Split('.')
                 .Select(part => part.ToCamelCase());
             return string.Join('.', parts);
         }

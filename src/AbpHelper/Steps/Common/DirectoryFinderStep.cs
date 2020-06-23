@@ -33,12 +33,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
+            string baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
             LogInput(() => SearchDirectoryName);
-            var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
+            string resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
-            var directoryPathName = Directory.EnumerateDirectories(baseDirectory, SearchDirectoryName, SearchOption.AllDirectories).Single();
+            string directoryPathName = Directory.EnumerateDirectories(baseDirectory, SearchDirectoryName, SearchOption.AllDirectories).Single();
             context.SetLastResult(directoryPathName);
             context.SetVariable(resultParameterName, directoryPathName);
             LogOutput(() => directoryPathName, $"Found directory: {directoryPathName}, stored in parameter: [{ResultVariableName}]");

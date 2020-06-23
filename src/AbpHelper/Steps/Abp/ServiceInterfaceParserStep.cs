@@ -26,30 +26,30 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var appServiceInterfaceFile = await context.EvaluateAsync(ServiceInterfaceFile, cancellationToken);
+            string appServiceInterfaceFile = await context.EvaluateAsync(ServiceInterfaceFile, cancellationToken);
             LogInput(() => appServiceInterfaceFile);
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
+            ProjectInfo projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
 
-            var sourceText = await File.ReadAllTextAsync(appServiceInterfaceFile);
+            string sourceText = await File.ReadAllTextAsync(appServiceInterfaceFile);
 
             try
             {
-                var tree = CSharpSyntaxTree.ParseText(sourceText);
-                var root = tree.GetCompilationUnitRoot();
+                Microsoft.CodeAnalysis.SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceText);
+                CompilationUnitSyntax root = tree.GetCompilationUnitRoot();
                 if (root.ContainsDiagnostics)
                 {
                     // source contains syntax error
-                    var ex = new ParseException(root.GetDiagnostics().Select(diag => diag.ToString()));
+                    ParseException ex = new ParseException(root.GetDiagnostics().Select(diag => diag.ToString()));
                     throw ex;
                 }
 
-                var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
-                var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
-                var interfaceDeclarationSyntax = root.Descendants<InterfaceDeclarationSyntax>().Single();
-                var interfaceName = interfaceDeclarationSyntax.Identifier.ToString();
+                string @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
+                string relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
+                InterfaceDeclarationSyntax interfaceDeclarationSyntax = root.Descendants<InterfaceDeclarationSyntax>().Single();
+                string interfaceName = interfaceDeclarationSyntax.Identifier.ToString();
                 int methodsCount = root.Descendants<MethodDeclarationSyntax>().Count();
 
-                var serviceInfo = new ServiceInfo(@namespace, interfaceName, methodsCount, relativeDirectory);
+                ServiceInfo serviceInfo = new ServiceInfo(@namespace, interfaceName, methodsCount, relativeDirectory);
 
                 context.SetLastResult(serviceInfo);
                 context.SetVariable("ServiceInfo", serviceInfo);
@@ -61,7 +61,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             {
                 Logger.LogError(e, "Parsing entity failed.");
                 if (e is ParseException pe)
-                    foreach (var error in pe.Errors)
+                    foreach (string error in pe.Errors)
                         Logger.LogError(error);
                 throw;
             }

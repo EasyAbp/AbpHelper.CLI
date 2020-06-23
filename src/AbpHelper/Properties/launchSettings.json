@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "AbpHelper": {
+      "commandName": "Project"
+    }
+  }
+}

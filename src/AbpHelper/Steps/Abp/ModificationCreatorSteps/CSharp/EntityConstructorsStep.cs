@@ -14,7 +14,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
     {
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
-            var model = context.GetVariable<object>("Model");
+            object model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
             string protectedCtorText = TextGenerator.GenerateByTemplateName(templateDir, "Entity_ProtectedConstructor", model);
             string publicCtorText = TextGenerator.GenerateByTemplateName(templateDir, "Entity_PublicConstructor", model);

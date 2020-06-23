@@ -10,11 +10,11 @@ namespace EasyAbp.AbpHelper.Extensions
     {
         public static IServiceCollection AddAllActivities(this IServiceCollection services)
         {
-            var activityTypes = Assembly.GetExecutingAssembly().GetTypes()
+            System.Collections.Generic.IEnumerable<Type> activityTypes = Assembly.GetExecutingAssembly().GetTypes()
                     .Where(t => !t.IsAbstract)
                     .Where(t => t.IsAssignableTo(typeof(IActivity)))
                 ;
-            foreach (var activity in activityTypes)
+            foreach (Type activity in activityTypes)
                 services.AddTransient(activity)
                     .AddTransient(sp => (IActivity) sp.GetRequiredService(activity))
                     ;
