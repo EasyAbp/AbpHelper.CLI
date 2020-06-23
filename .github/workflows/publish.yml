@@ -17,4 +17,4 @@ jobs:
         VERSION_FILE_PATH: src/AbpHelper/AbpHelper.csproj
         PACKAGE_NAME: Dosse.AbpHelper.CLI
         NUGET_KEY: ${{ secrets.NUGET_KEY_M }}
-        NUGET_SOURCE: https://nuget.pkg.github.com/DosSEdo/
+        NUGET_SOURCE: https://nuget.pkg.github.com/DosSEdo/index.json
