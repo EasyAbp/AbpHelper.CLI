@@ -3,11 +3,11 @@
 @using {{ ProjectInfo.FullName }}.Permissions
 {{~ end ~}}
 {{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using {{ ProjectInfo.FullName }}.Localization
-@using Microsoft.AspNetCore.Authorization
-@using Volo.Abp.AspNetCore.Mvc.UI.Layout
-@using Microsoft.AspNetCore.Mvc.Localization
 @model IndexModel
 @inject IPageLayout PageLayout
 @inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
@@ -64,4 +64,3 @@
             </thead>
         </abp-table>
     </abp-card-body>
-</abp-card>

@@ -1,7 +1,7 @@
 # AbpHelper.CLI
 
-[![NuGet](https://img.shields.io/nuget/v/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
-[![NuGet Download](https://img.shields.io/nuget/dt/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
+[![NuGet](https://img.shields.io/nuget/v/DosSEdo.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/DosSEdo.AbpHelper)
+[![NuGet Download](https://img.shields.io/nuget/dt/DosSEdo.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/DosSEdo.AbpHelper)
 
 AbpHelper is a tool that helps you with developing [Abp vNext](https://abp.io/) applications.
 
@@ -11,13 +11,13 @@ AbpHelper is a tool that helps you with developing [Abp vNext](https://abp.io/) 
 
 1. Install AbpHelper CLI tool
 
-    `dotnet tool install EasyAbp.AbpHelper -g`
+    `dotnet tool install DosSEdo.AbpHelper -g`
 
-    > If you prefer GUI, there is also a tool with a fancy UI: [AbpHelper.GUI](https://github.com/EasyAbp/AbpHelper.GUI)
+    > If you prefer GUI, there is also a tool with a fancy UI: [AbpHelper.GUI](https://github.com/DosSEdo/AbpHelper.GUI)
 
 1. If you have previously installed it, update it with the following command:
 
-    `dotnet tool update EasyAbp.AbpHelper -g`
+    `dotnet tool update DosSEdo.AbpHelper -g`
 
 1. Use [ABP CLI](https://docs.abp.io/en/abp/latest/CLI) to create an ABP application
 

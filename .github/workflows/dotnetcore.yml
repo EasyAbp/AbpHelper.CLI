@@ -1,0 +1,110 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ develop ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  pull_request:
+    branches: [ develop ]
+env: 
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet: [ '3.1.201' ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1.4.0
+      with:
+        dotnet-version: ${{ matrix.dotnet }}
+    - name: Install dependencies
+      run: dotnet restore src/AbpHelper/AbpHelper.csproj
+    - name: Build
+      run: dotnet build src/AbpHelper/AbpHelper.csproj --configuration Release --no-restore
+    - name: Nerdbank.GitVersioning
+      uses: dotnet/nbgv@v0.3.1
+      with:
+        # The path to the directory for which the version should be determined. This should be at or below the directory containing the version.json file. Default is repo root directory.
+        path: src/AbpHelper/
+    - name: Test
+      run: dotnet test src/AbpHelper.Tests/AbpHelper.Tests.csproj --no-restore --verbosity normal
+    - name: Zipping
+      run: zip -r AbpHelper . -i src/AbpHelper/bin/Release/*
+      id: zipping
+    - name: Upload build result to artifact release-asset
+      if: steps.zipping.outcome == 'success'
+      uses: actions/upload-artifact@v2
+      with:
+        name: AbpHelper
+        path: AbpHelper.zip
+    
+  publish:    
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+    - uses: actions/checkout@v2
+    - name: publish on version change
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        # Filepath of the project to be packaged, relative to root of repository
+        PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
+
+        # NuGet package id, used for version detection & defaults to project name
+        PACKAGE_NAME: AbpHelper.CLI
+
+        # Flag to toggle git tagging, enabled by default
+        TAG_COMMIT: true
+
+        # Format of the git tag, [*] gets replaced with actual version
+        TAG_FORMAT: v*
+
+        # API key to authenticate with NuGet server
+        NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
+
+        # NuGet server uri hosting the packages, defaults to https://api.nuget.org
+        NUGET_SOURCE: https://nuget.pkg.github.com/DosSEdo/
+
+        # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
+        INCLUDE_SYMBOLS: true    
+  
+  Release:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download artifact for Build
+        uses: actions/download-artifact@v2
+        with:
+          name: AbpHelper
+          path: AbpHelper.zip
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./AbpHelper.zip
+          asset_name: AbpHelper.zip
+          asset_content_type: application/zip
