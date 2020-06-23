@@ -27,7 +27,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - uses: actions/checkout@develop
+    - uses: actions/checkout@master
     # Authenticates packages to push to GPR
     - uses: actions/setup-dotnet@v1
       with:
