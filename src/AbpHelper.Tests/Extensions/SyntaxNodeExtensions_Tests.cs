@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using EasyAbp.AbpHelper.Extensions;
+using DosSEdo.AbpHelper.Extensions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Shouldly;
@@ -12,7 +12,7 @@ namespace EasyApp.AbpHelper.Tests.Extensions
         private const string CSharpCode = 
 @"using System;
 
-namespace EasyAbp.AbpHelper
+namespace DosSEdo.AbpHelper
 {
     public   class Hello
     {
@@ -138,7 +138,7 @@ namespace EasyAbp.AbpHelper
         }
         
         /// <summary>
-        /// https://github.com/EasyAbp/AbpHelper.CLI/issues/43
+        /// https://github.com/DosSEdo/AbpHelper.CLI/issues/43
         /// </summary>
         [Fact]
         public void Issue_43()

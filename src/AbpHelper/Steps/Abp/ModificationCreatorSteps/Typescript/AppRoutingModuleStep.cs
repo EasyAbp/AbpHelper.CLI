@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using EasyAbp.AbpHelper.Generator;
-using EasyAbp.AbpHelper.Models;
+using DosSEdo.AbpHelper.Generator;
+using DosSEdo.AbpHelper.Models;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 
-namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
+namespace DosSEdo.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
 {
     public class AppRoutingModuleStep : TypeScriptModificationCreatorStep
     {

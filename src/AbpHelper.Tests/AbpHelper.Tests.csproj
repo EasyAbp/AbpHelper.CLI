@@ -5,7 +5,7 @@
 
         <IsPackable>false</IsPackable>
 
-        <AssemblyName>EasyAbpAbpHelper.Tests</AssemblyName>
+        <AssemblyName>DosSEdoAbpHelper.Tests</AssemblyName>
 
         <RootNamespace>EasyApp.AbpHelper.Tests</RootNamespace>
     </PropertyGroup>

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace EasyAbp.AbpHelper.Models
+namespace DosSEdo.AbpHelper.Models
 {
     public class ProjectInfo
     {

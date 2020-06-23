@@ -1,4 +1,4 @@
-﻿namespace EasyAbp.AbpHelper.Extensions
+﻿namespace DosSEdo.AbpHelper.Extensions
 {
     public static class PathExtensions
     {

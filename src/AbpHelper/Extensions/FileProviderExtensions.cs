@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
 using Volo.Abp;
 
-namespace EasyAbp.AbpHelper.Extensions
+namespace DosSEdo.AbpHelper.Extensions
 {
     public static class FileProviderExtensions
     {

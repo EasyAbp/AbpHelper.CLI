@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using EasyAbp.AbpHelper.Extensions;
+using DosSEdo.AbpHelper.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Scriban;
 using Scriban.Runtime;
 using Volo.Abp.DependencyInjection;
 
-namespace EasyAbp.AbpHelper.Generator
+namespace DosSEdo.AbpHelper.Generator
 {
     public class TextGenerator : ISingletonDependency
     {

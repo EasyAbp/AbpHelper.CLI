@@ -1,13 +1,13 @@
-﻿using EasyAbp.AbpHelper.Steps.Abp;
-using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
-using EasyAbp.AbpHelper.Steps.Common;
+﻿using DosSEdo.AbpHelper.Steps.Abp;
+using DosSEdo.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
+using DosSEdo.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
+namespace DosSEdo.AbpHelper.Workflow.Generate.Crud
 {
     public static class UiRazorPagesGenerationWorkflow
     {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Volo.Abp.DependencyInjection;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace DosSEdo.AbpHelper.Commands
 {
     public abstract class CommandBase : Command, ITransientDependency
     {

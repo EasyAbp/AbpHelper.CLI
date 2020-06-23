@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EasyAbp.AbpHelper.Steps.Abp
+namespace DosSEdo.AbpHelper.Steps.Abp
 {
     public class ParseException : Exception
     {

@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
-using EasyAbp.AbpHelper.Generator;
+using DosSEdo.AbpHelper.Extensions;
+using DosSEdo.AbpHelper.Generator;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Runtime;
 
-namespace EasyAbp.AbpHelper.Steps.Common
+namespace DosSEdo.AbpHelper.Steps.Common
 {
     public class GroupGenerationStep : Step
     {

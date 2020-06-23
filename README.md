@@ -2,6 +2,8 @@
 
 [![NuGet](https://img.shields.io/nuget/v/DosSEdo.AbpHelper.svg?style=flat-square)](https://github.com/DosSEdo/AbpHelper.CLI/packages/EasyAbp.AbpHelper)
 [![NuGet Download](https://img.shields.io/nuget/dt/DosSEdo.AbpHelper.svg?style=flat-square)](https://github.com/DosSEdo/AbpHelper.CLI/packages/EasyAbp.AbpHelper)
+![.NET Core](https://github.com/DosSEdo/AbpHelper.CLI/workflows/.NET%20Core/badge.svg)
+![publish to nuget](https://github.com/DosSEdo/AbpHelper.CLI/workflows/publish%20to%20nuget/badge.svg)
 
 AbpHelper is a tool that helps you with developing [Abp vNext](https://abp.io/) applications.
 

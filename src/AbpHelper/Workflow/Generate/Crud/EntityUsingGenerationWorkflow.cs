@@ -1,8 +1,8 @@
-﻿using EasyAbp.AbpHelper.Steps.Common;
+﻿using DosSEdo.AbpHelper.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Services;
 
-namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
+namespace DosSEdo.AbpHelper.Workflow.Generate.Crud
 {
     public static class EntityUsingGenerationWorkflow
     {

@@ -3,16 +3,16 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Generator;
-using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.Common;
+using DosSEdo.AbpHelper.Generator;
+using DosSEdo.AbpHelper.Models;
+using DosSEdo.AbpHelper.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
+namespace DosSEdo.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
     public abstract class CSharpModificationCreatorStep : Step
     {

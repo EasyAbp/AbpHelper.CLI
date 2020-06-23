@@ -1,4 +1,4 @@
-﻿namespace EasyAbp.AbpHelper.Models
+﻿namespace DosSEdo.AbpHelper.Models
 {
     public interface IStartLine
     {

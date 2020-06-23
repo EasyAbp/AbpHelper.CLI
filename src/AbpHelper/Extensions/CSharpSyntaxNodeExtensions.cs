@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace EasyAbp.AbpHelper.Extensions
+namespace DosSEdo.AbpHelper.Extensions
 {
     public static class CSharpSyntaxNodeExtensions
     {

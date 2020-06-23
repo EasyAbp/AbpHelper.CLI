@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Humanizer;
 
-namespace EasyAbp.AbpHelper.Models
+namespace DosSEdo.AbpHelper.Models
 {
     public class ServiceInfo
     {

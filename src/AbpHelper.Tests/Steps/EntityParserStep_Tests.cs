@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.Abp;
-using EasyAbp.AbpHelper.Steps.Common;
+using DosSEdo.AbpHelper.Models;
+using DosSEdo.AbpHelper.Steps.Abp;
+using DosSEdo.AbpHelper.Steps.Common;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
@@ -97,7 +97,7 @@ namespace Acme.BookStore.Books
         public async Task Parse_Entity_Without_PrimaryKey()
         {
             string code = @"
-namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
+namespace Acme.BookStore.DosSEdo.BookStore.UserRoles
 {
     public class UserRole : Entity
     {
@@ -132,10 +132,10 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
 
                     // Assert
                     EntityInfo info = ctx.GetVariable<EntityInfo>("EntityInfo");
-                    info.Namespace.ShouldBe("Acme.BookStore.EasyAbp.BookStore.UserRoles");
-                    info.RelativeNamespace.ShouldBe("EasyAbp.BookStore.UserRoles");
+                    info.Namespace.ShouldBe("Acme.BookStore.DosSEdo.BookStore.UserRoles");
+                    info.RelativeNamespace.ShouldBe("DosSEdo.BookStore.UserRoles");
                     info.NamespaceLastPart.ShouldBe("UserRoles");
-                    info.RelativeDirectory.ShouldBe("EasyAbp/BookStore/UserRoles");
+                    info.RelativeDirectory.ShouldBe("DosSEdo/BookStore/UserRoles");
                     info.Name.ShouldBe("UserRole");
                     info.NamePluralized.ShouldBe("UserRoles");
                     info.BaseType.ShouldBe("Entity");

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using EasyAbp.AbpHelper.Models;
+using DosSEdo.AbpHelper.Models;
 using Scriban.Runtime;
 
-namespace EasyAbp.AbpHelper.Generator
+namespace DosSEdo.AbpHelper.Generator
 {
     public class AbpFunctions : ScriptObject
     {

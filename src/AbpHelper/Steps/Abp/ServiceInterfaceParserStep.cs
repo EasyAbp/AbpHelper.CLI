@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
-using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.Common;
+using DosSEdo.AbpHelper.Extensions;
+using DosSEdo.AbpHelper.Models;
+using DosSEdo.AbpHelper.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
-namespace EasyAbp.AbpHelper.Steps.Abp
+namespace DosSEdo.AbpHelper.Steps.Abp
 {
     public class ServiceInterfaceParserStep : Step
     {

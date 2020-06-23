@@ -5,7 +5,7 @@
 $version = $proj.Project.PropertyGroup.AssemblyVersion
 
 # Publish all packages
-& dotnet nuget push ("EasyAbp.AbpHelper." + "$version".Trim() + ".nupkg") -s https://nuget.pkg.github.com/DosSEdo/index.json
+& dotnet nuget push ("DosSEdo.AbpHelper." + "$version".Trim() + ".nupkg") -s https://nuget.pkg.github.com/DosSEdo/index.json
 
 # Go back to the pack folder
 Set-Location $packFolder

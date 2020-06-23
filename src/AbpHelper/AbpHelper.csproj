@@ -6,17 +6,17 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <Description>AbpHelper is a tool to help you with developing Abp vNext applications.</Description>
-    <Copyright>EasyAbp Team</Copyright>
-    <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
+    <Copyright>DosSEdo Team</Copyright>
+    <PackageProjectUrl>https://github.com/DosSEdo/AbpHelper.CLI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DosSEdo/AbpHelper.CLI</RepositoryUrl>
     <PackageVersion>0.5.0</PackageVersion>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>abphelper</ToolCommandName>
-    <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
-    <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
+    <RootNamespace>DosSEdo.AbpHelper</RootNamespace>
+    <AssemblyName>DosSEdo.AbpHelper</AssemblyName>
     <AssemblyVersion>0.5.0</AssemblyVersion>
     <FileVersion>0.5.0</FileVersion>
-    <Authors>EasyAbp Team</Authors>
+    <Authors>DosSEdo Team</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>abp helper generator</PackageTags>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>

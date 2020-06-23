@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
-using EasyAbp.AbpHelper.Steps.Abp;
-using EasyAbp.AbpHelper.Steps.Common;
+using DosSEdo.AbpHelper.Extensions;
+using DosSEdo.AbpHelper.Steps.Abp;
+using DosSEdo.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace DosSEdo.AbpHelper.Commands
 {
     public class LocalizationCommand : CommandBase
     {

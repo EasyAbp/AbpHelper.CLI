@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace DosSEdo.AbpHelper.Commands
 {
     public class GenerateCommand : CommandBase
     {

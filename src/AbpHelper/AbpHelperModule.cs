@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
-using EasyAbp.AbpHelper.Extensions;
+using DosSEdo.AbpHelper.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
 
-namespace EasyAbp.AbpHelper
+namespace DosSEdo.AbpHelper
 {
     [DependsOn(typeof(AbpAutofacModule))]
     public class AbpHelperModule : AbpModule
