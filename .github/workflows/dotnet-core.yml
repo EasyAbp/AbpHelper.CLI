@@ -27,9 +27,9 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-   # - uses: actions/checkout@master
-   #- run: dotnet build --configuration Release AbpHelper/AbpHelper.csproj
-   #- name: Create the package
-   #   run: dotnet pack --configuration Release AbpHelper/AbpHelper.csproj
-   #- name: Publish the package to GPR
-   #   run: dotnet nuget push AbpHelper/AbpHelper.csproj/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_KEY_M }} --source https://nuget.pkg.github.com/DosSEdo/index.json
+    - uses: actions/checkout@master
+    - run: dotnet build --configuration Release AbpHelper/AbpHelper.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release AbpHelper/AbpHelper.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push AbpHelper/AbpHelper.csproj/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_KEY_M }} --source https://nuget.pkg.github.com/DosSEdo/index.json
