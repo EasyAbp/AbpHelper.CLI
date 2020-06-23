@@ -25,7 +25,7 @@ namespace EasyAbp.AbpHelper.Commands
 
         protected void AddCommand<TCommand>() where TCommand : CommandBase
         {
-            var command = ServiceProvider.GetRequiredService<TCommand>();
+            TCommand command = ServiceProvider.GetRequiredService<TCommand>();
             base.AddCommand(command);
         }
 
@@ -48,14 +48,14 @@ namespace EasyAbp.AbpHelper.Commands
 
         protected async Task RunWorkflow(Func<IWorkflowBuilder, WorkflowDefinitionVersion> builder)
         {
-            var workflowBuilderFactory = ServiceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
-            var workflowBuilder = workflowBuilderFactory();
+            Func<IWorkflowBuilder> workflowBuilderFactory = ServiceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
+            IWorkflowBuilder workflowBuilder = workflowBuilderFactory();
 
-            var workflowDefinition = builder(workflowBuilder);
+            WorkflowDefinitionVersion workflowDefinition = builder(workflowBuilder);
             // Start the workflow.
             Logger.LogInformation($"Command '{Name}' started.");
-            var invoker = ServiceProvider.GetService<IWorkflowInvoker>();
-            var ctx = await invoker.StartAsync(workflowDefinition);
+            IWorkflowInvoker invoker = ServiceProvider.GetService<IWorkflowInvoker>();
+            Elsa.Services.Models.WorkflowExecutionContext ctx = await invoker.StartAsync(workflowDefinition);
             if (ctx.Workflow.Status == WorkflowStatus.Finished)
             {
                 Logger.LogInformation($"Command '{Name}' finished successfully.");

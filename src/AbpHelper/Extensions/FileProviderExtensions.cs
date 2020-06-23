@@ -14,13 +14,13 @@ namespace EasyAbp.AbpHelper.Extensions
         public static IEnumerable<(string, IFileInfo)> GetFilesRecursively(this IFileProvider fileProvider, string subpath)
         {
             subpath = subpath.EnsureEndsWith('/');
-            var contents = fileProvider.GetDirectoryContents(subpath);
-            foreach (var content in contents)
+            IDirectoryContents contents = fileProvider.GetDirectoryContents(subpath);
+            foreach (IFileInfo content in contents)
             {
                 if (content.IsDirectory)
                 {
                     string path = subpath + content.Name;
-                    foreach (var file in GetFilesRecursively(fileProvider, path))
+                    foreach ((string, IFileInfo) file in GetFilesRecursively(fileProvider, path))
                     {
                         yield return file;
                     }
@@ -55,9 +55,9 @@ namespace EasyAbp.AbpHelper.Extensions
         {
             Check.NotNull(fileInfo, nameof(fileInfo));
 
-            using (var stream = fileInfo.CreateReadStream())
+            using (Stream stream = fileInfo.CreateReadStream())
             {
-                using (var streamReader = new StreamReader(stream, encoding, true))
+                using (StreamReader streamReader = new StreamReader(stream, encoding, true))
                 {
                     return streamReader.ReadToEnd();
                 }
@@ -71,9 +71,9 @@ namespace EasyAbp.AbpHelper.Extensions
         {
             Check.NotNull(fileInfo, nameof(fileInfo));
 
-            using (var stream = fileInfo.CreateReadStream())
+            using (Stream stream = fileInfo.CreateReadStream())
             {
-                using (var streamReader = new StreamReader(stream, encoding, true))
+                using (StreamReader streamReader = new StreamReader(stream, encoding, true))
                 {
                     return await streamReader.ReadToEndAsync();
                 }

@@ -20,9 +20,9 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var command = await context.EvaluateAsync(Command, cancellationToken);
+            string command = await context.EvaluateAsync(Command, cancellationToken);
             LogInput(() => command);
-            var exitCode = RunCommand(command);
+            int exitCode = RunCommand(command);
             if (exitCode != 0) throw new RunningCommandFailedException(exitCode);
 
             return Done();
@@ -30,7 +30,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         private int RunCommand(string command)
         {
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo = new ProcessStartInfo(GetFileName())
                 {

@@ -14,15 +14,15 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
     {
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-            var model = context.GetVariable<object>("Model");
+            ProjectInfo projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
+            object model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
             string addMenuItemText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
 
             CSharpSyntaxNode MainMenu(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
                 .Single(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
 
-            var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
+            List<ModificationBuilder<CSharpSyntaxNode>> builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
 
             if (projectInfo.TemplateType == TemplateType.Application)
             {

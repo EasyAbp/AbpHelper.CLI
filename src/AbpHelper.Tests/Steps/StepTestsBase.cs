@@ -8,7 +8,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
     {
         protected async Task UsingWorkflowContext(Func<WorkflowExecutionContext, Task> action)
         {
-            var context = new WorkflowExecutionContext(new Workflow(), null, Application.ServiceProvider);
+            WorkflowExecutionContext context = new WorkflowExecutionContext(new Workflow(), null, Application.ServiceProvider);
             await action(context);
         }
     }

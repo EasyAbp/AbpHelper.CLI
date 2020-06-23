@@ -34,15 +34,15 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
+            string baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
-            var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
+            string searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
             LogInput(() => searchFileName);
-            var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
+            string resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
-            var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
+            string[] files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
 
-            var filePathName = files.SingleOrDefault();
+            string filePathName = files.SingleOrDefault();
             if (filePathName == null) throw new FileNotFoundException(searchFileName);
 
             context.SetLastResult(filePathName);

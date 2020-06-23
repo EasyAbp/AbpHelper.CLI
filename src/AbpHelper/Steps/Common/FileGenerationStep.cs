@@ -25,12 +25,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
+            string targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
 
             LogInput(() => targetFile);
             LogInput(() => Contents, $"Contents length: {Contents.Length}");
 
-            var dir = Path.GetDirectoryName(targetFile);
+            string? dir = Path.GetDirectoryName(targetFile);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);

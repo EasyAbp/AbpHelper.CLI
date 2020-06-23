@@ -2,19 +2,19 @@ name: publish to nuget
 on:
   push:
     branches:
-      - master # Default release branch
+      - master
+      - develop
 jobs:
-  publish:
-    name: list on nuget
+  publish:    
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      # Publish
-      - name: publish AbpHelper.CLI
-        uses: brandedoutcast/publish-nuget@v2
-        with:
-          PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
-          VERSION_FILE_PATH: src/AbpHelper/AbpHelper.csproj
-          VERSION_REGEX: <AssemblyVersion>(.*)<\/AssemblyVersion>
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+    - uses: actions/checkout@v2
+    - name: publish on version change
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
+        VERSION_FILE_PATH: src/AbpHelper/AbpHelper.csproj
+        PACKAGE_NAME: Dosse.AbpHelper.CLI
+        NUGET_KEY: oy2kmdxar7t2ytkodctatkrewqus3ppuvohndxdhoh3jci
+        NUGET_SOURCE: https://api.nuget.org/v3/index.json
