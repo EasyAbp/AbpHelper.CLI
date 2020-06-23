@@ -27,14 +27,14 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - uses: actions/checkout@master
+    - uses: actions/checkout@develop
     # Authenticates packages to push to GPR
     - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
         source-url: https://nuget.pkg.github.com/DosSEdo/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY_M}}
     - run: dotnet build --configuration Release AbpHelper/AbpHelper.csproj
     - name: tool isntall
       run: dotnet tool install gpr -g AbpHelper/AbpHelper.csproj
