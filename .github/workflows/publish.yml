@@ -16,5 +16,5 @@ jobs:
         PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
         VERSION_FILE_PATH: src/AbpHelper/AbpHelper.csproj
         PACKAGE_NAME: Dosse.AbpHelper.CLI
-        NUGET_KEY: ${{ secrets.NUGET_KEY_M }}
+        NUGET_KEY: oy2kmdxar7t2ytkodctatkrewqus3ppuvohndxdhoh3jci
         NUGET_SOURCE: https://api.nuget.org/v3/index.json
