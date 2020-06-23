@@ -24,7 +24,6 @@ jobs:
         source-url: https://nuget.pkg.github.com/DosSEdo/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY_M}}
-    - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
