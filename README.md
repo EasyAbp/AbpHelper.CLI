@@ -3,12 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/DosSEdo.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/DosSEdo.AbpHelper)
 [![NuGet Download](https://img.shields.io/nuget/dt/DosSEdo.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/DosSEdo.AbpHelper)
 
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/DosSEdo/AbpHelper.CLI)
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/DosSEdo/AbpHelper.CLI)
-
-# AbpHelper
-AbpHelper is a tool that help you with developing Abp vNext applications.
+AbpHelper is a tool that helps you with developing [Abp vNext](https://abp.io/) applications.
 
 **Make sure to backup your source files before using it!**
 

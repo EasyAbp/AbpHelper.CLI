@@ -1,6 +1,5 @@
 ﻿using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using System.IO;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Commands;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +19,6 @@ namespace EasyAbp.AbpHelper
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Volo.Abp", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
-                .WriteTo.File(Path.Combine("Logs", "logs.txt"))
                 .WriteTo.Console()
                 .CreateLogger();
 
