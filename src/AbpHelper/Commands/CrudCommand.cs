@@ -64,8 +64,8 @@ namespace EasyAbp.AbpHelper.Commands
             AddOption(new Option(new[] {"--migration-project-name"},
                 $"Specify the name of the migration project." + Environment.NewLine +
                 "For ABP applications, the default value is '*.EntityFrameworkCore.DbMigrations.csproj';" + Environment.NewLine +
-                "For ABP modules, the default value is '*.Web.Unified.csproj'." + Environment.NewLine +
-                "For example: --migration-project-name *.HttpApi.Host.csproj, abphelper will search '*.HttpApi.Host.csproj' file and make it as the migration project." + Environment.NewLine +
+                "For ABP modules, the default value is '*.HttpApi.Host.csproj'." + Environment.NewLine +
+                "For example: --migration-project-name *.Web.Unified.csproj, abphelper will search '*.Web.Unified.csproj' file and make it as the migration project." + Environment.NewLine +
                 "This argument takes effect only if '--skip-db-migrations' is NOT specified.")
             {
                 Argument = new Argument<string>()

@@ -29,7 +29,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                     step =>
                                     {
                                         step.VariableName = "ModuleMigrationProjectName";
-                                        step.ValueExpression = new LiteralExpression("*.Web.Unified.csproj");
+                                        step.ValueExpression = new LiteralExpression("*.HttpApi.Host.csproj");
                                     })
                                 .Then("SearchFiles")
                                 ;
