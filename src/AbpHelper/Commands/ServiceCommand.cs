@@ -34,7 +34,7 @@ namespace EasyAbp.AbpHelper.Commands
         private async Task Run(CommandOption option)
         {
             string directory = GetBaseDirectory(option.Directory);
-            option.Folder = option.Folder.Replace('\\', '/');
+            option.Folder = option.Folder.NormalizePath();
             await RunWorkflow(builder => builder
                 .StartWith<SetVariable>(
                     step =>

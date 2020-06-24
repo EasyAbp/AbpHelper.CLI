@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EasyAbp.AbpHelper.Extensions;
 using Humanizer;
 
 namespace EasyAbp.AbpHelper.Models
@@ -12,7 +13,7 @@ namespace EasyAbp.AbpHelper.Models
             Name = name;
             BaseType = baseType;
             PrimaryKey = primaryKey;
-            RelativeDirectory = relativeDirectory.Replace('\\', '/');
+            RelativeDirectory = relativeDirectory.NormalizePath();
         }
 
         public string Namespace { get; }
