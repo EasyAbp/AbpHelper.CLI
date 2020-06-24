@@ -11,6 +11,7 @@ namespace EasyAbp.AbpHelper.Commands
             AddCommand<ServiceCommand>();
             AddCommand<MethodsCommand>();
             AddCommand<LocalizationCommand>();
+            AddCommand<ControllerCommand>();
         }
     }
 }
