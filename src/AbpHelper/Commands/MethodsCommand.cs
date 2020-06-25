@@ -116,7 +116,7 @@ namespace EasyAbp.AbpHelper.Commands
         private class CommandOption
         {
             public string Directory { get; set; } = null!;
-            public bool Overwrite { get; set; }
+            public bool NoOverwrite { get; set; }
             public string ServiceName { get; set; } = null!;
             public string[] MethodNames { get; set; } = null!;
             public bool NoInput { get; set; }

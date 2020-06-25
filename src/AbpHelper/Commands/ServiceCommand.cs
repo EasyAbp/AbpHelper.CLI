@@ -76,7 +76,7 @@ namespace EasyAbp.AbpHelper.Commands
         {
             public string Directory { get; set; } = null!;
             public string Name { get; set; } = null!;
-            public bool Overwrite { get; set; }
+            public bool NoOverwrite { get; set; }
             public string Folder { get; set; } = String.Empty;
         }
     }
