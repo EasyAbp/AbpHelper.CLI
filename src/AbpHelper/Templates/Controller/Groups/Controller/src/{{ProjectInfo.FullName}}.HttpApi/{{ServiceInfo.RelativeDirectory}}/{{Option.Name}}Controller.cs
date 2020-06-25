@@ -20,7 +20,7 @@ namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
         }
 
         {{~ for method in ServiceInfo.Methods ~}}
-{{ include "Templates/Controller/ControllerMethod" method }}
+{{ include "Templates/Controller/ControllerMethod" ServiceInfo method }}
         {{~ if !for.last ~}}
 
         {{~ end ~}}

@@ -2,6 +2,7 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Models;
 using Scriban.Runtime;
+using Volo.Abp.Http;
 
 namespace EasyAbp.AbpHelper.Generator
 {
@@ -18,6 +19,12 @@ namespace EasyAbp.AbpHelper.Generator
         {
             if (propertyInfo.Type == "Guid?" && propertyInfo.Name == "TenantId") return true;
             return false;
+        }
+
+        public static string GetHttpVerb(string methodName)
+        {
+            string verb = HttpMethodHelper.GetConventionalVerbForMethodName(methodName);
+            return $"Http{Char.ToUpper(verb[0])}{verb.Substring(1).ToLower()}";
         }
     }
 }
