@@ -11,10 +11,12 @@ namespace EasyAbp.AbpHelper.Generator
     public class TextGenerator : ISingletonDependency
     {
         private readonly IFileProvider _fileProvider;
+        private readonly ITemplateLoader _templateLoader;
 
-        public TextGenerator(IFileProvider fileProvider)
+        public TextGenerator(IFileProvider fileProvider, ITemplateLoader templateLoader)
         {
             _fileProvider = fileProvider;
+            _templateLoader = templateLoader;
         }
 
         public string GenerateByTemplateName(string templateDirectory, string templateName, object model)
@@ -30,7 +32,7 @@ namespace EasyAbp.AbpHelper.Generator
             return GenerateByTemplateText(templateText, model, out context);
         }
 
-        public string GenerateByTemplateText(string templateText, object model)
+        public string GenerateByTemplateText(string templateText, object model, string? templateDirectory = null)
         {
             return GenerateByTemplateText(templateText, model, out _);
         }
@@ -43,6 +45,7 @@ namespace EasyAbp.AbpHelper.Generator
             scriptObject.Import(model, renamer: member => member.Name);
             context.PushGlobal(scriptObject);
             context.MemberRenamer = member => member.Name;
+            context.TemplateLoader = _templateLoader;
 
             var template = Template.Parse(templateText);
             var text = template.Render(context).Replace("\r\n", Environment.NewLine);

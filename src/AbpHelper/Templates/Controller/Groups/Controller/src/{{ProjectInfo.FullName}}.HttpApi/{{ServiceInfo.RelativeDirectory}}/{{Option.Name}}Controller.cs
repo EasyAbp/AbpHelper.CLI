@@ -20,10 +20,7 @@ namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
         }
 
         {{~ for method in ServiceInfo.Methods ~}}
-        {{ method.Accessor }} {{ method.ReturnType }} {{  method.Name }}({{ for param in method.Parameters }}{{ param.Type }} {{ param.Name }}{{if !for.last }}, {{ end }}{{ end }})
-        {
-            {{ if method.ReturnType != "void" }}return {{ end }}_service.{{ method.Name }}({{ for param in method.Parameters }}{{ param.Name }}{{if !for.last }}, {{ end }}{{ end }});
-        }
+{{ include "Templates/Controller/ControllerMethod" method }}
         {{~ if !for.last ~}}
 
         {{~ end ~}}
