@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Workflow.Generate.Crud;
+using Elsa;
 using Elsa.Activities;
+using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 
@@ -17,14 +20,6 @@ namespace EasyAbp.AbpHelper.Commands
         {
             AddArgument(new Argument<string>("name") {Description = "The service name(without 'AppService' postfix)"});
             AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"-f", "--folder"}, "Specify the folder where the controller is generated. Multi-level(e.g., foo/bar) directory is supported")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"-s", "--startup-project-name"}, "Specify the name of the startup project. For ABP applications, the default value is '*.Web.csproj'; For ABP modules, the default value is '*.HttpApi.Host.csproj'")
             {
                 Argument = new Argument<string>()
             });
@@ -42,7 +37,6 @@ namespace EasyAbp.AbpHelper.Commands
         private async Task Run(CommandOption option)
         {
             string directory = GetBaseDirectory(option.Directory);
-            option.Folder = option.Folder.NormalizePath();
             await RunWorkflow(builder => builder
                 .StartWith<SetVariable>(
                     step =>
@@ -59,18 +53,42 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<SetVariable>(
                     step =>
                     {
+                        step.VariableName = "Overwrite";
+                        step.ValueExpression = new JavaScriptExpression<bool>("!Option.NoOverwrite");
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
                         step.VariableName = "TemplateDirectory";
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Controller");
                     })
                 .Then<ProjectInfoProviderStep>()
-                .Then<RunCommandStep>(
-                    step => step.Command = new JavaScriptExpression<string>(
-                        @"`cd /d ${AspNetCoreDir} && dotnet build`"
-                    ))
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipBuild"),
+                    ifElse =>
+                    {
+                        ifElse.When(OutcomeNames.False)
+                            .Then<RunCommandStep>(
+                                step => step.Command = new JavaScriptExpression<string>(
+                                    @"`cd /d ${AspNetCoreDir} && dotnet build`"
+                                ))
+                            .Then("SearchServiceInterface")
+                            ;
+                        ifElse.When(OutcomeNames.True)
+                            .Then("SearchServiceInterface")
+                            ;
+                    })
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.Name}AppService.cs`"); })
-                .Then<ServiceInterfaceParserStep>()
+                    step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.Name}AppService.cs`"); }
+                    ).WithName("SearchServiceInterface")
+                .Then<ServiceInterfaceSemanticParserStep>()
                 .Then<SetModelVariableStep>()
+                .Then<GroupGenerationStep>(
+                    step =>
+                    {
+                        step.GroupName = "Controller";
+                        step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                    })
                 .Build()
             );
         }
@@ -79,7 +97,6 @@ namespace EasyAbp.AbpHelper.Commands
         {
             public string Directory { get; set; } = null!;
             public string Name { get; set; } = null!;
-            public string Folder { get; set; } = String.Empty;
             public bool SkipBuild { get; set; }
             public bool Regenerate { get; set; }
         }

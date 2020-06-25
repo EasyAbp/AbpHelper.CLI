@@ -28,16 +28,4 @@ namespace EasyAbp.AbpHelper.Models
         public string? CompositeKeyName { get; set; }
         public List<PropertyInfo> CompositeKeys { get; } = new List<PropertyInfo>();
     }
-
-    public class PropertyInfo
-    {
-        public PropertyInfo(string type, string name)
-        {
-            Type = type;
-            Name = name;
-        }
-
-        public string Type { get; }
-        public string Name { get; }
-    }
 }
