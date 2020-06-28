@@ -4,6 +4,7 @@ using System.CommandLine.Invocation;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
+using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
@@ -54,7 +55,7 @@ namespace EasyAbp.AbpHelper.Commands
                     step =>
                     {
                         step.VariableName = "Overwrite";
-                        step.ValueExpression = new JavaScriptExpression<bool>("!Option.NoOverwrite");
+                        step.ValueExpression = new JavaScriptExpression<bool>("true");
                     })
                 .Then<SetVariable>(
                     step =>
@@ -80,14 +81,47 @@ namespace EasyAbp.AbpHelper.Commands
                     })
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.Name}AppService.cs`"); }
-                    ).WithName("SearchServiceInterface")
+                ).WithName("SearchServiceInterface")
                 .Then<ServiceInterfaceSemanticParserStep>()
                 .Then<SetModelVariableStep>()
-                .Then<GroupGenerationStep>(
-                    step =>
+                .Then<IfElse>(
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.Regenerate"),
+                    ifElse =>
                     {
-                        step.GroupName = "Controller";
-                        step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                        ifElse.When(OutcomeNames.True) // Regenerate
+                            .Then<GroupGenerationStep>(
+                                step =>
+                                {
+                                    step.GroupName = "Controller";
+                                    step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                                })
+                            ;
+                        ifElse.When(OutcomeNames.False)
+                            .Then<FileFinderStep>(
+                                step =>
+                                {
+                                    step.SearchFileName = new JavaScriptExpression<string>("`${Option.Name}Controller.cs`");
+                                    step.ErrorIfNotFound = new JavaScriptExpression<bool>("false");
+                                }
+                            ).WithName("SearchController")
+                            .Then<IfElse>(
+                                step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult == null"),
+                                found =>
+                                {
+                                    found.When(OutcomeNames.True)
+                                        .Then<GroupGenerationStep>(
+                                            step =>
+                                            {
+                                                step.GroupName = "Controller";
+                                                step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                                            })
+                                        ;
+                                    found.When(OutcomeNames.False)
+                                        .Then<ControllerParserStep>()
+                                        .Then<ControllerStep>()
+                                        ;
+                                }
+                            );
                     })
                 .Build()
             );

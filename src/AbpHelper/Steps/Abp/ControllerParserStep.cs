@@ -17,10 +17,10 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyAbp.AbpHelper.Steps.Abp
 {
-    // TODO: Remove ServiceInterfaceParserStep?
-    public class ServiceInterfaceSemanticParserStep : Step
+    // TODO: Can this be merged with ServiceInterfaceSemanticParserStep into one class? 
+    public class ControllerParserStep : Step
     {
-        public WorkflowExpression<string> ServiceInterfaceFile
+        public WorkflowExpression<string> ControllerFile
         {
             get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
             set => SetState(value);
@@ -28,7 +28,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var appServiceInterfaceFile = await context.EvaluateAsync(ServiceInterfaceFile, cancellationToken);
+            var appServiceInterfaceFile = await context.EvaluateAsync(ControllerFile, cancellationToken);
             LogInput(() => appServiceInterfaceFile);
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
 
@@ -55,7 +55,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                         })
                     ;
                 // Create compilation of the interface
-                var compilation = CSharpCompilation.Create("ServiceInterface")
+                var compilation = CSharpCompilation.Create("Controller")
                     .AddReferences(
                         MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
                     )
@@ -64,21 +64,20 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
-                var interfaceDeclarationSyntax = root.Descendants<InterfaceDeclarationSyntax>().Single();
-                var interfaceName = interfaceDeclarationSyntax.Identifier.ToString();
+                var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
+                var className = classDeclarationSyntax.Identifier.ToString();
 
                 var model = compilation.GetSemanticModel(tree);
-                var symbol = model.GetDeclaredSymbol(interfaceDeclarationSyntax)!;
+                var symbol = model.GetDeclaredSymbol(classDeclarationSyntax)!;
                 var methods = symbol
-                        .AllInterfaces
-                        .Add(symbol)
+                        .GetBaseTypesAndThis()
                         .SelectMany(type => type.GetMembers())
                         .Where(type => type.Kind == SymbolKind.Method)
                         .Cast<IMethodSymbol>()
                         .Select(CreateMethodInfo)
                     ;
 
-                var serviceInfo = new ServiceInfo(@namespace, interfaceName, relativeDirectory);
+                var serviceInfo = new ServiceInfo(@namespace, className, relativeDirectory);
                 serviceInfo.Methods.AddRange(methods);
 
                 context.SetLastResult(serviceInfo);
@@ -89,14 +88,14 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             }
             catch (Exception e)
             {
-                Logger.LogError(e, "Parsing service interface failed.");
+                Logger.LogError(e, "Parsing controller failed.");
                 if (e is ParseException pe)
                     foreach (var error in pe.Errors)
                         Logger.LogError(error);
                 throw;
             }
         }
-
+        
         private MethodInfo CreateMethodInfo(IMethodSymbol methodSymbol)
         {
             var methodInfo = new MethodInfo(
@@ -104,7 +103,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 methodSymbol.ReturnType.ToMinimalQualifiedName(),
                 methodSymbol.ReturnType.ToDisplayString(),
                 methodSymbol.Name
-                );
+            );
             methodInfo.Parameters.AddRange(
                 methodSymbol.Parameters
                     .Select(ps => new ParameterInfo(

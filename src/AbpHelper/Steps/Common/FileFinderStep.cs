@@ -37,7 +37,6 @@ namespace EasyAbp.AbpHelper.Steps.Common
             set => SetState(value);
         }
 
-
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
             var resultVariableName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
