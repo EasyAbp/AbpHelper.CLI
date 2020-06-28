@@ -1,5 +1,8 @@
-﻿        [{{ method.Name | abp.get_http_verb }}]
+﻿{{~ route = method | abp.get_route ~}}
+        [{{ method.Name | abp.get_http_verb }}]
+        {{~ if route ~}}
         [Route("{{ method | abp.get_route }}")]
+        {{~ end ~}}
         {{ method.Accessor }} {{ method.ReturnType }} {{  method.Name }}({{ for param in method.Parameters }}{{ param.Type }} {{ param.Name }}{{if !for.last }}, {{ end }}{{ end }})
         {
             {{ if method.ReturnType != "void" }}return {{ end }}_service.{{ method.Name }}({{ for param in method.Parameters }}{{ param.Name }}{{if !for.last }}, {{ end }}{{ end }});
