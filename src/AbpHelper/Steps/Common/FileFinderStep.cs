@@ -31,23 +31,38 @@ namespace EasyAbp.AbpHelper.Steps.Common
             set => SetState(value);
         }
 
+        public WorkflowExpression<bool> ErrorIfNotFound
+        {
+            get => GetState(() => new JavaScriptExpression<bool>("true"));
+            set => SetState(value);
+        }
+
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
+            var resultVariableName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
             var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
             LogInput(() => searchFileName);
-            var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
+            var errorIfNotFound = await context.EvaluateAsync(ErrorIfNotFound, cancellationToken);
+            LogInput(() => errorIfNotFound);
 
             var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
 
             var filePathName = files.SingleOrDefault();
-            if (filePathName == null) throw new FileNotFoundException(searchFileName);
 
             context.SetLastResult(filePathName);
-            context.SetVariable(resultParameterName, filePathName);
-            LogOutput(() => filePathName, $"Found file: '{filePathName}', stored in parameter: '{ResultVariableName}'");
+            context.SetVariable(resultVariableName, filePathName);
+            if (filePathName == null)
+            {
+                if (errorIfNotFound) throw new FileNotFoundException(searchFileName);
+                LogOutput(() => filePathName, $"File: '{filePathName}' not found, stored 'null' in parameter: '{ResultVariableName}'");
+            }
+            else
+            {
+                LogOutput(() => filePathName, $"Found file: '{filePathName}', stored in parameter: '{ResultVariableName}'");
+            }
 
             return Done();
         }
