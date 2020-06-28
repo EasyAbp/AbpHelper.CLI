@@ -99,16 +99,17 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
         private MethodInfo CreateMethodInfo(IMethodSymbol methodSymbol)
         {
-            string returnType = methodSymbol.ReturnType.ToMinimalQualifiedName();
             var methodInfo = new MethodInfo(
                 methodSymbol.DeclaredAccessibility.ToString().ToLower(),
-                returnType,
+                methodSymbol.ReturnType.ToMinimalQualifiedName(),
+                methodSymbol.ReturnType.ToDisplayString(),
                 methodSymbol.Name
                 );
             methodInfo.Parameters.AddRange(
                 methodSymbol.Parameters
                     .Select(ps => new ParameterInfo(
                         ps.Type.ToMinimalQualifiedName(),
+                        ps.Type.ToDisplayString(),
                         ps.Name)
                     )
             );

@@ -9,7 +9,7 @@ using Volo.Abp.Application.Dtos;
 namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
 {
     [RemoteService(Name = "{{ Option.Name }}Service")]
-    [Route("/api/{{ Option.Name | abp.camel_case }}")]
+    [Route("/api/app/{{ Option.Name | abp.camel_case }}")]
     public class {{ Option.Name }}Controller : {{ ProjectInfo.Name }}Controller, I{{ Option.Name }}AppService
     {
         private readonly I{{ Option.Name }}AppService _service;
