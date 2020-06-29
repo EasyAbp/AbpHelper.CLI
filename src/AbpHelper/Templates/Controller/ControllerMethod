@@ -1,4 +1,5 @@
 ﻿{{~ route = method | abp.get_route ~}}
+
         [{{ method.Name | abp.get_http_verb }}]
         {{~ if route ~}}
         [Route("{{ method | abp.get_route }}")]

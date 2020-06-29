@@ -4,7 +4,7 @@ using Humanizer;
 
 namespace EasyAbp.AbpHelper.Models
 {
-    public class ServiceInfo
+    public class ClassInfo
     {
         public string Namespace { get; }
         public string NamespaceLastPart => Namespace.Split('.').Last();
@@ -14,7 +14,7 @@ namespace EasyAbp.AbpHelper.Models
         
         public List<MethodInfo> Methods { get; } = new List<MethodInfo>();
 
-        public ServiceInfo(string @namespace, string name, string relativeDirectory)
+        public ClassInfo(string @namespace, string name, string relativeDirectory)
         {
             Namespace = @namespace;
             Name = name;

@@ -18,12 +18,8 @@ namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
         {
             _service = service;
         }
-
         {{~ for method in ServiceInfo.Methods ~}}
-{{ include "Templates/Controller/ControllerMethod" ServiceInfo method }}
-        {{~ if !for.last ~}}
-
-        {{~ end ~}}
+{{~ include "Templates/Controller/ControllerMethod" method ~}}
         {{~ end ~}}
     }
 }

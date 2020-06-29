@@ -75,10 +75,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                         .SelectMany(type => type.GetMembers())
                         .Where(type => type.Kind == SymbolKind.Method)
                         .Cast<IMethodSymbol>()
-                        .Select(CreateMethodInfo)
+                        .Select(SymbolExtensions.ToMethodInfo)
                     ;
 
-                var serviceInfo = new ServiceInfo(@namespace, interfaceName, relativeDirectory);
+                var serviceInfo = new ClassInfo(@namespace, interfaceName, relativeDirectory);
                 serviceInfo.Methods.AddRange(methods);
 
                 context.SetLastResult(serviceInfo);
@@ -95,25 +95,6 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                         Logger.LogError(error);
                 throw;
             }
-        }
-
-        private MethodInfo CreateMethodInfo(IMethodSymbol methodSymbol)
-        {
-            var methodInfo = new MethodInfo(
-                methodSymbol.DeclaredAccessibility.ToString().ToLower(),
-                methodSymbol.ReturnType.ToMinimalQualifiedName(),
-                methodSymbol.ReturnType.ToDisplayString(),
-                methodSymbol.Name
-                );
-            methodInfo.Parameters.AddRange(
-                methodSymbol.Parameters
-                    .Select(ps => new ParameterInfo(
-                        ps.Type.ToMinimalQualifiedName(),
-                        ps.Type.ToDisplayString(),
-                        ps.Name)
-                    )
-            );
-            return methodInfo;
         }
     }
 }

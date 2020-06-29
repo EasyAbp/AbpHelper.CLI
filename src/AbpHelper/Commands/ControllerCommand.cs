@@ -119,6 +119,7 @@ namespace EasyAbp.AbpHelper.Commands
                                     found.When(OutcomeNames.False)
                                         .Then<ControllerParserStep>()
                                         .Then<ControllerStep>()
+                                        .Then<FileModifierStep>()
                                         ;
                                 }
                             );
