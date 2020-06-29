@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+{{~ if ProjectInfo.TemplateType == 'Application' ~}}
 using {{ ProjectInfo.FullName }}.Controllers;
+{{~ end ~}}
 using {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
