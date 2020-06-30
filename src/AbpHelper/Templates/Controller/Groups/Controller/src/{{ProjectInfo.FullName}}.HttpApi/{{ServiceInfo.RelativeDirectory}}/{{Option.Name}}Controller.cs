@@ -14,7 +14,7 @@ namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
     {{~ if ProjectInfo.TemplateType == 'Application' ~}}
     [Route("/api/app/{{ Option.Name | abp.camel_case }}")]
     {{~ else if ProjectInfo.TemplateType == 'Module' ~}}
-    [Route("/api/{{ ProjectInfo.Name }}/{{ Option.Name | abp.camel_case }}")]
+    [Route("/api/{{ ProjectInfo.Name | abp.camel_case }}/{{ Option.Name | abp.camel_case }}")]
     {{~ end ~}}
     public class {{ Option.Name }}Controller : {{ ProjectInfo.Name }}Controller, I{{ Option.Name }}AppService
     {
