@@ -9,7 +9,7 @@
     <Copyright>EasyAbp Team</Copyright>
     <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
-    <PackageVersion>0.5.0-preview</PackageVersion>
+    <PackageVersion>0.5.0</PackageVersion>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>abphelper</ToolCommandName>
     <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
@@ -46,6 +46,6 @@
   
   <PropertyGroup>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <Version>0.5.0-preview</Version>
+    <Version>0.5.0</Version>
   </PropertyGroup>
 </Project>
