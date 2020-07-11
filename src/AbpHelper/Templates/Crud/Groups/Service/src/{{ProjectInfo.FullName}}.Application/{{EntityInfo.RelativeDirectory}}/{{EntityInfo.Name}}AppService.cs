@@ -49,7 +49,7 @@ namespace {{ EntityInfo.Namespace }}
         protected override string CreatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Create;
         protected override string UpdatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Update;
         protected override string DeletePolicyName { get; set; } = {{ permissionNamesPrefix }}.Delete;
-        {{~ end -}}
+        {{~ end ~}}
 
         {{~ if Option.CustomRepository ~}}
         private readonly {{ repositoryType }} {{ repositoryName }};

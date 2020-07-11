@@ -6,4 +6,3 @@
             public const string Create = Default + ".Create";
             public const string Delete = Default + ".Delete";
         }
-
