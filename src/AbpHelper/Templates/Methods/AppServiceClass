@@ -1,13 +1,11 @@
-{{- if ServiceInfo.MethodsCount > 0 ~}}
+{{~ for name in Option.MethodNames ~}}
 
-{{~ end -}}
-{{- for name in Option.MethodNames -}}
-    {{- if Option.NoOutput
+    {{~ if Option.NoOutput
         return = "Task"
     else
         return = "Task<" + name + "Output>"
-    end -}}
-    {{- if Option.NoInput
+    end ~}}
+    {{~ if Option.NoInput
         parameter = ""
     else
         parameter = name + "Input input"
@@ -16,7 +14,4 @@
         {
              throw new System.NotImplementedException();
         }
-    {{~ if !for.last ~}}
-
-    {{~ end ~}}
-{{- end -}}
+{{~ end ~}}
