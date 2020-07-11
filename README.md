@@ -45,11 +45,11 @@ AbpHelper is a tool that helps you with developing [Abp vNext](https://abp.io/) 
     AbpHelper will generate all the CRUD stuffs , even include adding migration and database updating!
 
 1. Run the `DbMigrator` to seed the database
-1. Startup your application 
+1. Startup your application
 1. Login with the default admin account, and see the magic happens!
 
     ![running_demo](doc/images/2020-02-10-14-09-22.png)
-    
+
     > If you don't see the TODO menu, check your permissions and make sure the TODO related permissions are granted
 
 ## Usage
@@ -86,6 +86,12 @@ AbpHelper is a tool that helps you with developing [Abp vNext](https://abp.io/) 
     Generate localization item(s) according to the specified name(s)
 
     [Demo GIF](doc/images/localization.gif)
+
+  * controller
+
+    Generate controller class and methods according to the specified service
+
+    [Demo GIF](doc/images/controller.gif)
 
 ## Extensibility
 
