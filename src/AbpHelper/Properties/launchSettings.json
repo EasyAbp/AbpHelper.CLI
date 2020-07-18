@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AbpHelper": {
+      "commandName": "Project",
+      "commandLineArgs": "generate crud UploadImage  --skip-ui -d F:\\\\gitcode\\\\Raymond.ScanOrder --ignore-directories EShop,Payment,src\\account"
+    }
+  }
+}

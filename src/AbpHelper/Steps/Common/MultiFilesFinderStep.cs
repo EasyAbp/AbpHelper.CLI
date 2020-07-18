@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
             set => SetState(value);
         }
 
+        public WorkflowExpression<string> IgnoreDirectories
+        {
+            get => GetState(() => new JavaScriptExpression<string>("IgnoreDirectories"));
+            set => SetState(value);
+        }
+
         public WorkflowExpression<string> SearchFileName
         {
             get => GetState<WorkflowExpression<string>>();
@@ -35,11 +42,19 @@ namespace EasyAbp.AbpHelper.Steps.Common
         {
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
+            var ignoredDirectories = await context.EvaluateAsync(IgnoreDirectories, cancellationToken);
+            LogInput(() => ignoredDirectories);
             var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
             LogInput(() => SearchFileName);
             var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
-            var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
+            var ignored = ignoredDirectories
+                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => Path.Combine(baseDirectory, x)).ToArray();
+
+            var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories)
+                .Where(x => !ignored.Any(x.StartsWith))
+                .ToArray();
 
             if (files.Length == 0) throw new FileNotFoundException();
 

@@ -1,11 +1,12 @@
-﻿using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Elsa.Expressions;
+﻿using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyAbp.AbpHelper.Steps.Common
 {
@@ -16,6 +17,12 @@ namespace EasyAbp.AbpHelper.Steps.Common
         public WorkflowExpression<string> BaseDirectory
         {
             get => GetState(() => new JavaScriptExpression<string>("BaseDirectory"));
+            set => SetState(value);
+        }
+
+        public WorkflowExpression<string> IgnoreDirectories
+        {
+            get => GetState(() => new JavaScriptExpression<string>("IgnoreDirectories"));
             set => SetState(value);
         }
 
@@ -42,12 +49,20 @@ namespace EasyAbp.AbpHelper.Steps.Common
             var resultVariableName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
+            var ignoredDirectories = await context.EvaluateAsync(IgnoreDirectories, cancellationToken);
+            LogInput(() => ignoredDirectories);
             var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
             LogInput(() => searchFileName);
             var errorIfNotFound = await context.EvaluateAsync(ErrorIfNotFound, cancellationToken);
             LogInput(() => errorIfNotFound);
 
-            var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
+            var ignored = ignoredDirectories
+                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => Path.Combine(baseDirectory, x)).ToArray();
+
+            var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories)
+                .Where(x => !ignored.Any(x.StartsWith))
+                .ToArray();
 
             var filePathName = files.SingleOrDefault();
 

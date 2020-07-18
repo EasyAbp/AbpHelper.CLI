@@ -61,6 +61,10 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<bool>()
             });
+            AddOption(new Option(new []{"--ignore-directories"}, "Ignore directories when searching files. Example: -ignore-directories Folder1,Folder2")
+            {
+                Argument = new Argument<string>()
+            });
             AddOption(new Option(new[] {"--migration-project-name"},
                 $"Specify the name of the migration project." + Environment.NewLine +
                 "For ABP applications, the default value is '*.EntityFrameworkCore.DbMigrations.csproj';" + Environment.NewLine +
@@ -80,6 +84,7 @@ namespace EasyAbp.AbpHelper.Commands
         private async Task Run(CommandOption option)
         {
             string directory = GetBaseDirectory(option.Directory);
+            
             var entityFileName = option.Entity + ".cs";
 
             await RunWorkflow(builder => builder
@@ -88,6 +93,12 @@ namespace EasyAbp.AbpHelper.Commands
                     {
                         step.VariableName = "BaseDirectory";
                         step.ValueExpression = new LiteralExpression(directory);
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "IgnoreDirectories";
+                        step.ValueExpression = new LiteralExpression(option.IgnoreDirectories);
                     })
                 .Then<SetVariable>(
                     step =>
@@ -232,6 +243,7 @@ namespace EasyAbp.AbpHelper.Commands
             public bool SkipTest { get; set; }
             public bool NoOverwrite { get; set; }
             public bool SkipEntityConstructors { get; set; }
+            public string IgnoreDirectories { get; set; } = null!;
         }
     }
 }
