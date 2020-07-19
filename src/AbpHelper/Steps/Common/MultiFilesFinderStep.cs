@@ -48,9 +48,9 @@ namespace EasyAbp.AbpHelper.Steps.Common
             LogInput(() => SearchFileName);
             var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
-            var ignored = ignoredDirectories
-                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => Path.Combine(baseDirectory, x)).ToArray();
+            var ignored = ignoredDirectories?
+                              .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                              .Select(x => Path.Combine(baseDirectory, x)).ToArray() ?? Array.Empty<string>();
 
             var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories)
                 .Where(x => !ignored.Any(x.StartsWith))

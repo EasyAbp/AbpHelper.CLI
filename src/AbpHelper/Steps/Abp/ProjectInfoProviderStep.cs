@@ -32,9 +32,9 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             var ignoredDirectories = await context.EvaluateAsync(IgnoreDirectories, cancellationToken);
             LogInput(() => ignoredDirectories);
 
-            var ignored = ignoredDirectories
-                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => Path.Combine(baseDirectory, x)).ToArray();
+            var ignored = ignoredDirectories?
+                              .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                              .Select(x => Path.Combine(baseDirectory, x)).ToArray() ?? Array.Empty<string>();
 
             TemplateType templateType;
             if (Directory.EnumerateFiles(baseDirectory, "*.DbMigrator.csproj", SearchOption.AllDirectories).Any(x => !ignored.Any(x.StartsWith)))
