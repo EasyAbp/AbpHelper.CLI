@@ -1,17 +1,16 @@
-﻿using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
+﻿using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Common;
-using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
+using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.Threading.Tasks;
 
 namespace EasyAbp.AbpHelper.Commands
 {
@@ -31,6 +30,10 @@ namespace EasyAbp.AbpHelper.Commands
             AddOption(new Option(new[] {"--regenerate"}, "Completely regenerate the controller class, instead of the default: only generate the missing controller methods")
             {
                 Argument = new Argument<bool>()
+            }); 
+            AddOption(new Option(new[] { "--ignore-directories" }, "Ignore directories when searching files. Example: -ignore-directories Folder1,Folder2")
+            {
+                Argument = new Argument<string>()
             });
             Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
@@ -44,6 +47,12 @@ namespace EasyAbp.AbpHelper.Commands
                     {
                         step.VariableName = "BaseDirectory";
                         step.ValueExpression = new LiteralExpression(directory);
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "IgnoreDirectories";
+                        step.ValueExpression = new LiteralExpression(option.IgnoreDirectories);
                     })
                 .Then<SetVariable>(
                     step =>
@@ -134,6 +143,7 @@ namespace EasyAbp.AbpHelper.Commands
             public string Name { get; set; } = null!;
             public bool SkipBuild { get; set; }
             public bool Regenerate { get; set; }
+            public string IgnoreDirectories { get; set; } = null!;
         }
     }
 }

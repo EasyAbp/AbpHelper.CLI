@@ -40,6 +40,10 @@ namespace EasyAbp.AbpHelper.Commands
             {
                 Argument = new Argument<bool>()
             });
+            AddOption(new Option(new[] { "--ignore-directories" }, "Ignore directories when searching files. Example: -ignore-directories Folder1,Folder2")
+            {
+                Argument = new Argument<string>()
+            });
             Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
@@ -58,6 +62,12 @@ namespace EasyAbp.AbpHelper.Commands
                     {
                         step.VariableName = "BaseDirectory";
                         step.ValueExpression = new LiteralExpression(directory);
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "IgnoreDirectories";
+                        step.ValueExpression = new LiteralExpression(option.IgnoreDirectories);
                     })
                 .Then<SetVariable>(
                     step =>
@@ -121,6 +131,7 @@ namespace EasyAbp.AbpHelper.Commands
             public string[] MethodNames { get; set; } = null!;
             public bool NoInput { get; set; }
             public bool NoOutput { get; set; }
+            public string IgnoreDirectories { get; set; } = null!;
         }
     }
 }

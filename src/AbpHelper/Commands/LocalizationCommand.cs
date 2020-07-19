@@ -22,6 +22,10 @@ namespace EasyAbp.AbpHelper.Commands
             AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
             {
                 Argument = new Argument<string>()
+            }); 
+            AddOption(new Option(new[] { "--ignore-directories" }, "Ignore directories when searching files. Example: -ignore-directories Folder1,Folder2")
+            {
+                Argument = new Argument<string>()
             });
             Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
@@ -35,6 +39,12 @@ namespace EasyAbp.AbpHelper.Commands
                     {
                         step.VariableName = "BaseDirectory";
                         step.ValueExpression = new LiteralExpression(directory);
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = "IgnoreDirectories";
+                        step.ValueExpression = new LiteralExpression(option.IgnoreDirectories);
                     })
                 .Then<SetVariable>(
                     step =>
@@ -82,6 +92,7 @@ namespace EasyAbp.AbpHelper.Commands
         {
             public string Directory { get; set; } = null!;
             public string[] Names { get; set; } = null!;
+            public string IgnoreDirectories { get; set; } = null!;
         }
     }
 }
