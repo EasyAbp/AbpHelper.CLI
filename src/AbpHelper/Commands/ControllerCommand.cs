@@ -71,7 +71,7 @@ namespace EasyAbp.AbpHelper.Commands
                         ifElse.When(OutcomeNames.False)
                             .Then<RunCommandStep>(
                                 step => step.Command = new JavaScriptExpression<string>(
-                                    @"`cd /d ${AspNetCoreDir} && dotnet build`"
+                                    @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.Application && dotnet build`"
                                 ))
                             .Then("SearchServiceInterface")
                             ;
