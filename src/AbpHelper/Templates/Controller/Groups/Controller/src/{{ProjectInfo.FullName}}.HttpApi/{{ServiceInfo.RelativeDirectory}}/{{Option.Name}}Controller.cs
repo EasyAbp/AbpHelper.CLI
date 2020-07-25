@@ -9,7 +9,7 @@ using {{ ProjectInfo.FullName }}.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
 
-namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
+namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeNamespace }}
 {
     [RemoteService(Name = "{{ Option.Name }}Service")]
     {{~ if ProjectInfo.TemplateType == 'Application' ~}}

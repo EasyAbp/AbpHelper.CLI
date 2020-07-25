@@ -12,6 +12,7 @@ namespace EasyAbp.AbpHelper.Models
         public string Name { get; }
         public string NamePluralized => Name.Pluralize();
         public string RelativeDirectory { get; }
+        public string RelativeNamespace => RelativeDirectory.Replace('/', '.');
         public List<MethodInfo> Methods { get; } = new List<MethodInfo>();
 
         public ClassInfo(string @namespace, string name, string relativeDirectory)
