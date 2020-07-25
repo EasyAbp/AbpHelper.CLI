@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -15,24 +16,26 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
-namespace EasyAbp.AbpHelper.Steps.Abp
+namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
 {
-    // TODO: Refactor this, merged with ServiceInterfaceSemanticParserStep into one class 
-    public class ControllerParserStep : Step
+    public abstract class BaseParserStep<TType> : Step where TType : TypeDeclarationSyntax
     {
-        public WorkflowExpression<string> ControllerFile
+        public WorkflowExpression<string> File
         {
             get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
             set => SetState(value);
         }
 
+        protected abstract string GetOutputVariableName();
+        protected abstract IEnumerable<MethodInfo> GetMethodInfos(INamedTypeSymbol symbol);
+
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
-            var appServiceInterfaceFile = await context.EvaluateAsync(ControllerFile, cancellationToken);
-            LogInput(() => appServiceInterfaceFile);
+            var file = await context.EvaluateAsync(File, cancellationToken);
+            LogInput(() => file);
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-
-            var sourceText = await File.ReadAllTextAsync(appServiceInterfaceFile);
+            var sourceText = await System.IO.File.ReadAllTextAsync(file, cancellationToken);
+            string outputVariableName = GetOutputVariableName();
 
             try
             {
@@ -55,7 +58,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                         })
                     ;
                 // Create compilation of the interface
-                var compilation = CSharpCompilation.Create("Controller")
+                var compilation = CSharpCompilation.Create(outputVariableName)
                     .AddReferences(
                         MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
                     )
@@ -65,32 +68,33 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 var usings = root.Descendants<UsingDirectiveSyntax>().Select(@using => @using.Name.ToString());
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
-                var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
-                var className = classDeclarationSyntax.Identifier.ToString();
+                var typeDeclarationSyntax = root.Descendants<TType>().Single();
+                var className = typeDeclarationSyntax.Identifier.ToString();
 
                 var model = compilation.GetSemanticModel(tree);
-                var symbol = model.GetDeclaredSymbol(classDeclarationSyntax)!;
-                var methods = symbol
+                var symbol = model.GetDeclaredSymbol(typeDeclarationSyntax)!;
+                var methods = GetMethodInfos(symbol);
+                /*var methods = symbol
                         .GetBaseTypesAndThis()
                         .SelectMany(type => type.GetMembers())
                         .Where(type => type.Kind == SymbolKind.Method)
                         .Cast<IMethodSymbol>()
                         .Select(SymbolExtensions.ToMethodInfo)
-                    ;
+                    ;*/
 
-                var controllerInfo = new ClassInfo(@namespace, className, relativeDirectory);
-                controllerInfo.Usings.AddRange(usings);
-                controllerInfo.Methods.AddRange(methods);
+                var classInfo = new ClassInfo(@namespace, className, relativeDirectory);
+                classInfo.Usings.AddRange(usings);
+                classInfo.Methods.AddRange(methods);
 
-                context.SetLastResult(controllerInfo);
-                context.SetVariable("ControllerInfo", controllerInfo);
-                LogOutput(() => controllerInfo);
+                context.SetLastResult(classInfo);
+                context.SetVariable(outputVariableName, classInfo);
+                LogOutput(() => classInfo);
 
                 return Done();
             }
             catch (Exception e)
             {
-                Logger.LogError(e, "Parsing controller failed.");
+                Logger.LogError(e, $"Parsing {outputVariableName} failed.");
                 if (e is ParseException pe)
                     foreach (var error in pe.Errors)
                         Logger.LogError(error);

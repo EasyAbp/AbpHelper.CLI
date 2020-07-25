@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
+using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;

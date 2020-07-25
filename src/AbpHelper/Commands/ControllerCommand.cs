@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
+using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
@@ -82,7 +83,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.Name}AppService.cs`"); }
                 ).WithName("SearchServiceInterface")
-                .Then<ServiceInterfaceSemanticParserStep>()
+                .Then<ServiceInterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.Regenerate"),

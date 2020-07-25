@@ -14,6 +14,7 @@ namespace EasyAbp.AbpHelper.Models
         public string RelativeDirectory { get; }
         public string RelativeNamespace => RelativeDirectory.Replace('/', '.');
         public List<MethodInfo> Methods { get; } = new List<MethodInfo>();
+        public List<string> ClassAttributes { get; } = new List<string>();
 
         public ClassInfo(string @namespace, string name, string relativeDirectory)
         {
