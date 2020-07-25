@@ -10,7 +10,7 @@
     else
         parameter = name + "Input input"
     end ~}}
-        public {{ return }} {{ name }}({{ parameter }})
+        public virtual {{ return }} {{ name }}Async({{ parameter }})
         {
              throw new System.NotImplementedException();
         }
