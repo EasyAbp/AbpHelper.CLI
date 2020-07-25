@@ -11,7 +11,7 @@ using Volo.Abp;
 
 namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeNamespace }}
 {
-    [RemoteService(Name = "{{ Option.Name }}Service")]
+    [RemoteService(Name = "{{ ProjectInfo.Name }}{{ Option.Name }}")]
     {{~ if ProjectInfo.TemplateType == 'Application' ~}}
     [Route("/api/app/{{ Option.Name | abp.camel_case }}")]
     {{~ else if ProjectInfo.TemplateType == 'Module' ~}}
