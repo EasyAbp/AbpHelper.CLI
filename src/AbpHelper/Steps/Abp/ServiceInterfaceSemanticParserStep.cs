@@ -62,6 +62,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
                     .AddSyntaxTrees(tree);
 
+                var usings = root.Descendants<UsingDirectiveSyntax>().Select(@using => @using.Name.ToString());
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
                 var interfaceDeclarationSyntax = root.Descendants<InterfaceDeclarationSyntax>().Single();
@@ -79,6 +80,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     ;
 
                 var serviceInfo = new ClassInfo(@namespace, interfaceName, relativeDirectory);
+                serviceInfo.Usings.AddRange(usings);
                 serviceInfo.Methods.AddRange(methods);
 
                 context.SetLastResult(serviceInfo);

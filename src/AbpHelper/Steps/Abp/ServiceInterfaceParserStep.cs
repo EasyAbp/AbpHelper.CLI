@@ -43,12 +43,14 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     throw ex;
                 }
 
+                var usings = root.Descendants<UsingDirectiveSyntax>().Select(@using => @using.Name.ToString());
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
                 var interfaceDeclarationSyntax = root.Descendants<InterfaceDeclarationSyntax>().Single();
                 var interfaceName = interfaceDeclarationSyntax.Identifier.ToString();
 
                 var serviceInfo = new ClassInfo(@namespace, interfaceName,  relativeDirectory);
+                serviceInfo.Usings.AddRange(usings);
 
                 context.SetLastResult(serviceInfo);
                 context.SetVariable("ServiceInfo", serviceInfo);

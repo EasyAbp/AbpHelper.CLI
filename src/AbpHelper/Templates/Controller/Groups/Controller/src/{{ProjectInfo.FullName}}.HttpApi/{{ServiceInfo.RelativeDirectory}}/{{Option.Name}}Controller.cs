@@ -1,12 +1,13 @@
-using System;
-using System.Threading.Tasks;
+{{~ for using in ServiceInfo.Usings ~}}
+{{~ if using != "Volo.Abp.Application.Services" ~}}
+using {{ using }};
+{{~ end ~}}
+{{~ end ~}}
 {{~ if ProjectInfo.TemplateType == 'Application' ~}}
 using {{ ProjectInfo.FullName }}.Controllers;
 {{~ end ~}}
-using {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
-using Volo.Abp.Application.Dtos;
 
 namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
 {
