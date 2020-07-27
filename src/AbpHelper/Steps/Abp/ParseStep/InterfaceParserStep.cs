@@ -7,11 +7,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
 {
-    public class ServiceInterfaceParserStep : BaseParserStep<InterfaceDeclarationSyntax>
+    public class InterfaceParserStep : BaseParserStep<InterfaceDeclarationSyntax>
     {
         protected override string GetOutputVariableName()
         {
-            return "ServiceInfo";
+            return "InterfaceInfo";
         }
 
         protected override IEnumerable<MethodInfo> GetMethodInfos(INamedTypeSymbol symbol)

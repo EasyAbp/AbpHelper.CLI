@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
+using TypeInfo = EasyAbp.AbpHelper.Models.TypeInfo;
 
 namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
 {
@@ -57,7 +58,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
                             return fileName.StartsWith("Volo.") || fileName.StartsWith(projectInfo.FullName);
                         })
                     ;
-                // Create compilation of the interface
+                // Create compilation of the TType
                 var compilation = CSharpCompilation.Create(outputVariableName)
                     .AddReferences(
                         MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
@@ -69,26 +70,20 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
                 var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
                 var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
                 var typeDeclarationSyntax = root.Descendants<TType>().Single();
-                var className = typeDeclarationSyntax.Identifier.ToString();
-
+                var typeName = typeDeclarationSyntax.Identifier.ToString();
+                var attributes = typeDeclarationSyntax.Descendants<AttributeListSyntax>().Select(attr => attr.ToString());
                 var model = compilation.GetSemanticModel(tree);
                 var symbol = model.GetDeclaredSymbol(typeDeclarationSyntax)!;
                 var methods = GetMethodInfos(symbol);
-                /*var methods = symbol
-                        .GetBaseTypesAndThis()
-                        .SelectMany(type => type.GetMembers())
-                        .Where(type => type.Kind == SymbolKind.Method)
-                        .Cast<IMethodSymbol>()
-                        .Select(SymbolExtensions.ToMethodInfo)
-                    ;*/
+                
+                var typeInfo = new TypeInfo(@namespace, typeName, relativeDirectory);
+                typeInfo.Usings.AddRange(usings);
+                typeInfo.Attributes.AddRange(attributes);
+                typeInfo.Methods.AddRange(methods);
 
-                var classInfo = new ClassInfo(@namespace, className, relativeDirectory);
-                classInfo.Usings.AddRange(usings);
-                classInfo.Methods.AddRange(methods);
-
-                context.SetLastResult(classInfo);
-                context.SetVariable(outputVariableName, classInfo);
-                LogOutput(() => classInfo);
+                context.SetLastResult(typeInfo);
+                context.SetVariable(outputVariableName, typeInfo);
+                LogOutput(() => typeInfo);
 
                 return Done();
             }

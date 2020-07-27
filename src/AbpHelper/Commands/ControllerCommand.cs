@@ -83,7 +83,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.Name}AppService.cs`"); }
                 ).WithName("SearchServiceInterface")
-                .Then<ServiceInterfaceParserStep>()
+                .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.Regenerate"),
@@ -118,7 +118,7 @@ namespace EasyAbp.AbpHelper.Commands
                                             })
                                         ;
                                     found.When(OutcomeNames.False)
-                                        .Then<ControllerParserStep>()
+                                        .Then<ClassParserStep>()
                                         .Then<ControllerStep>()
                                         .Then<FileModifierStep>()
                                         ;

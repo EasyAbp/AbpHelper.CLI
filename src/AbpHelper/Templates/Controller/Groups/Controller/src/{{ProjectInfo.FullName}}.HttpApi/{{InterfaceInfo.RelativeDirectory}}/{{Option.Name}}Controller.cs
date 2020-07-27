@@ -1,4 +1,4 @@
-{{~ for using in ServiceInfo.Usings ~}}
+{{~ for using in InterfaceInfo.Usings ~}}
 {{~ if using != "Volo.Abp.Application.Services" ~}}
 using {{ using }};
 {{~ end ~}}
@@ -9,8 +9,11 @@ using {{ ProjectInfo.FullName }}.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
 
-namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeNamespace }}
+namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }}
 {
+    {{~ for attribute in InterfaceInfo.Attributes}}
+    attribute
+    {{~ end ~}}
     [RemoteService(Name = "{{ ProjectInfo.Name }}{{ Option.Name }}")]
     {{~ if ProjectInfo.TemplateType == 'Application' ~}}
     [Route("/api/app/{{ Option.Name | abp.camel_case }}")]
@@ -25,7 +28,7 @@ namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeNamespace }}
         {
             _service = service;
         }
-        {{~ for method in ServiceInfo.Methods ~}}
+        {{~ for method in InterfaceInfo.Methods ~}}
 {{~ include "Templates/Controller/ControllerMethod" method ~}}
         {{~ end ~}}
     }

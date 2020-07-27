@@ -81,7 +81,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<ProjectInfoProviderStep>()
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.ServiceName}AppService.cs`"); })
-                .Then<ServiceInterfaceParserStep>()
+                .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<AppServiceInterfaceStep>()
                 .Then<FileModifierStep>()

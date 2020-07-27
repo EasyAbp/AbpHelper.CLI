@@ -18,13 +18,13 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
-            var serviceInfo = context.GetVariable<ClassInfo>("ServiceInfo");
-            var controllerInfo = context.GetVariable<ClassInfo>("ControllerInfo");
+            var interfaceInfo = context.GetVariable<TypeInfo>("InterfaceInfo");
+            var classInfo = context.GetVariable<TypeInfo>("ClassInfo");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
 
             // Generate added methods
             var modifications = new List<ModificationBuilder<CSharpSyntaxNode>>();
-            var addedMethods = serviceInfo.Methods.Except(controllerInfo.Methods);
+            var addedMethods = interfaceInfo.Methods.Except(classInfo.Methods);
             foreach (var method in addedMethods)
             {
                 var model = new {method};

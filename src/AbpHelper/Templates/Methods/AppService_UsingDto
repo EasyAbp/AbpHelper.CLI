@@ -1,1 +1,1 @@
-using {{ ServiceInfo.Namespace }}.Dtos;
+using {{ InterfaceInfo.Namespace }}.Dtos;

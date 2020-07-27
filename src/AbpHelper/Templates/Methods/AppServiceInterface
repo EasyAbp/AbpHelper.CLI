@@ -1,4 +1,4 @@
-{{- if ServiceInfo.MethodsCount > 0 ~}}
+{{- if InterfaceInfo.MethodsCount > 0 ~}}
 
 {{~ end -}}
 {{- for name in Option.MethodNames -}}
