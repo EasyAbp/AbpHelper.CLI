@@ -106,10 +106,10 @@ namespace EasyAbp.AbpHelper.Commands
                                 }
                             ).WithName("SearchController")
                             .Then<IfElse>(
-                                step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult == null"),
+                                step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult != null"),
                                 found =>
                                 {
-                                    found.When(OutcomeNames.True)
+                                    found.When(OutcomeNames.False)
                                         .Then<GroupGenerationStep>(
                                             step =>
                                             {
@@ -117,8 +117,11 @@ namespace EasyAbp.AbpHelper.Commands
                                                 step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
                                             })
                                         ;
-                                    found.When(OutcomeNames.False)
-                                        .Then<ClassParserStep>()
+                                    found.When(OutcomeNames.True)
+                                        .Then<ClassParserStep>(step =>
+                                        {
+                                            step.OutputVariableName = new LiteralExpression<string>("ControllerInfo");
+                                        })
                                         .Then<ControllerStep>()
                                         .Then<FileModifierStep>()
                                         ;

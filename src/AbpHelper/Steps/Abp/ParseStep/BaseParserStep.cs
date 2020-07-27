@@ -27,16 +27,22 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
             set => SetState(value);
         }
 
-        protected abstract string GetOutputVariableName();
+        public abstract WorkflowExpression<string> OutputVariableName
+        {
+            get;
+            set;
+        }
+
         protected abstract IEnumerable<MethodInfo> GetMethodInfos(INamedTypeSymbol symbol);
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
             var file = await context.EvaluateAsync(File, cancellationToken);
             LogInput(() => file);
+            string outputVariableName = await context.EvaluateAsync(OutputVariableName, cancellationToken);
+            LogInput(() => outputVariableName);
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
             var sourceText = await System.IO.File.ReadAllTextAsync(file, cancellationToken);
-            string outputVariableName = GetOutputVariableName();
 
             try
             {
