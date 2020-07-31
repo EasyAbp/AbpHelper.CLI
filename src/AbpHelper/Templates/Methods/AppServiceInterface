@@ -1,4 +1,4 @@
-{{- if ServiceInfo.MethodsCount > 0 ~}}
+{{- if InterfaceInfo.MethodsCount > 0 ~}}
 
 {{~ end -}}
 {{- for name in Option.MethodNames -}}
@@ -12,7 +12,7 @@
     else
         parameter = name + "Input input"
     end ~}}
-        {{ return }} {{ name }}({{ parameter }});
+        {{ return }} {{ name }}Async({{ parameter }});
     {{~ if !for.last ~}}
 
     {{~ end ~}}

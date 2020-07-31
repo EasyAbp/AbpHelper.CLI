@@ -4,17 +4,22 @@ using Humanizer;
 
 namespace EasyAbp.AbpHelper.Models
 {
-    public class ClassInfo
+    /// <summary>
+    /// Hold information of a class or a interface
+    /// </summary>
+    public class TypeInfo
     {
+        public List<string> Usings { get; } = new List<string>();
         public string Namespace { get; }
         public string NamespaceLastPart => Namespace.Split('.').Last();
         public string Name { get; }
         public string NamePluralized => Name.Pluralize();
         public string RelativeDirectory { get; }
-        
+        public string RelativeNamespace => RelativeDirectory.Replace('/', '.');
         public List<MethodInfo> Methods { get; } = new List<MethodInfo>();
+        public List<string> Attributes { get; } = new List<string>();
 
-        public ClassInfo(string @namespace, string name, string relativeDirectory)
+        public TypeInfo(string @namespace, string name, string relativeDirectory)
         {
             Namespace = @namespace;
             Name = name;

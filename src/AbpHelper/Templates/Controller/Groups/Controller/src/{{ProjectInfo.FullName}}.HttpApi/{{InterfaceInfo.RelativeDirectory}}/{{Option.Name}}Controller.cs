@@ -1,16 +1,20 @@
-using System;
-using System.Threading.Tasks;
+{{~ for using in InterfaceInfo.Usings ~}}
+{{~ if using != "Volo.Abp.Application.Services" ~}}
+using {{ using }};
+{{~ end ~}}
+{{~ end ~}}
 {{~ if ProjectInfo.TemplateType == 'Application' ~}}
 using {{ ProjectInfo.FullName }}.Controllers;
 {{~ end ~}}
-using {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
-using Volo.Abp.Application.Dtos;
 
-namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
+namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }}
 {
-    [RemoteService(Name = "{{ Option.Name }}Service")]
+    {{~ for attribute in InterfaceInfo.Attributes}}
+    attribute
+    {{~ end ~}}
+    [RemoteService(Name = "{{ ProjectInfo.Name }}{{ Option.Name }}")]
     {{~ if ProjectInfo.TemplateType == 'Application' ~}}
     [Route("/api/app/{{ Option.Name | abp.camel_case }}")]
     {{~ else if ProjectInfo.TemplateType == 'Module' ~}}
@@ -24,7 +28,7 @@ namespace {{ ProjectInfo.FullName }}.{{ ServiceInfo.RelativeDirectory }}
         {
             _service = service;
         }
-        {{~ for method in ServiceInfo.Methods ~}}
+        {{~ for method in InterfaceInfo.Methods ~}}
 {{~ include "Templates/Controller/ControllerMethod" method ~}}
         {{~ end ~}}
     }

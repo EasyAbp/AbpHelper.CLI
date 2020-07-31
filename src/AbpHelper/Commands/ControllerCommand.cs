@@ -1,5 +1,6 @@
 ﻿using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
+using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;
@@ -35,7 +36,7 @@ namespace EasyAbp.AbpHelper.Commands
                         ifElse.When(OutcomeNames.False)
                             .Then<RunCommandStep>(
                                 step => step.Command = new JavaScriptExpression<string>(
-                                    @"`cd /d ${AspNetCoreDir} && dotnet build`"
+                                    @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.Application && dotnet build`"
                                 ))
                             .Then("SearchServiceInterface")
                             ;
@@ -46,7 +47,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.Name}}AppService.cs`"); }
                 ).WithName("SearchServiceInterface")
-                .Then<ServiceInterfaceSemanticParserStep>()
+                .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{OverwriteVariableName}"),
@@ -69,10 +70,10 @@ namespace EasyAbp.AbpHelper.Commands
                                 }
                             ).WithName("SearchController")
                             .Then<IfElse>(
-                                step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult == null"),
+                                step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult != null"),
                                 found =>
                                 {
-                                    found.When(OutcomeNames.True)
+                                    found.When(OutcomeNames.False)
                                         .Then<GroupGenerationStep>(
                                             step =>
                                             {
@@ -80,8 +81,11 @@ namespace EasyAbp.AbpHelper.Commands
                                                 step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
                                             })
                                         ;
-                                    found.When(OutcomeNames.False)
-                                        .Then<ControllerParserStep>()
+                                    found.When(OutcomeNames.True)
+                                        .Then<ClassParserStep>(step =>
+                                        {
+                                            step.OutputVariableName = new LiteralExpression<string>("ControllerInfo");
+                                        })
                                         .Then<ControllerStep>()
                                         .Then<FileModifierStep>()
                                         ;

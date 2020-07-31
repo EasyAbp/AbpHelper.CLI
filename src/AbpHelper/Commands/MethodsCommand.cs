@@ -1,5 +1,6 @@
 ﻿using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
+using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;
@@ -47,7 +48,7 @@ namespace EasyAbp.AbpHelper.Commands
                     {
                         step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.ServiceName}}AppService.cs`");
                     })
-                .Then<ServiceInterfaceParserStep>()
+                .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<AppServiceInterfaceStep>()
                 .Then<FileModifierStep>()
