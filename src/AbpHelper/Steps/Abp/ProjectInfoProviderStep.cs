@@ -1,58 +1,46 @@
-﻿using System;
+﻿using EasyAbp.AbpHelper.Models;
+using Elsa.Results;
+using Elsa.Services.Models;
+using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Models;
-using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Steps.Abp
 {
-    public class ProjectInfoProviderStep : Step
+    public class ProjectInfoProviderStep : StepWithOption
     {
-        public WorkflowExpression<string> BaseDirectory
-        {
-            get => GetState(() => new JavaScriptExpression<string>("BaseDirectory"));
-            set => SetState(value);
-        }
-
-        public WorkflowExpression<string> IgnoreDirectories
-        {
-            get => GetState(() => new JavaScriptExpression<string>("IgnoreDirectories"));
-            set => SetState(value);
-        }
-
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
-            var ignoredDirectories = await context.EvaluateAsync(IgnoreDirectories, cancellationToken);
-            LogInput(() => ignoredDirectories);
-
-            var ignored = ignoredDirectories?
-                              .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                              .Select(x => Path.Combine(baseDirectory, x)).ToArray() ?? Array.Empty<string>();
+            var excludedDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
+            LogInput(() => excludedDirectories);
 
             TemplateType templateType;
-            if (Directory.EnumerateFiles(baseDirectory, "*.DbMigrator.csproj", SearchOption.AllDirectories).Any(x => !ignored.Any(x.StartsWith)))
+            if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludedDirectories))
+            {
                 templateType = TemplateType.Application;
-            else if (Directory.EnumerateFiles(baseDirectory, "*.Host.Shared.csproj", SearchOption.AllDirectories).Any(x => !ignored.Any(x.StartsWith)))
+            }
+            else if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludedDirectories))
+            {
                 templateType = TemplateType.Module;
+            }
             else
+            {
                 throw new NotSupportedException($"Unknown ABP project structure. Directory: {baseDirectory}");
+            }
+
 
             // Assume the domain project must be existed for an ABP project
-            var domainCsprojFile = Directory.EnumerateFiles(baseDirectory, "*.Domain.csproj", SearchOption.AllDirectories).FirstOrDefault(x => !ignored.Any(x.StartsWith));
+            var domainCsprojFile = SearchFileInDirectory(baseDirectory, "*.Domain.csproj", excludedDirectories);
             if (domainCsprojFile == null) throw new NotSupportedException($"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {baseDirectory}");
 
             var fileName = Path.GetFileName(domainCsprojFile);
             var fullName = fileName.RemovePostFix(".Domain.csproj");
 
             UiFramework uiFramework;
-            if (Directory.EnumerateFiles(baseDirectory, "*.cshtml", SearchOption.AllDirectories).Any(x => !ignored.Any(x.StartsWith)))
+            if (FileExistsInDirectory(baseDirectory, "*.cshtml", excludedDirectories))
             {
                 uiFramework = UiFramework.RazorPages;
                 if (templateType == TemplateType.Application)
@@ -64,7 +52,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     context.SetVariable("AspNetCoreDir", baseDirectory);
                 }
             }
-            else if (Directory.EnumerateFiles(baseDirectory, "app.module.ts", SearchOption.AllDirectories).Any(x => !ignored.Any(x.StartsWith)))
+            else if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludedDirectories))
             {
                 uiFramework = UiFramework.Angular;
                 context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
@@ -76,7 +64,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             }
 
             var tiered = false;
-            if (templateType == TemplateType.Application) tiered = Directory.EnumerateFiles(baseDirectory, "*.IdentityServer.csproj", SearchOption.AllDirectories).Any(x => !ignored.Any(x.StartsWith));
+            if (templateType == TemplateType.Application)
+            {
+                tiered = FileExistsInDirectory(baseDirectory, "*.IdentityServer.csproj", excludedDirectories);
+            }
 
             var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
             context.SetLastResult(projectInfo);

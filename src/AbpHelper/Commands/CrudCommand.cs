@@ -1,10 +1,4 @@
-﻿using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Linq;
-using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
-using EasyAbp.AbpHelper.Models;
+﻿using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow.Generate.Crud;
@@ -13,105 +7,27 @@ using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
+using Elsa.Services;
+using System;
+using System.Linq;
 
 namespace EasyAbp.AbpHelper.Commands
 {
-    public class CrudCommand : CommandBase
+    public class CrudCommand : CommandWithOption<CrudCommandOptions>
     {
-        public CrudCommand(IServiceProvider serviceProvider) : base(serviceProvider, "crud", "Generate a set of CRUD related files according to the specified entity")
+        private const string DbMigrations = "DbMigrations";
+        private const string TestGeneration = "TestGeneration";
+
+        public CrudCommand(IServiceProvider serviceProvider)
+            : base(serviceProvider, "crud", "Generate a set of CRUD related files according to the specified entity")
         {
-            AddArgument(new Argument<string>("entity"){Description = "The entity class name"});
-            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"--separate-dto"}, "Generate separate Create and Update DTO files")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--skip-permissions"}, "Skip generating crud permissions")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--custom-repository"}, "Generate custom repository interface and class for the entity")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--skip-db-migrations"}, "Skip performing db migration and update")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--skip-ui"}, "Skip generating UI")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--skip-view-model"}, "Skip generating 'CreateUpdateViewModel`, use 'CreateUpdateDto' directly")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--skip-localization"}, "Skip generating localization")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--skip-test"}, "Skip generating test")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--no-overwrite"}, "Specify not to overwrite existing files")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new []{"--ignore-directories"}, "Ignore directories when searching files. Example: -ignore-directories Folder1,Folder2")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"--migration-project-name"},
-                $"Specify the name of the migration project." + Environment.NewLine +
-                "For ABP applications, the default value is '*.EntityFrameworkCore.DbMigrations.csproj';" + Environment.NewLine +
-                "For ABP modules, the default value is '*.HttpApi.Host.csproj'." + Environment.NewLine +
-                "For example: --migration-project-name *.Web.Unified.csproj, abphelper will search '*.Web.Unified.csproj' file and make it as the migration project." + Environment.NewLine +
-                "This argument takes effect only if '--skip-db-migrations' is NOT specified.")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"--skip-entity-constructors"}, "Skip generating constructors for the entity")
-            {
-                Argument = new Argument<bool>()
-            });
-            Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
-        private async Task Run(CommandOption option)
+        protected override IActivityBuilder ConfigureBuild(CrudCommandOptions option, IActivityBuilder activityBuilder)
         {
-            string directory = GetBaseDirectory(option.Directory);
-            
             var entityFileName = option.Entity + ".cs";
 
-            await RunWorkflow(builder => builder
-                .StartWith<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "BaseDirectory";
-                        step.ValueExpression = new LiteralExpression(directory);
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "IgnoreDirectories";
-                        step.ValueExpression = new LiteralExpression(option.IgnoreDirectories);
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Option";
-                        step.ValueExpression = new JavaScriptExpression<CommandOption>($"({option.ToJson()})");
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Overwrite";
-                        step.ValueExpression = new JavaScriptExpression<bool>("!Option.NoOverwrite");
-                    })
+            return base.ConfigureBuild(option, activityBuilder)
                 .Then<SetVariable>(
                     step =>
                     {
@@ -124,7 +40,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<EntityParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipEntityConstructors"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipEntityConstructors"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -138,7 +54,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .AddEntityUsingGenerationWorkflow("EntityUsing")
                 .AddEfCoreConfigurationWorkflow()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.CustomRepository"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.CustomRepository"),
                     ifElse =>
                     {
                         ifElse
@@ -154,7 +70,7 @@ namespace EasyAbp.AbpHelper.Commands
                 )
                 .AddServiceGenerationWorkflow("ServiceGeneration")
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipLocalization"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipLocalization"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -166,7 +82,7 @@ namespace EasyAbp.AbpHelper.Commands
                             ;
                     })
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipUi"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipUi"),
                     ifElse =>
                     {
                         ifElse
@@ -180,42 +96,42 @@ namespace EasyAbp.AbpHelper.Commands
                                 @switch =>
                                 {
                                     @switch.When(UiFramework.None.ToString("D"))
-                                        .Then("TestGeneration");
+                                        .Then(TestGeneration);
 
                                     @switch.When(UiFramework.RazorPages.ToString("D"))
                                         .AddUiRazorPagesGenerationWorkflow()
-                                        .Then("TestGeneration");
+                                        .Then(TestGeneration);
 
                                     @switch.When(UiFramework.Angular.ToString("D"))
                                         // TODO
                                         //.AddUiAngularGenerationWorkflow()
-                                        .Then("TestGeneration");
+                                        .Then(TestGeneration);
                                 }
                             )
                             ;
                         ifElse
                             .When(OutcomeNames.True)
-                            .Then("TestGeneration")
+                            .Then(TestGeneration)
                             ;
                     }
                 ).WithName("Ui")
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipTest"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipTest"),
                     ifElse =>
                     {
                         ifElse
                             .When(OutcomeNames.False)
                             .AddTestGenerationWorkflow()
-                            .Then("DbMigrations")
+                            .Then(DbMigrations)
                             ;
                         ifElse
                             .When(OutcomeNames.True)
-                            .Then("DbMigrations")
+                            .Then(DbMigrations)
                             ;
                     }
-                ).WithName("TestGeneration")
+                ).WithName(TestGeneration)
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipDbMigrations"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipDbMigrations"),
                     ifElse =>
                     {
                         ifElse
@@ -223,27 +139,7 @@ namespace EasyAbp.AbpHelper.Commands
                             .AddMigrationAndUpdateDatabaseWorkflow()
                             ;
                     }
-                ).WithName("DbMigrations")
-                .Build()
-            );
-        }
-
-        private class CommandOption
-        {
-            public string Directory { get; set; } = null!;
-            public string Entity { get; set; } = null!;
-            public string MigrationProjectName { get; set; } = null!;
-            public bool SkipPermissions { get; set; }
-            public bool SeparateDto { get; set; }
-            public bool CustomRepository { get; set; }
-            public bool SkipDbMigrations { get; set; }
-            public bool SkipUi { get; set; }
-            public bool SkipViewModel { get; set; }
-            public bool SkipLocalization { get; set; }
-            public bool SkipTest { get; set; }
-            public bool NoOverwrite { get; set; }
-            public bool SkipEntityConstructors { get; set; }
-            public string IgnoreDirectories { get; set; } = null!;
+                ).WithName(DbMigrations);
         }
     }
 }

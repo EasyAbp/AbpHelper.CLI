@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
-using EasyAbp.AbpHelper.Steps.Abp;
+﻿using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
@@ -12,75 +6,35 @@ using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
+using Elsa.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EasyAbp.AbpHelper.Commands
 {
-    public class MethodsCommand : CommandBase
+    public class MethodsCommand : CommandWithOption<MethodsCommandOption>
     {
-        public MethodsCommand(IServiceProvider serviceProvider) : base(serviceProvider, "methods", "Generate service method(s) according to the specified name(s)")
+        public MethodsCommand(IServiceProvider serviceProvider)
+            : base(serviceProvider, "methods", "Generate service method(s) according to the specified name(s)")
         {
-            AddArgument(new Argument<string[]>("method-names") {Description = "The method names"});
-            AddOption(new Option(new[] {"-s", "--service-name"}, "The service name(without 'AppService' postfix)")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"--no-overwrite"}, "Specify not to overwrite existing files")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--no-input"}, "Not to generate input DTO file and parameter")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--no-output"}, "Not to generate output DTO file and parameter")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] { "--ignore-directories" }, "Ignore directories when searching files. Example: -ignore-directories Folder1,Folder2")
-            {
-                Argument = new Argument<string>()
-            });
-            Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
-        private async Task Run(CommandOption option)
+        protected override Task RunCommand(MethodsCommandOption option)
         {
-            string directory = GetBaseDirectory(option.Directory);
-            for (int i = 0; i < option.MethodNames.Length; i++)
+            for (var i = 0; i < option.MethodNames.Length; i++)
             {
                 // Convert method name to pascal case
                 option.MethodNames[i] = option.MethodNames[i].ToPascalCase();
             }
 
-            await RunWorkflow(builder => builder
-                .StartWith<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "BaseDirectory";
-                        step.ValueExpression = new LiteralExpression(directory);
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "IgnoreDirectories";
-                        step.ValueExpression = new LiteralExpression(option.IgnoreDirectories);
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Option";
-                        step.ValueExpression = new JavaScriptExpression<CommandOption>($"({option.ToJson()})");
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Overwrite";
-                        step.ValueExpression = new JavaScriptExpression<bool>("!Option.NoOverwrite");
-                    })
+            return base.RunCommand(option);
+        }
+
+        protected override IActivityBuilder ConfigureBuild(MethodsCommandOption option,
+            IActivityBuilder activityBuilder)
+        {
+            return base.ConfigureBuild(option, activityBuilder)
                 .Then<SetVariable>(
                     step =>
                     {
@@ -89,13 +43,16 @@ namespace EasyAbp.AbpHelper.Commands
                     })
                 .Then<ProjectInfoProviderStep>()
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.ServiceName}AppService.cs`"); })
+                    step =>
+                    {
+                        step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.ServiceName}}AppService.cs`");
+                    })
                 .Then<ServiceInterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<AppServiceInterfaceStep>()
                 .Then<FileModifierStep>()
                 .Then<ForEach>(
-                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>("Option.MethodNames"); },
+                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>($"{OptionVariableName}.MethodNames"); },
                     branch =>
                         branch.When(OutcomeNames.Iterate)
                             .Then<SetVariable>(
@@ -116,22 +73,12 @@ namespace EasyAbp.AbpHelper.Commands
                             .Then(branch)
                 )
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new JavaScriptExpression<string>("`${Option.ServiceName}AppService.cs`"); })
+                    step =>
+                    {
+                        step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.ServiceName}}AppService.cs`");
+                    })
                 .Then<AppServiceClassStep>()
-                .Then<FileModifierStep>()
-                .Build()
-            );
-        }
-
-        private class CommandOption
-        {
-            public string Directory { get; set; } = null!;
-            public bool NoOverwrite { get; set; }
-            public string ServiceName { get; set; } = null!;
-            public string[] MethodNames { get; set; } = null!;
-            public bool NoInput { get; set; }
-            public bool NoOutput { get; set; }
-            public string IgnoreDirectories { get; set; } = null!;
+                .Then<FileModifierStep>();
         }
     }
 }

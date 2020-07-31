@@ -1,4 +1,5 @@
-﻿using EasyAbp.AbpHelper.Steps.Common;
+﻿using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
@@ -68,7 +69,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                 )
                                 .Then<IfElse>(
                                         ie => ie.ConditionExpression = new JavaScriptExpression<bool>
-                                            ("ProjectInfo.UiFramework == 1"),
+                                            ($"ProjectInfo.UiFramework == {UiFramework.RazorPages:D}"),
                                         ie =>
                                         {
                                             ie.When(OutcomeNames.True)
@@ -82,7 +83,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                         })
                                 .Then<IfElse>(
                                     ie => ie.ConditionExpression = new JavaScriptExpression<bool>
-                                        ("ProjectInfo.UiFramework == 0"),
+                                        ($"ProjectInfo.UiFramework == {UiFramework.None:D}"),
                                     ie =>
                                     {
                                         ie.When(OutcomeNames.True)
