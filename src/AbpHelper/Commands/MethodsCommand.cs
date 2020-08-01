@@ -46,14 +46,14 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<FileFinderStep>(
                     step =>
                     {
-                        step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.ServiceName}}AppService.cs`");
+                        step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}AppService.cs`");
                     })
                 .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<AppServiceInterfaceStep>()
                 .Then<FileModifierStep>()
                 .Then<ForEach>(
-                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>($"{OptionVariableName}.MethodNames"); },
+                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>($"{OptionVariableName}.{nameof(MethodsCommandOption.MethodNames)}"); },
                     branch =>
                         branch.When(OutcomeNames.Iterate)
                             .Then<SetVariable>(
@@ -76,7 +76,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<FileFinderStep>(
                     step =>
                     {
-                        step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.ServiceName}}AppService.cs`");
+                        step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}AppService.cs`");
                     })
                 .Then<AppServiceClassStep>()
                 .Then<FileModifierStep>();

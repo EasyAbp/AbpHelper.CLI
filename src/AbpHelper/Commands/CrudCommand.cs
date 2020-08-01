@@ -40,7 +40,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .Then<EntityParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipEntityConstructors"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipEntityConstructors)}"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -54,7 +54,7 @@ namespace EasyAbp.AbpHelper.Commands
                 .AddEntityUsingGenerationWorkflow("EntityUsing")
                 .AddEfCoreConfigurationWorkflow()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.CustomRepository"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.CustomRepository)}"),
                     ifElse =>
                     {
                         ifElse
@@ -70,7 +70,7 @@ namespace EasyAbp.AbpHelper.Commands
                 )
                 .AddServiceGenerationWorkflow("ServiceGeneration")
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipLocalization"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipLocalization)}"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -82,7 +82,7 @@ namespace EasyAbp.AbpHelper.Commands
                             ;
                     })
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipUi"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipUi)}"),
                     ifElse =>
                     {
                         ifElse
@@ -116,7 +116,7 @@ namespace EasyAbp.AbpHelper.Commands
                     }
                 ).WithName("Ui")
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipTest"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipTest)}"),
                     ifElse =>
                     {
                         ifElse
@@ -131,7 +131,7 @@ namespace EasyAbp.AbpHelper.Commands
                     }
                 ).WithName(TestGeneration)
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipDbMigrations"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipDbMigrations)}"),
                     ifElse =>
                     {
                         ifElse

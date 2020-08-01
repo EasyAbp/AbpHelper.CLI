@@ -30,7 +30,7 @@ namespace EasyAbp.AbpHelper.Commands
                     })
                 .Then<ProjectInfoProviderStep>()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.SkipBuild"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(ControllerCommandOption.SkipBuild)}"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -45,12 +45,12 @@ namespace EasyAbp.AbpHelper.Commands
                             ;
                     })
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.Name}}AppService.cs`"); }
+                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
                 ).WithName("SearchServiceInterface")
                 .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{OverwriteVariableName}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(ControllerCommandOption.NoOverwrite)}"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.True) // Regenerate/Overwrite
@@ -65,7 +65,7 @@ namespace EasyAbp.AbpHelper.Commands
                             .Then<FileFinderStep>(
                                 step =>
                                 {
-                                    step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.Name}}Controller.cs`");
+                                    step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}Controller.cs`");
                                     step.ErrorIfNotFound = new JavaScriptExpression<bool>("false");
                                 }
                             ).WithName("SearchController")
