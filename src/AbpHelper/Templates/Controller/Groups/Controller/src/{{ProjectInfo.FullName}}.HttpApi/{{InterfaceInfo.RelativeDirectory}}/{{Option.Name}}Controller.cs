@@ -28,7 +28,7 @@ namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }}
         {
             _service = service;
         }
-        {{~ for method in InterfaceInfo.Methods ~}}
+        {{~ for method in ClassInfo.Methods | abp.intersect InterfaceInfo.Methods ~}}
 {{~ include "Templates/Controller/ControllerMethod" method ~}}
         {{~ end ~}}
     }

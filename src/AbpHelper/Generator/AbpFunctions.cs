@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Scriban.Runtime;
@@ -78,6 +79,11 @@ namespace EasyAbp.AbpHelper.Generator
             }
 
             return url.RemovePreFix("/");
+        }
+
+        public static List<MethodInfo> Intersect(List<MethodInfo> collection1, List<MethodInfo> collection2)
+        {
+            return collection1.Intersect(collection2).ToList();
         }
     }
 }

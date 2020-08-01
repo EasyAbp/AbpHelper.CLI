@@ -21,8 +21,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
             return symbol
                     .GetBaseTypesAndThis()
                     .SelectMany(type => type.GetMembers())
-                    .Where(type => type.Kind == SymbolKind.Method)
-                    .Cast<IMethodSymbol>()
+                    .OfType<IMethodSymbol>()
                     .Select(SymbolExtensions.ToMethodInfo)
                 ;
         }

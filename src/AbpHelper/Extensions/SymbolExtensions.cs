@@ -38,6 +38,10 @@ namespace EasyAbp.AbpHelper.Extensions
                         ps.Name)
                     )
             );
+            methodInfo.Attributes.AddRange(
+                symbol.GetAttributes()
+                    .Select(attr => attr.ToString()!)
+                );
             return methodInfo;
         }
     }

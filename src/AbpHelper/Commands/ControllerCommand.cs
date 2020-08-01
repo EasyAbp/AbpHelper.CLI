@@ -48,6 +48,10 @@ namespace EasyAbp.AbpHelper.Commands
                     step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
                 ).WithName("SearchServiceInterface")
                 .Then<InterfaceParserStep>()
+                .Then<FileFinderStep>(
+                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
+                )
+                .Then<ClassParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(ControllerCommandOption.NoOverwrite)}"),

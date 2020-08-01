@@ -1,5 +1,8 @@
 ﻿{{~ route = method | abp.get_route ~}}
 
+        {{~ for attribute in method.Attributes ~}}
+        [{{ attribute }}]
+        {{~ end ~}}
         [{{ method.Name | abp.get_http_verb }}]
         {{~ if route ~}}
         [Route("{{ method | abp.get_route }}")]
