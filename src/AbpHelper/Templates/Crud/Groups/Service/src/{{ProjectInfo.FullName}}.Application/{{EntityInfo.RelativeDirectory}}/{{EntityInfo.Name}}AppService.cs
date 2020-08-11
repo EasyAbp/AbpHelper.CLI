@@ -78,7 +78,7 @@ namespace {{ EntityInfo.Namespace }}
         protected override async Task<{{ EntityInfo.Name }}> GetEntityByIdAsync({{ EntityInfo.CompositeKeyName }} id)
         {
             // TODO: AbpHelper generated
-            return await AsyncQueryableExecuter.FirstOrDefaultAsync(
+            return await AsyncExecuter.FirstOrDefaultAsync(
                 {{ repositoryName }}.Where(e =>
                 {{~ for prop in EntityInfo.CompositeKeys ~}}
                     e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
