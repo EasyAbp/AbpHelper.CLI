@@ -1,63 +1,27 @@
-﻿using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
-using EasyAbp.AbpHelper.Steps.Abp;
+﻿using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
-using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
+using Elsa.Services;
+using System;
 
 namespace EasyAbp.AbpHelper.Commands
 {
-    public class ControllerCommand : CommandBase
+    public class ControllerCommand : CommandWithOption<ControllerCommandOption>
     {
-        public ControllerCommand(IServiceProvider serviceProvider) : base(serviceProvider, "controller", "Generate controller class and methods according to the specified service")
+        public ControllerCommand(IServiceProvider serviceProvider) 
+            : base(serviceProvider, "controller", "Generate controller class and methods according to the specified service")
         {
-            AddArgument(new Argument<string>("name") {Description = "The service name(without 'AppService' postfix)"});
-            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
-            {
-                Argument = new Argument<string>()
-            });
-            AddOption(new Option(new[] {"--skip-build"}, "Skip building the solution")
-            {
-                Argument = new Argument<bool>()
-            });
-            AddOption(new Option(new[] {"--regenerate"}, "Completely regenerate the controller class, instead of the default: only generate the missing controller methods")
-            {
-                Argument = new Argument<bool>()
-            });
-            Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
-        private async Task Run(CommandOption option)
+        protected override IActivityBuilder ConfigureBuild(ControllerCommandOption option, IActivityBuilder activityBuilder)
         {
-            string directory = GetBaseDirectory(option.Directory);
-            await RunWorkflow(builder => builder
-                .StartWith<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "BaseDirectory";
-                        step.ValueExpression = new LiteralExpression(directory);
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Option";
-                        step.ValueExpression = new JavaScriptExpression<CommandOption>($"({option.ToJson()})");
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Overwrite";
-                        step.ValueExpression = new JavaScriptExpression<bool>("true");
-                    })
+            return base.ConfigureBuild(option, activityBuilder)
                 .Then<SetVariable>(
                     step =>
                     {
@@ -66,7 +30,7 @@ namespace EasyAbp.AbpHelper.Commands
                     })
                 .Then<ProjectInfoProviderStep>()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.SkipBuild"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(ControllerCommandOption.SkipBuild)}"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -81,15 +45,15 @@ namespace EasyAbp.AbpHelper.Commands
                             ;
                     })
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new JavaScriptExpression<string>("`I${Option.Name}AppService.cs`"); }
+                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
                 ).WithName("SearchServiceInterface")
                 .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>("Option.Regenerate"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(ControllerCommandOption.NoOverwrite)}"),
                     ifElse =>
                     {
-                        ifElse.When(OutcomeNames.True) // Regenerate
+                        ifElse.When(OutcomeNames.True) // Regenerate/Overwrite
                             .Then<GroupGenerationStep>(
                                 step =>
                                 {
@@ -101,7 +65,7 @@ namespace EasyAbp.AbpHelper.Commands
                             .Then<FileFinderStep>(
                                 step =>
                                 {
-                                    step.SearchFileName = new JavaScriptExpression<string>("`${Option.Name}Controller.cs`");
+                                    step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}Controller.cs`");
                                     step.ErrorIfNotFound = new JavaScriptExpression<bool>("false");
                                 }
                             ).WithName("SearchController")
@@ -127,17 +91,7 @@ namespace EasyAbp.AbpHelper.Commands
                                         ;
                                 }
                             );
-                    })
-                .Build()
-            );
-        }
-
-        private class CommandOption
-        {
-            public string Directory { get; set; } = null!;
-            public string Name { get; set; } = null!;
-            public bool SkipBuild { get; set; }
-            public bool Regenerate { get; set; }
+                    });
         }
     }
 }

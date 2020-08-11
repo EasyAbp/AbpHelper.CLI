@@ -1,47 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Extensions;
-using EasyAbp.AbpHelper.Steps.Abp;
+﻿using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
+using Elsa.Services;
+using System;
+using System.Collections.Generic;
 
 namespace EasyAbp.AbpHelper.Commands
 {
-    public class LocalizationCommand : CommandBase
+    public class LocalizationCommand : CommandWithOption<LocalizationCommandOption>
     {
-        public LocalizationCommand(IServiceProvider serviceProvider) : base(serviceProvider, "localization", "Generate localization item(s) according to the specified name(s)")
+        public LocalizationCommand(IServiceProvider serviceProvider)
+            : base(serviceProvider, "localization", "Generate localization item(s) according to the specified name(s)")
         {
-            AddArgument(new Argument<string[]>("names") {Description = "The localization item names, separated by the space char"});
-            AddOption(new Option(new[] {"-d", "--directory"}, "The ABP project root directory. If no directory is specified, current directory is used")
-            {
-                Argument = new Argument<string>()
-            });
-            Handler = CommandHandler.Create((CommandOption optionType) => Run(optionType));
         }
 
-        private async Task Run(CommandOption option)
+        protected override IActivityBuilder ConfigureBuild(LocalizationCommandOption option, IActivityBuilder activityBuilder)
         {
-            string directory = GetBaseDirectory(option.Directory);
-            await RunWorkflow(builder => builder
-                .StartWith<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "BaseDirectory";
-                        step.ValueExpression = new LiteralExpression(directory);
-                    })
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "Option";
-                        step.ValueExpression = new JavaScriptExpression<CommandOption>($"({option.ToJson()})");
-                    })
+            return base.ConfigureBuild(option, activityBuilder)
                 .Then<SetVariable>(
                     step =>
                     {
@@ -73,15 +52,7 @@ namespace EasyAbp.AbpHelper.Commands
                                 }
                             )
                             .Then(branch)
-                )
-                .Build()
-            );
-        }
-
-        private class CommandOption
-        {
-            public string Directory { get; set; } = null!;
-            public string[] Names { get; set; } = null!;
+                );
         }
     }
 }

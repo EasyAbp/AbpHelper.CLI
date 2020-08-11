@@ -1,4 +1,5 @@
-﻿using EasyAbp.AbpHelper.Steps.Common;
+﻿using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
@@ -52,7 +53,8 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         }
                     )
                     .Then<IfElse>(
-                        ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>("ProjectInfo.TemplateType == 0"),
+                        ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>
+                            ("ProjectInfo.TemplateType == 0"),
                         ifElse =>
                         {
                             // Application
@@ -65,16 +67,37 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                         step.ResultVariableName = new LiteralExpression("MigrationProjectFile");
                                     }
                                 )
-                                .Then<FileFinderStep>(
-                                    step =>
+                                .Then<IfElse>(
+                                        ie => ie.ConditionExpression = new JavaScriptExpression<bool>
+                                            ($"ProjectInfo.UiFramework == {UiFramework.RazorPages:D}"),
+                                        ie =>
+                                        {
+                                            ie.When(OutcomeNames.True)
+                                                .Then<FileFinderStep>(
+                                                    step =>
+                                                    {
+                                                        step.SearchFileName = new LiteralExpression("*.Web.csproj");
+                                                        step.ResultVariableName =
+                                                            new LiteralExpression<string>("StartupProjectFile");
+                                                    });
+                                        })
+                                .Then<IfElse>(
+                                    ie => ie.ConditionExpression = new JavaScriptExpression<bool>
+                                        ($"ProjectInfo.UiFramework == {UiFramework.None:D}"),
+                                    ie =>
                                     {
-                                        step.SearchFileName = new LiteralExpression("*.Web.csproj");
-                                        step.ResultVariableName = new LiteralExpression<string>("StartupProjectFile");
-                                    }
-                                )
+                                        ie.When(OutcomeNames.True)
+                                            .Then<FileFinderStep>(
+                                                step =>
+                                                {
+                                                    step.SearchFileName = new LiteralExpression("*.DbMigrator.csproj");
+                                                    step.ResultVariableName =
+                                                        new LiteralExpression<string>("StartupProjectFile");
+                                                });
+                                    })
                                 .Then("RunMigration")
                                 ;
-                            
+
                             // Module
                             ifElse
                                 .When(OutcomeNames.False)

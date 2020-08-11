@@ -1,23 +1,18 @@
-﻿using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Elsa.Expressions;
+﻿using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyAbp.AbpHelper.Steps.Common
 {
-    public class FileFinderStep : Step
+    public class FileFinderStep : StepWithOption
     {
         public const string DefaultFileParameterName = "FileFinderResult";
-
-        public WorkflowExpression<string> BaseDirectory
-        {
-            get => GetState(() => new JavaScriptExpression<string>("BaseDirectory"));
-            set => SetState(value);
-        }
 
         public WorkflowExpression<string> SearchFileName
         {
@@ -42,12 +37,14 @@ namespace EasyAbp.AbpHelper.Steps.Common
             var resultVariableName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
+            var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
+            LogInput(() => excludeDirectories);
             var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
             LogInput(() => searchFileName);
             var errorIfNotFound = await context.EvaluateAsync(ErrorIfNotFound, cancellationToken);
             LogInput(() => errorIfNotFound);
 
-            var files = Directory.EnumerateFiles(baseDirectory, searchFileName, SearchOption.AllDirectories).ToArray();
+            var files = SearchFilesInDirectory(baseDirectory, searchFileName, excludeDirectories);
 
             var filePathName = files.SingleOrDefault();
 
