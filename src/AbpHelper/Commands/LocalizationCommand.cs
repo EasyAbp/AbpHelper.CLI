@@ -18,9 +18,9 @@ namespace EasyAbp.AbpHelper.Commands
         {
         }
 
-        protected override IActivityBuilder ConfigureBuild(LocalizationCommandOption option, IActivityBuilder activityBuilder)
+        protected override IActivityBuilder ConfigureBuild(IActivityBuilder activityBuilder, LocalizationCommandOption option)
         {
-            return base.ConfigureBuild(option, activityBuilder)
+            return base.ConfigureBuild(activityBuilder, option)
                 .Then<SetVariable>(
                     step =>
                     {

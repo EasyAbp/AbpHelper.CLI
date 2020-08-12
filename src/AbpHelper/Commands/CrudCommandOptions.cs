@@ -10,8 +10,8 @@ For ABP modules, the default value is '*.HttpApi.Host.csproj'.
 For example: --migration-project-name *.Web.Unified.csproj, abphelper will search '*.Web.Unified.csproj' file and make it as the migration project.
 This argument takes effect only if '--skip-db-migrations' is NOT specified.";
 
-        [Argument("entity", Description = "The entity class name")]
-        public string Entity { get; set; } = null!;
+        [Argument("entities", Description = "The entity class names")]
+        public string[] Entities { get; set; } = null!;
 
         [Option("migration-project-name", Description = MigrationProjectNameDescription)]
         public string MigrationProjectName { get; set; } = null!;

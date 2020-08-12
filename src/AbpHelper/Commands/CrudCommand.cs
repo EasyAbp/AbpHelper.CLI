@@ -1,4 +1,7 @@
-﻿using EasyAbp.AbpHelper.Models;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow.Generate.Crud;
@@ -7,9 +10,6 @@ using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
-using Elsa.Services;
-using System;
-using System.Linq;
 
 namespace EasyAbp.AbpHelper.Commands
 {
@@ -23,123 +23,141 @@ namespace EasyAbp.AbpHelper.Commands
         {
         }
 
-        protected override IActivityBuilder ConfigureBuild(CrudCommandOptions option, IActivityBuilder activityBuilder)
+        protected override async Task RunCommand(CrudCommandOptions option)
         {
-            var entityFileName = option.Entity + ".cs";
+            option.Directory = GetBaseDirectory(option.Directory);
+            foreach (var entity in option.Entities)
+            {
+                var entityFileName = entity + ".cs";
+                await RunWorkflow(builder => 
+                    CreateBasicWorkflow(builder, option)
+                    .Then<SetVariable>(
+                        step =>
+                        {
+                            step.VariableName = "TemplateDirectory";
+                            step.ValueExpression = new LiteralExpression<string>("/Templates/Crud");
+                        })
+                    .Then<ProjectInfoProviderStep>()
+                    .Then<FileFinderStep>(
+                        step => { step.SearchFileName = new LiteralExpression(entityFileName); })
+                    .Then<EntityParserStep>()
+                    .Then<SetModelVariableStep>()
+                    .Then<IfElse>(
+                        step => step.ConditionExpression =
+                            new JavaScriptExpression<bool>(
+                                $"{OptionVariableName}.{nameof(CrudCommandOptions.SkipEntityConstructors)}"),
+                        ifElse =>
+                        {
+                            ifElse.When(OutcomeNames.False)
+                                .AddEntityConstructorsGenerationWorkflow()
+                                .Then("EntityUsing")
+                                ;
+                            ifElse.When(OutcomeNames.True)
+                                .Then("EntityUsing")
+                                ;
+                        })
+                    .AddEntityUsingGenerationWorkflow("EntityUsing")
+                    .AddEfCoreConfigurationWorkflow()
+                    .Then<IfElse>(
+                        step => step.ConditionExpression =
+                            new JavaScriptExpression<bool>(
+                                $"{OptionVariableName}.{nameof(CrudCommandOptions.CustomRepository)}"),
+                        ifElse =>
+                        {
+                            ifElse
+                                .When(OutcomeNames.True)
+                                .AddCustomRepositoryGeneration()
+                                .Then("ServiceGeneration")
+                                ;
+                            ifElse
+                                .When(OutcomeNames.False)
+                                .Then("ServiceGeneration")
+                                ;
+                        }
+                    )
+                    .AddServiceGenerationWorkflow("ServiceGeneration")
+                    .Then<IfElse>(
+                        step => step.ConditionExpression =
+                            new JavaScriptExpression<bool>(
+                                $"{OptionVariableName}.{nameof(CrudCommandOptions.SkipLocalization)}"),
+                        ifElse =>
+                        {
+                            ifElse.When(OutcomeNames.False)
+                                .AddLocalizationGenerationWorkflow("LocalizationGeneration")
+                                .Then("Ui")
+                                ;
+                            ifElse.When(OutcomeNames.True)
+                                .Then("Ui")
+                                ;
+                        })
+                    .Then<IfElse>(
+                        step => step.ConditionExpression =
+                            new JavaScriptExpression<bool>(
+                                $"{OptionVariableName}.{nameof(CrudCommandOptions.SkipUi)}"),
+                        ifElse =>
+                        {
+                            ifElse
+                                .When(OutcomeNames.False)
+                                .Then<Switch>(
+                                    @switch =>
+                                    {
+                                        @switch.Expression =
+                                            new JavaScriptExpression<string>("(ProjectInfo.UiFramework)");
+                                        @switch.Cases = Enum.GetValues(typeof(UiFramework)).Cast<int>()
+                                            .Select(u => u.ToString()).ToArray();
+                                    },
+                                    @switch =>
+                                    {
+                                        @switch.When(UiFramework.None.ToString("D"))
+                                            .Then(TestGeneration);
 
-            return base.ConfigureBuild(option, activityBuilder)
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = "TemplateDirectory";
-                        step.ValueExpression = new LiteralExpression<string>("/Templates/Crud");
-                    })
-                .Then<ProjectInfoProviderStep>()
-                .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new LiteralExpression(entityFileName); })
-                .Then<EntityParserStep>()
-                .Then<SetModelVariableStep>()
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipEntityConstructors)}"),
-                    ifElse =>
-                    {
-                        ifElse.When(OutcomeNames.False)
-                            .AddEntityConstructorsGenerationWorkflow()
-                            .Then("EntityUsing")
-                            ;
-                        ifElse.When(OutcomeNames.True)
-                            .Then("EntityUsing")
-                            ;
-                    })
-                .AddEntityUsingGenerationWorkflow("EntityUsing")
-                .AddEfCoreConfigurationWorkflow()
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.CustomRepository)}"),
-                    ifElse =>
-                    {
-                        ifElse
-                            .When(OutcomeNames.True)
-                            .AddCustomRepositoryGeneration()
-                            .Then("ServiceGeneration")
-                            ;
-                        ifElse
-                            .When(OutcomeNames.False)
-                            .Then("ServiceGeneration")
-                            ;
-                    }
-                )
-                .AddServiceGenerationWorkflow("ServiceGeneration")
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipLocalization)}"),
-                    ifElse =>
-                    {
-                        ifElse.When(OutcomeNames.False)
-                            .AddLocalizationGenerationWorkflow("LocalizationGeneration")
-                            .Then("Ui")
-                            ;
-                        ifElse.When(OutcomeNames.True)
-                            .Then("Ui")
-                            ;
-                    })
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipUi)}"),
-                    ifElse =>
-                    {
-                        ifElse
-                            .When(OutcomeNames.False)
-                            .Then<Switch>(
-                                @switch =>
-                                {
-                                    @switch.Expression = new JavaScriptExpression<string>("(ProjectInfo.UiFramework)");
-                                    @switch.Cases = Enum.GetValues(typeof(UiFramework)).Cast<int>().Select(u => u.ToString()).ToArray();
-                                },
-                                @switch =>
-                                {
-                                    @switch.When(UiFramework.None.ToString("D"))
-                                        .Then(TestGeneration);
+                                        @switch.When(UiFramework.RazorPages.ToString("D"))
+                                            .AddUiRazorPagesGenerationWorkflow()
+                                            .Then(TestGeneration);
 
-                                    @switch.When(UiFramework.RazorPages.ToString("D"))
-                                        .AddUiRazorPagesGenerationWorkflow()
-                                        .Then(TestGeneration);
-
-                                    @switch.When(UiFramework.Angular.ToString("D"))
-                                        // TODO
-                                        //.AddUiAngularGenerationWorkflow()
-                                        .Then(TestGeneration);
-                                }
-                            )
-                            ;
-                        ifElse
-                            .When(OutcomeNames.True)
-                            .Then(TestGeneration)
-                            ;
-                    }
-                ).WithName("Ui")
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipTest)}"),
-                    ifElse =>
-                    {
-                        ifElse
-                            .When(OutcomeNames.False)
-                            .AddTestGenerationWorkflow()
-                            .Then(DbMigrations)
-                            ;
-                        ifElse
-                            .When(OutcomeNames.True)
-                            .Then(DbMigrations)
-                            ;
-                    }
-                ).WithName(TestGeneration)
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipDbMigrations)}"),
-                    ifElse =>
-                    {
-                        ifElse
-                            .When(OutcomeNames.False)
-                            .AddMigrationAndUpdateDatabaseWorkflow()
-                            ;
-                    }
-                ).WithName(DbMigrations);
+                                        @switch.When(UiFramework.Angular.ToString("D"))
+                                            // TODO
+                                            //.AddUiAngularGenerationWorkflow()
+                                            .Then(TestGeneration);
+                                    }
+                                )
+                                ;
+                            ifElse
+                                .When(OutcomeNames.True)
+                                .Then(TestGeneration)
+                                ;
+                        }
+                    ).WithName("Ui")
+                    .Then<IfElse>(
+                        step => step.ConditionExpression =
+                            new JavaScriptExpression<bool>(
+                                $"{OptionVariableName}.{nameof(CrudCommandOptions.SkipTest)}"),
+                        ifElse =>
+                        {
+                            ifElse
+                                .When(OutcomeNames.False)
+                                .AddTestGenerationWorkflow()
+                                .Then(DbMigrations)
+                                ;
+                            ifElse
+                                .When(OutcomeNames.True)
+                                .Then(DbMigrations)
+                                ;
+                        }
+                    ).WithName(TestGeneration)
+                    .Then<IfElse>(
+                        step => step.ConditionExpression =
+                            new JavaScriptExpression<bool>(
+                                $"{OptionVariableName}.{nameof(CrudCommandOptions.SkipDbMigrations)}"),
+                        ifElse =>
+                        {
+                            ifElse
+                                .When(OutcomeNames.False)
+                                .AddMigrationAndUpdateDatabaseWorkflow()
+                                ;
+                        }
+                    ).WithName(DbMigrations).Build());
+            }
         }
     }
 }

@@ -20,7 +20,8 @@ namespace EasyAbp.AbpHelper.Commands
 {
     public abstract class CommandWithOption<TOption> : CommandBase where TOption : CommandOptionsBase
     {
-        public CommandWithOption(IServiceProvider serviceProvider, string name, string? description = null) : base(serviceProvider, name, description)
+        public CommandWithOption(IServiceProvider serviceProvider, string name, string? description = null) : base(
+            serviceProvider, name, description)
         {
             Logger = NullLogger<CommandWithOption<TOption>>.Instance;
 
@@ -40,40 +41,49 @@ namespace EasyAbp.AbpHelper.Commands
         {
             option.Directory = GetBaseDirectory(option.Directory);
 
-            await RunWorkflow(builder =>
-            {
-                var activityBuilder = builder
-                    .StartWith<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = OptionVariableName;
-                            step.ValueExpression = new JavaScriptExpression<TOption>($"({option.ToJson()})");
-                        })
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = BaseDirectoryVariableName;
-                            step.ValueExpression = new LiteralExpression(option.Directory);
-                        })
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = ExcludeDirectoriesVariableName;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"{OptionVariableName}.{nameof(CommandOptionsBase.ExcludeDirectories)}");
-                        })
-
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = OverwriteVariableName;
-                            step.ValueExpression = new JavaScriptExpression<bool>($"!{OptionVariableName}.{nameof(CommandOptionsBase.NoOverwrite)}");
-                        });
-
-                return ConfigureBuild(option, activityBuilder).Build();
-            });
+            await RunWorkflow(builder => CreateWorkflow(builder, option));
         }
 
-        protected virtual IActivityBuilder ConfigureBuild(TOption option, IActivityBuilder activityBuilder)
+        protected virtual WorkflowDefinitionVersion CreateWorkflow(IWorkflowBuilder builder, TOption option)
+        {
+            var activityBuilder = CreateBasicWorkflow(builder, option);
+
+            return ConfigureBuild(activityBuilder, option).Build();
+        }
+
+        protected virtual IActivityBuilder CreateBasicWorkflow(IWorkflowBuilder builder, TOption option)
+        {
+            return builder.StartWith<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = OptionVariableName;
+                        step.ValueExpression = new JavaScriptExpression<TOption>($"({option.ToJson()})");
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = BaseDirectoryVariableName;
+                        step.ValueExpression = new LiteralExpression(option.Directory);
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = ExcludeDirectoriesVariableName;
+                        step.ValueExpression =
+                            new JavaScriptExpression<string[]>(
+                                $"{OptionVariableName}.{nameof(CommandOptionsBase.ExcludeDirectories)}");
+                    })
+                .Then<SetVariable>(
+                    step =>
+                    {
+                        step.VariableName = OverwriteVariableName;
+                        step.ValueExpression =
+                            new JavaScriptExpression<bool>(
+                                $"!{OptionVariableName}.{nameof(CommandOptionsBase.NoOverwrite)}");
+                    });
+        }
+
+        protected virtual IActivityBuilder ConfigureBuild(IActivityBuilder activityBuilder, TOption option)
         {
             return activityBuilder;
         }

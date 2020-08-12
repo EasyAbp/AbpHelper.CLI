@@ -32,10 +32,9 @@ namespace EasyAbp.AbpHelper.Commands
             return base.RunCommand(option);
         }
 
-        protected override IActivityBuilder ConfigureBuild(MethodsCommandOption option,
-            IActivityBuilder activityBuilder)
+        protected override IActivityBuilder ConfigureBuild(IActivityBuilder activityBuilder, MethodsCommandOption option)
         {
-            return base.ConfigureBuild(option, activityBuilder)
+            return base.ConfigureBuild(activityBuilder, option)
                 .Then<SetVariable>(
                     step =>
                     {
