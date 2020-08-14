@@ -1,8 +1,11 @@
 
         public {{ EntityInfo.Name }}(
-            {{- if EntityInfo.PrimaryKey }}{{ EntityInfo.PrimaryKey }} id, {{ end -}}
+            {{~ if EntityInfo.PrimaryKey ~}}
+            {{ EntityInfo.PrimaryKey }} id
+            {{- end -}}
             {{- for prop in EntityInfo.Properties -}}
-            {{ prop.Type }} {{ prop.Name | abp.camel_case }}{{ if !for.last }}, {{ end }}
+            {{- if !for.first || EntityInfo.PrimaryKey ~}},{{- end ~}}
+            {{~ prop.Type }} {{ prop.Name | abp.camel_case }}
             {{- end -}}
         ){{ if EntityInfo.PrimaryKey }} : base(id){{ end }}
         {
