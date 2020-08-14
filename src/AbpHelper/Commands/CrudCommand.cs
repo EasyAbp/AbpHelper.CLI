@@ -10,6 +10,7 @@ using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 using System;
 using System.Linq;
+using EasyAbp.AbpHelper.Workflow;
 
 namespace EasyAbp.AbpHelper.Commands
 {
@@ -74,11 +75,11 @@ namespace EasyAbp.AbpHelper.Commands
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
-                            .AddLocalizationGenerationWorkflow("LocalizationGeneration")
-                            .Then("Ui")
+                            .AddLocalizationGenerationWorkflow()
+                            .Then(ActivityNames.Ui)
                             ;
                         ifElse.When(OutcomeNames.True)
-                            .Then("Ui")
+                            .Then(ActivityNames.Ui)
                             ;
                     })
                 .Then<IfElse>(
@@ -114,7 +115,7 @@ namespace EasyAbp.AbpHelper.Commands
                             .Then(TestGeneration)
                             ;
                     }
-                ).WithName("Ui")
+                ).WithName(ActivityNames.Ui)
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipTest)}"),
                     ifElse =>

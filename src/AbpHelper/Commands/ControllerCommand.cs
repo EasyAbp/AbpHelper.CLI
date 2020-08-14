@@ -9,6 +9,7 @@ using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 using System;
+using EasyAbp.AbpHelper.Workflow;
 
 namespace EasyAbp.AbpHelper.Commands
 {
@@ -38,15 +39,15 @@ namespace EasyAbp.AbpHelper.Commands
                                 step => step.Command = new JavaScriptExpression<string>(
                                     @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.Application && dotnet build`"
                                 ))
-                            .Then("SearchServiceInterface")
+                            .Then(ActivityNames.SearchServiceInterface)
                             ;
                         ifElse.When(OutcomeNames.True)
-                            .Then("SearchServiceInterface")
+                            .Then(ActivityNames.SearchServiceInterface)
                             ;
                     })
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
-                ).WithName("SearchServiceInterface")
+                ).WithName(ActivityNames.SearchServiceInterface)
                 .Then<InterfaceParserStep>()
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
@@ -72,7 +73,7 @@ namespace EasyAbp.AbpHelper.Commands
                                     step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}Controller.cs`");
                                     step.ErrorIfNotFound = new JavaScriptExpression<bool>("false");
                                 }
-                            ).WithName("SearchController")
+                            ).WithName(ActivityNames.SearchController)
                             .Then<IfElse>(
                                 step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult != null"),
                                 found =>

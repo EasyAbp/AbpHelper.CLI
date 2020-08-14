@@ -28,7 +28,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         {
                             ifElse
                                 .When(OutcomeNames.True)
-                                .Then("AutoMapper")
+                                .Then(ActivityNames.AutoMapper)
                                 ;
                             ifElse
                                 .When(OutcomeNames.False)
@@ -40,12 +40,12 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                     step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}PermissionDefinitionProvider.cs`"); })
                                 .Then<PermissionDefinitionProviderStep>()
                                 .Then<FileModifierStep>()
-                                .Then("AutoMapper")
+                                .Then(ActivityNames.AutoMapper)
                                 ;
                         }
                     )
                     /* Add mapping */
-                    .Then<FileFinderStep>(step => step.SearchFileName = new LiteralExpression("*ApplicationAutoMapperProfile.cs")).WithName("AutoMapper")
+                    .Then<FileFinderStep>(step => step.SearchFileName = new LiteralExpression("*ApplicationAutoMapperProfile.cs")).WithName(ActivityNames.AutoMapper)
                     .Then<ApplicationAutoMapperProfileStep>()
                     .Then<FileModifierStep>()
                 ;

@@ -33,7 +33,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                         step.VariableName = "ModuleMigrationProjectName";
                                         step.ValueExpression = new LiteralExpression("*.HttpApi.Host.csproj");
                                     })
-                                .Then("SearchFiles")
+                                .Then(ActivityNames.SearchFiles)
                                 ;
                             ifElse
                                 .When(OutcomeNames.False)
@@ -49,7 +49,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                         step.VariableName = "ModuleMigrationProjectName";
                                         step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOptions.MigrationProjectName)}");
                                     })
-                                .Then("SearchFiles")
+                                .Then(ActivityNames.SearchFiles)
                                 ;
                         }
                     )
@@ -80,7 +80,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                                     step.SearchFileName = new LiteralExpression("*.Web.csproj");
                                                     step.ResultVariableName = new LiteralExpression<string>("StartupProjectFile");
                                                 })
-                                            .Then("RunMigration")
+                                            .Then(ActivityNames.RunMigration)
                                             ;
                                     })
                                 .Then<IfElse>(
@@ -95,7 +95,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                                     step.SearchFileName = new LiteralExpression("*.DbMigrator.csproj");
                                                     step.ResultVariableName = new LiteralExpression<string>("StartupProjectFile");
                                                 })
-                                            .Then("RunMigration")
+                                            .Then(ActivityNames.RunMigration)
                                             ;
                                     });
                             // Module
@@ -115,14 +115,14 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                         step.ResultVariableName = new LiteralExpression<string>("StartupProjectFile");
                                     }
                                 )
-                                .Then("RunMigration")
+                                .Then(ActivityNames.RunMigration)
                                 ;
                         }
-                    ).WithName("SearchFiles")
+                    ).WithName(ActivityNames.SearchFiles)
                     /* Add migration */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add Added${EntityInfo.Name} -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\"`")
-                    ).WithName("RunMigration")
+                    ).WithName(ActivityNames.RunMigration)
                     /* Update database */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>("`dotnet ef database update -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\"`")

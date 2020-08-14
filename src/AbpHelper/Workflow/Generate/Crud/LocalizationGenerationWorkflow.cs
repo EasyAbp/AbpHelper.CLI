@@ -11,13 +11,13 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
     public static class LocalizationGenerationWorkflow
     {
-        public static IActivityBuilder AddLocalizationGenerationWorkflow(this IOutcomeBuilder builder, string name)
+        public static IActivityBuilder AddLocalizationGenerationWorkflow(this IOutcomeBuilder builder)
         {
             return builder
                     /* Add localization */
                     .Then<TextGenerationStep>(
                         step => { step.TemplateName = "Localization"; }
-                    ).WithName("LocalizationGeneration")
+                    ).WithName(ActivityNames.LocalizationGeneration)
                     .Then<MultiFileFinderStep>(
                         step =>
                         {
