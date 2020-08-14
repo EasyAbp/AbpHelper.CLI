@@ -28,15 +28,15 @@ namespace EasyAbp.AbpHelper.Generator
         public static string GetHttpVerb(MethodInfo method)
         {
             var verbs = HttpMethodHelper.ConventionalPrefixes.Keys.Select(prefix => $"Http{prefix}").ToList();
-            var definedVerb = method.Attributes.FirstOrDefault(attr => verbs.Contains(attr, StringComparer.InvariantCultureIgnoreCase));
-            if (definedVerb == null)
+            var verb = method.Attributes.FirstOrDefault(attr => verbs.Contains(attr, StringComparer.InvariantCultureIgnoreCase));
+            if (verb == null)
             {
-                var verb = HttpMethodHelper.GetConventionalVerbForMethodName(method.Name);
+                verb = HttpMethodHelper.GetConventionalVerbForMethodName(method.Name);
                 return $"Http{Char.ToUpper(verb[0])}{verb.Substring(1).ToLower()}";
             }
             else
             {
-                return String.Empty;
+                return verb;
             }
         }
 
