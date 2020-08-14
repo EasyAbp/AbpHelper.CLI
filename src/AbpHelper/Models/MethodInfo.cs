@@ -14,6 +14,8 @@ namespace EasyAbp.AbpHelper.Models
         public string Name { get; }
 
         public List<ParameterInfo> Parameters { get; } = new List<ParameterInfo>();
+        
+        public List<string> Attributes { get; } = new List<string>();
 
         public MethodInfo(string accessor, string returnType, string fullReturnType, string name)
         {

@@ -19,15 +19,15 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
             set => SetState(value);
         }
 
-        protected override IEnumerable<MethodInfo> GetMethodInfos(INamedTypeSymbol symbol)
+        protected override IEnumerable<MethodInfo> GetMethodInfos(InterfaceDeclarationSyntax typeDeclarationSyntax, INamedTypeSymbol typeSymbol)
         {
-            return symbol
+            return typeSymbol
                     .AllInterfaces
-                    .Add(symbol)
+                    .Add(typeSymbol)
                     .SelectMany(type => type.GetMembers())
                     .Where(type => type.Kind == SymbolKind.Method)
                     .Cast<IMethodSymbol>()
-                    .Select(SymbolExtensions.ToMethodInfo)
+                    .Select(GetMethodInfoFromSymbol)
                 ;
         }
     }

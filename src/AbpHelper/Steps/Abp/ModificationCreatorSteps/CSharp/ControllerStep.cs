@@ -18,13 +18,19 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
         {
-            var interfaceInfo = context.GetVariable<TypeInfo>("InterfaceInfo");
+            var serviceInterfaceInfo = context.GetVariable<TypeInfo>("InterfaceInfo");
+            var serviceClassInfo = context.GetVariable<TypeInfo>("ClassInfo");
             var controllerInfo = context.GetVariable<TypeInfo>("ControllerInfo");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
 
             // Generate added methods
             var modifications = new List<ModificationBuilder<CSharpSyntaxNode>>();
-            var addedMethods = interfaceInfo.Methods.Except(controllerInfo.Methods);
+            var addedMethods = serviceClassInfo.Methods
+                .Except(controllerInfo.Methods)                  // Except the existing controller methods
+                .Intersect(serviceInterfaceInfo.Methods)        // Only methods defined in the interface need to generate
+                                                                // Why not just use the `serviceInterfaceInfo.Methods`? Because we need use attributes info
+                                                                // which only defined in the service class
+                ;
             foreach (var method in addedMethods)
             {
                 var model = new {method};

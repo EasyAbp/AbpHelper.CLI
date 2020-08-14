@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
@@ -33,7 +34,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
             set;
         }
 
-        protected abstract IEnumerable<MethodInfo> GetMethodInfos(INamedTypeSymbol symbol);
+        protected abstract IEnumerable<MethodInfo> GetMethodInfos(TType typeDeclarationSyntax, INamedTypeSymbol typeSymbol);
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
         {
@@ -79,8 +80,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
                 var typeName = typeDeclarationSyntax.Identifier.ToString();
                 var attributes = typeDeclarationSyntax.Descendants<AttributeListSyntax>().Select(attr => attr.ToString());
                 var model = compilation.GetSemanticModel(tree);
-                var symbol = model.GetDeclaredSymbol(typeDeclarationSyntax)!;
-                var methods = GetMethodInfos(symbol);
+                var typeSymbol = model.GetDeclaredSymbol(typeDeclarationSyntax)!;
+                var methods = GetMethodInfos(typeDeclarationSyntax, typeSymbol);
                 
                 var typeInfo = new TypeInfo(@namespace, typeName, relativeDirectory);
                 typeInfo.Usings.AddRange(usings);
@@ -101,6 +102,32 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
                         Logger.LogError(error);
                 throw;
             }
+        }
+        
+        
+        protected MethodInfo GetMethodInfoFromSymbol(IMethodSymbol symbol)
+        {
+            var methodInfo = new MethodInfo(
+                symbol.DeclaredAccessibility.ToString().ToLower(),
+                symbol.ReturnType.ToMinimalQualifiedName(),
+                symbol.ReturnType.ToDisplayString(),
+                symbol.Name
+            );
+            methodInfo.Parameters.AddRange(
+                symbol.Parameters
+                    .Select(ps => new ParameterInfo(
+                        ps.Type.ToMinimalQualifiedName(),
+                        ps.Type.ToDisplayString(),
+                        ps.Name)
+                    )
+            ); 
+
+            methodInfo.Attributes.AddRange(
+                symbol.GetAttributes()
+                    .Where(attr => attr.AttributeClass?.Name != nameof(AsyncStateMachineAttribute))
+                    .Select(attr => attr.ToString()!)
+            );
+            return methodInfo;
         }
     }
 }
