@@ -112,7 +112,7 @@ namespace EasyAbp.AbpHelper.Commands
             }
             else
             {
-                Logger.LogError(ctx.CurrentActivity.State.ToString());
+                Logger.LogError("Error activity: " + ctx.CurrentActivity.State);
             }
         }
 
