@@ -25,10 +25,19 @@ namespace EasyAbp.AbpHelper.Generator
             return false;
         }
 
-        public static string GetHttpVerb(string methodName)
+        public static string GetHttpVerb(MethodInfo method)
         {
-            string verb = HttpMethodHelper.GetConventionalVerbForMethodName(methodName);
-            return $"Http{Char.ToUpper(verb[0])}{verb.Substring(1).ToLower()}";
+            var verbs = HttpMethodHelper.ConventionalPrefixes.Keys.Select(prefix => $"Http{prefix}").ToList();
+            var definedVerb = method.Attributes.FirstOrDefault(attr => verbs.Contains(attr, StringComparer.InvariantCultureIgnoreCase));
+            if (definedVerb == null)
+            {
+                var verb = HttpMethodHelper.GetConventionalVerbForMethodName(method.Name);
+                return $"Http{Char.ToUpper(verb[0])}{verb.Substring(1).ToLower()}";
+            }
+            else
+            {
+                return String.Empty;
+            }
         }
 
         /// <summary>

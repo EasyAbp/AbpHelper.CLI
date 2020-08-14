@@ -1,9 +1,12 @@
 ﻿{{~ route = method | abp.get_route ~}}
+{{~ defined_http_verb = method | abp.get_http_verb ~}}
 
         {{~ for attribute in method.Attributes ~}}
         [{{ attribute }}]
         {{~ end ~}}
-        [{{ method.Name | abp.get_http_verb }}]
+        {{~ if defined_http_verb != "" ~}}
+        [{{ defined_http_verb }}]
+        {{~ end ~}}
         {{~ if route ~}}
         [Route("{{ method | abp.get_route }}")]
         {{~ end ~}}
