@@ -4,10 +4,11 @@
             {{ EntityInfo.PrimaryKey }} id
             {{- end -}}
             {{- for prop in EntityInfo.Properties -}}
-            {{- if !for.first || EntityInfo.PrimaryKey ~}},{{- end ~}}
-            {{~ prop.Type }} {{ prop.Name | abp.camel_case }}
-            {{- end -}}
-        ){{ if EntityInfo.PrimaryKey }} : base(id){{ end }}
+            {{- if EntityInfo.PrimaryKey }}, {{ end }}
+            {{ prop.Type }} {{ prop.Name | abp.camel_case }}
+            {{- if for.last; "\r\n"; else; ; end -}}
+            {{- end ~}}
+        ){{ if EntityInfo.PrimaryKey }} : base(id){{~ end }}
         {
             {{~ for prop in EntityInfo.Properties ~}}
             {{ prop.Name }} = {{ prop.Name | abp.camel_case }};
