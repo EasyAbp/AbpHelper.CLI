@@ -7,6 +7,7 @@ using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 using System;
 using System.Threading.Tasks;
+using Humanizer;
 
 namespace EasyAbp.AbpHelper.Commands
 {
@@ -19,6 +20,10 @@ namespace EasyAbp.AbpHelper.Commands
 
         protected override Task RunCommand(ServiceCommandOption option)
         {
+            if (option.Folder.IsNullOrEmpty())
+            {
+                option.Folder = option.Name.Pluralize();
+            }
             option.Folder = option.Folder.NormalizePath();
             return base.RunCommand(option);
         }
