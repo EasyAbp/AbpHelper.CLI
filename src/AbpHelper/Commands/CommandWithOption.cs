@@ -15,6 +15,7 @@ using Elsa.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Serilog;
 
 namespace EasyAbp.AbpHelper.Commands
 {
@@ -108,6 +109,10 @@ namespace EasyAbp.AbpHelper.Commands
             if (ctx.Workflow.Status == WorkflowStatus.Finished)
             {
                 Logger.LogInformation($"Command '{Name}' finished successfully.");
+            }
+            else
+            {
+                Logger.LogError(ctx.CurrentActivity.State.ToString());
             }
         }
 
