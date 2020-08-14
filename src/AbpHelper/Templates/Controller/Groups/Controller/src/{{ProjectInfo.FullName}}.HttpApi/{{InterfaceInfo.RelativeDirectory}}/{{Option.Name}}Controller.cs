@@ -11,10 +11,14 @@ using Volo.Abp;
 
 namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }}
 {
-    {{~ for attribute in InterfaceInfo.Attributes}}
-    attribute
+    {{~ for attribute in ClassInfo.Attributes ~}}
+    {{~ if attribute | string.starts_with "[RemoteService"; defined_remote_service = attribute; end ~}}
     {{~ end ~}}
+    {{~ if defined_remote_service ~}}
+    {{ defined_remote_service }}
+    {{~ else ~}}
     [RemoteService(Name = "{{ ProjectInfo.Name }}{{ Option.Name }}")]
+    {{~ end ~}}
     {{~ if ProjectInfo.TemplateType == 'Application' ~}}
     [Route("/api/app/{{ Option.Name | abp.camel_case }}")]
     {{~ else if ProjectInfo.TemplateType == 'Module' ~}}
