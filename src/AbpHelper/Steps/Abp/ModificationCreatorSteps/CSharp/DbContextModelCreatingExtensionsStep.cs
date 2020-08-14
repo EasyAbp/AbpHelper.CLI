@@ -12,7 +12,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
     public class DbContextModelCreatingExtensionsStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var model = context.GetVariable<object>("Model");
             var entityUsingText = context.GetVariable<string>("EntityUsingText");

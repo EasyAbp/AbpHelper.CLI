@@ -12,7 +12,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
     public class AppServiceClassStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>("TemplateDirectory");

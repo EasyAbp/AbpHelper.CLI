@@ -16,7 +16,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         {
         }
 
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var serviceInterfaceInfo = context.GetVariable<TypeInfo>("InterfaceInfo");
             var serviceClassInfo = context.GetVariable<TypeInfo>("ClassInfo");

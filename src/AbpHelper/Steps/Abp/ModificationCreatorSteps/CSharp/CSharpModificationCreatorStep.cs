@@ -11,6 +11,7 @@ using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
@@ -38,7 +39,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             var tree = CSharpSyntaxTree.ParseText(sourceText);
             var root = tree.GetCompilationUnitRoot();
 
-            var builders = CreateModifications(context);
+            var builders = CreateModifications(context, root);
             var modifications = builders
                     .Where(builder => builder.ModifyCondition(root))
                     .Select(builder => builder.Build(root))
@@ -52,6 +53,6 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             return Done();
         }
 
-        protected abstract IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context);
+        protected abstract IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit);
     }
 }

@@ -12,11 +12,16 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
     public class PermissionDefinitionProviderStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-            var model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string groupName = rootUnit.Descendants<LocalDeclarationStatementSyntax>()
+                .Single(stat => stat.ToFullString().Contains("context.AddGroup"))
+                .Descendants<VariableDeclarationSyntax>().Single()
+                .Variables[0].Identifier.Text;
+            var model = context.GetVariable<dynamic>("Model");
+            model.Bag.groupName = groupName;
             string permissionDefinitionsText = TextGenerator.GenerateByTemplateName(templateDir, "Permissions_Definitions", model);
 
             var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
