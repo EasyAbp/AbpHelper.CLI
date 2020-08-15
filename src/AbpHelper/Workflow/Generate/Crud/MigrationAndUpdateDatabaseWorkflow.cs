@@ -10,8 +10,8 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
         public static IActivityBuilder AddMigrationAndUpdateDatabaseWorkflow(this IOutcomeBuilder builder)
         {
             return builder
-                    .Then<ToActivityBuilder>()
-                    .AddConfigureMigrationProjectsWorkflow()
+                    .Then<EmptyStep>()
+                    .AddConfigureMigrationProjectsWorkflow(ActivityNames.RunMigration)
                     /* Add migration */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add Added${EntityInfo.Name} -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\"`")

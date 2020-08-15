@@ -1,5 +1,10 @@
 ﻿using System;
+using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Workflow;
 using EasyAbp.AbpHelper.Workflow.Common;
+using Elsa.Activities.Console.Activities;
+using Elsa.Expressions;
+using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 
 namespace EasyAbp.AbpHelper.Commands.Ef.Migrations.Add
@@ -16,7 +21,10 @@ except providing the default value for the `--project` and `--startup-project` o
         protected override IActivityBuilder ConfigureBuild(AddCommandOption option, IActivityBuilder activityBuilder)
         {
             return base.ConfigureBuild(option, activityBuilder)
-                    .AddConfigureMigrationProjectsWorkflow()
+                    .AddConfigureMigrationProjectsWorkflow(ActivityNames.RunMigration)
+                    .Then<RunCommandStep>(
+                        step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add ${Option.Name} -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\"`")
+                    ).WithName(ActivityNames.RunMigration)
                 ;
         }
     }

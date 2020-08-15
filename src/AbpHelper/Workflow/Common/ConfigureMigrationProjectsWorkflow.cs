@@ -18,7 +18,7 @@ namespace EasyAbp.AbpHelper.Workflow.Common
         private const string ModuleMigrationProjectName = nameof(ModuleMigrationProjectName);
         private const string AppMigrationProjectName = nameof(AppMigrationProjectName);
 
-        public static IActivityBuilder AddConfigureMigrationProjectsWorkflow(this IActivityBuilder builder)
+        public static IActivityBuilder AddConfigureMigrationProjectsWorkflow(this IActivityBuilder builder, string nextActivityName)
         {
             return builder
                     .Then<IfElse>(
@@ -26,7 +26,7 @@ namespace EasyAbp.AbpHelper.Workflow.Common
                         ifElse =>
                         {
                             ifElse
-                                .When(OutcomeNames.True)
+                                .When(OutcomeNames.True)    // No migration project name provided
                                 .Then<SetVariable>(
                                     step =>
                                     {
@@ -86,7 +86,7 @@ namespace EasyAbp.AbpHelper.Workflow.Common
                                                     step.SearchFileName = new LiteralExpression("*.Web.csproj");
                                                     step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
                                                 })
-                                            .Then(ActivityNames.RunMigration)
+                                            .Then(nextActivityName)
                                             ;
                                     })
                                 .Then<IfElse>(
@@ -101,7 +101,7 @@ namespace EasyAbp.AbpHelper.Workflow.Common
                                                     step.SearchFileName = new LiteralExpression("*.DbMigrator.csproj");
                                                     step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
                                                 })
-                                            .Then(ActivityNames.RunMigration)
+                                            .Then(nextActivityName)
                                             ;
                                     });
                             // Module
@@ -121,7 +121,7 @@ namespace EasyAbp.AbpHelper.Workflow.Common
                                         step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
                                     }
                                 )
-                                .Then(ActivityNames.RunMigration)
+                                .Then(nextActivityName)
                                 ;
                         }
                     ).WithName(ActivityNames.SearchFiles)

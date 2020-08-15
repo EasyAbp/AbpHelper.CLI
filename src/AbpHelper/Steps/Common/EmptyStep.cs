@@ -5,10 +5,9 @@ namespace EasyAbp.AbpHelper.Steps.Common
 {
     /// <summary>
     /// This is an empty step.
-    /// It can convert `IOutcomeBuilder` to `IActivityBuilder` when writing fluent steps in a workflow,
-    /// which is useful when writing extension workflow methods
+    /// It can be used as a label, or it can convert `IOutcomeBuilder` to `IActivityBuilder` when writing fluent steps in a workflow,
     /// </summary>
-    public class ToActivityBuilder : Step
+    public class EmptyStep : Step
     {
         protected override ActivityExecutionResult OnExecute(WorkflowExecutionContext context)
         {

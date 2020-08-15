@@ -17,7 +17,6 @@ using Elsa.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Serilog;
 
 namespace EasyAbp.AbpHelper.Commands
 {
