@@ -144,7 +144,7 @@ namespace EasyAbp.AbpHelper.Commands
                         {
                             ArgumentType = propertyInfo.PropertyType,
                         },
-                        Required = optionAttribute.Required
+                        IsRequired = optionAttribute.Required
                     });
 
                     continue;
