@@ -21,7 +21,7 @@ except providing the default value for the `--project` and `--startup-project` o
 
         protected override IActivityBuilder ConfigureBuild(AddCommandOption option, IActivityBuilder activityBuilder)
         {
-            string efOptions = string.Join(" ", option.EfOptions);
+            string efOptions = option.EfOptions == null ? String.Empty : string.Join(" ", option.EfOptions);
             return base.ConfigureBuild(option, activityBuilder)
                     .Then<SetVariable>(step =>
                     {
@@ -31,7 +31,7 @@ except providing the default value for the `--project` and `--startup-project` o
                     })
                     .AddConfigureMigrationProjectsWorkflow(ActivityNames.RunMigration)
                     .Then<RunCommandStep>(
-                        step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add ${Option.Name} -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\" ${EfOptions}`")
+                        step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add ${Option.Name} -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\" ${EfOptions || ''}`")
                     ).WithName(ActivityNames.RunMigration)
                 ;
         }
