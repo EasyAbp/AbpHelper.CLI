@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Attributes;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Services;
+using EasyAbp.AbpHelper.Steps.Abp;
 using Elsa.Activities;
 using Elsa.Expressions;
 using Elsa.Models;
@@ -65,13 +66,14 @@ namespace EasyAbp.AbpHelper.Commands
                             step.VariableName = ExcludeDirectoriesVariableName;
                             step.ValueExpression = new JavaScriptExpression<string[]>($"{OptionVariableName}.{nameof(CommandOptionsBase.ExcludeDirectories)}");
                         })
-
                     .Then<SetVariable>(
                         step =>
                         {
                             step.VariableName = OverwriteVariableName;
                             step.ValueExpression = new JavaScriptExpression<bool>($"!{OptionVariableName}.{nameof(CommandOptionsBase.NoOverwrite)}");
-                        });
+                        })
+                    .Then<ProjectInfoProviderStep>()
+                    ;
 
                 return ConfigureBuild(option, activityBuilder).Build();
             });

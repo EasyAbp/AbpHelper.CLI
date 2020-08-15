@@ -27,7 +27,6 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Localization
                         step.VariableName = "TemplateDirectory";
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Localization");
                     })
-                .Then<ProjectInfoProviderStep>()
                 .Then<SetModelVariableStep>()
                 /* Add localization */
                 .Then<TextGenerationStep>(

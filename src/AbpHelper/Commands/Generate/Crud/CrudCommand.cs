@@ -35,7 +35,6 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                         step.VariableName = "TemplateDirectory";
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Crud");
                     })
-                .Then<ProjectInfoProviderStep>()
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new LiteralExpression(entityFileName); })
                 .Then<EntityParserStep>()

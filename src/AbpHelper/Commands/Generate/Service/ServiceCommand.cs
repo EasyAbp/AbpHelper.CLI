@@ -37,7 +37,6 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Service
                         step.VariableName = "TemplateDirectory";
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Service");
                     })
-                .Then<ProjectInfoProviderStep>()
                 .Then<SetModelVariableStep>()
                 .Then<GroupGenerationStep>(
                     step =>

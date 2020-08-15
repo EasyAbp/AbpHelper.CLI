@@ -29,7 +29,6 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Controller
                         step.VariableName = "TemplateDirectory";
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Controller");
                     })
-                .Then<ProjectInfoProviderStep>()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(ControllerCommandOption.SkipBuild)}"),
                     ifElse =>
