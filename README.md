@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
 [![NuGet Download](https://img.shields.io/nuget/dt/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
 
-AbpHelper provides code generation and more features to help you develop applications and modules with the [ABP framework](https://abp.io).
+Providing code generation and more features to help you develop applications and modules with the [ABP framework](https://abp.io).
 
 **Make sure to backup your source files before using it!**
 
