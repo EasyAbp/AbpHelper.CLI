@@ -11,11 +11,6 @@ using Volo.Abp.DependencyInjection;
 
 namespace EasyAbp.AbpHelper.Services
 {
-    public interface ICheckUpdateService
-    {
-        Task CheckUpdate();
-    }
-
     public class CheckUpdateService : ICheckUpdateService, ITransientDependency
     {
         private const string RepoUrl = "https://api.nuget.org/v3/index.json";
