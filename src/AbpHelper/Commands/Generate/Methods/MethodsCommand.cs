@@ -1,4 +1,7 @@
-﻿using EasyAbp.AbpHelper.Steps.Abp;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
@@ -8,11 +11,8 @@ using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace EasyAbp.AbpHelper.Commands.Generate.Methods
 {
     public class MethodsCommand : CommandWithOption<MethodsCommandOption>
     {

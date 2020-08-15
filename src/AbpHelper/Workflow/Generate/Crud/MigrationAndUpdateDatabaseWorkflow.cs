@@ -1,4 +1,5 @@
 ﻿using EasyAbp.AbpHelper.Commands;
+using EasyAbp.AbpHelper.Commands.Generate.Crud;
 using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;

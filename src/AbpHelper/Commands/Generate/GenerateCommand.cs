@@ -1,7 +1,12 @@
 ﻿
 using System;
+using EasyAbp.AbpHelper.Commands.Generate.Controller;
+using EasyAbp.AbpHelper.Commands.Generate.Crud;
+using EasyAbp.AbpHelper.Commands.Generate.Localization;
+using EasyAbp.AbpHelper.Commands.Generate.Methods;
+using EasyAbp.AbpHelper.Commands.Generate.Service;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace EasyAbp.AbpHelper.Commands.Generate
 {
     public class GenerateCommand : CommandBase
     {

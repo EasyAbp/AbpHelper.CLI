@@ -1,6 +1,9 @@
-﻿using EasyAbp.AbpHelper.Models;
+﻿using System;
+using System.Linq;
+using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Workflow;
 using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
 using Elsa.Activities;
@@ -8,11 +11,8 @@ using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
-using System;
-using System.Linq;
-using EasyAbp.AbpHelper.Workflow;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace EasyAbp.AbpHelper.Commands.Generate.Crud
 {
     public class CrudCommand : CommandWithOption<CrudCommandOptions>
     {

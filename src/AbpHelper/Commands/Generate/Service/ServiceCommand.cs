@@ -1,15 +1,15 @@
-﻿using EasyAbp.AbpHelper.Extensions;
+﻿using System;
+using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
-using System;
-using System.Threading.Tasks;
 using Humanizer;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace EasyAbp.AbpHelper.Commands.Generate.Service
 {
     public class ServiceCommand : CommandWithOption<ServiceCommandOption>
     {

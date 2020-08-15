@@ -1,6 +1,6 @@
 ﻿using EasyAbp.AbpHelper.Attributes;
 
-namespace EasyAbp.AbpHelper.Commands
+namespace EasyAbp.AbpHelper.Commands.Generate.Localization
 {
     public class LocalizationCommandOption : CommandOptionsBase
     {

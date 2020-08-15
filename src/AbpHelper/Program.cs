@@ -2,6 +2,7 @@
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Commands;
+using EasyAbp.AbpHelper.Commands.Generate;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
