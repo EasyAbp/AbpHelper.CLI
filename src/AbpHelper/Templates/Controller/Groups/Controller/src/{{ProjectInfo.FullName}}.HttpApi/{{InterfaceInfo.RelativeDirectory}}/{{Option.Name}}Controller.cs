@@ -1,8 +1,9 @@
 {{~ for using in InterfaceInfo.Usings ~}}
-{{~ if using != "Volo.Abp.Application.Services" ~}}
+{{~ if using != "Volo.Abp.Application.Services" && using != "System.Threading.Tasks" ~}}
 using {{ using }};
 {{~ end ~}}
 {{~ end ~}}
+using System.Threading.Tasks;
 {{~ if ProjectInfo.TemplateType == 'Application' ~}}
 using {{ ProjectInfo.FullName }}.Controllers;
 {{~ end ~}}

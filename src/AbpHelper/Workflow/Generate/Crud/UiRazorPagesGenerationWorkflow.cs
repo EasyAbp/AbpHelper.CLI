@@ -45,6 +45,12 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                             step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
                         }
                     ).WithName(ActivityNames.UiRazor)
+                    /* Add menu name */
+                    .Then<FileFinderStep>(
+                        step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}Menus.cs`")
+                    )
+                    .Then<MenuNameStep>()
+                    .Then<FileModifierStep>() 
                     /* Add menu */
                     .Then<FileFinderStep>(
                         step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MenuContributor.cs`")

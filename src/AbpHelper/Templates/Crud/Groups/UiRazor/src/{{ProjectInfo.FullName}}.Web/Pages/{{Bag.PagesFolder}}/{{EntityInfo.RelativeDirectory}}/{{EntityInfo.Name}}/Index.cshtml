@@ -8,6 +8,7 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
 @using {{ ProjectInfo.FullName }}.Localization
+@using {{ ProjectInfo.FullName }}.Web.Menus
 @model IndexModel
 @inject IPageLayout PageLayout
 @inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
@@ -18,7 +19,7 @@
 @{
     PageLayout.Content.Title = L["{{ EntityInfo.Name }}"].Value;
     PageLayout.Content.BreadCrumb.Add(L["Menu:{{ EntityInfo.Name }}"].Value);
-    PageLayout.Content.MenuItemName = "{{ EntityInfo.Name }}";
+    PageLayout.Content.MenuItemName = {{ ProjectInfo.Name }}Menus.{{ EntityInfo.Name }};
 }
 
 @section scripts
@@ -39,7 +40,7 @@
             <abp-column size-md="_6" class="text-right">
 {{~ if !Option.SkipPermissions ~}}
 			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Create))
-                { 
+                {
 {{~ end ~}}
                 <abp-button id="New{{ EntityInfo.Name }}Button"
                             text="@L["Create{{ EntityInfo.Name }}"].Value"
@@ -57,7 +58,7 @@
             <tr>
                 <th>@L["Actions"]</th>
                 {{~ for prop in EntityInfo.Properties ~}}
-                {{~ if prop | abp.is_ignore_property; continue; end ~}} 
+                {{~ if prop | abp.is_ignore_property; continue; end ~}}
                 <th>@L["{{ EntityInfo.Name + prop.Name }}"]</th>
                 {{~ end ~}}
             </tr>
