@@ -9,13 +9,13 @@
     <Copyright>EasyAbp Team</Copyright>
     <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
-    <PackageVersion>0.5.0</PackageVersion>
+    <PackageVersion>0.5.1</PackageVersion>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>abphelper</ToolCommandName>
     <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
     <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
-    <AssemblyVersion>0.4.9</AssemblyVersion>
-    <FileVersion>0.4.9</FileVersion>
+    <AssemblyVersion>0.5.1</AssemblyVersion>
+    <FileVersion>0.5.1</FileVersion>
     <Authors>EasyAbp Team</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>abp helper generator</PackageTags>
@@ -47,6 +47,6 @@
   
   <PropertyGroup>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <Version>0.4.9</Version>
+    <Version>0.5.1</Version>
   </PropertyGroup>
 </Project>
