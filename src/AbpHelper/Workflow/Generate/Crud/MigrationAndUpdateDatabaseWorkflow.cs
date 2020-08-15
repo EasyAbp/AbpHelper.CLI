@@ -12,6 +12,11 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
     public static class MigrationAndUpdateDatabaseWorkflow
     {
+        private const string StartupProjectFile = nameof(StartupProjectFile);
+        private const string MigrationProjectFile = nameof(MigrationProjectFile);
+        private const string ModuleMigrationProjectName = nameof(ModuleMigrationProjectName);
+        private const string AppMigrationProjectName = nameof(AppMigrationProjectName);
+
         public static IActivityBuilder AddMigrationAndUpdateDatabaseWorkflow(this IOutcomeBuilder builder)
         {
             return builder
@@ -24,13 +29,13 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                 .Then<SetVariable>(
                                     step =>
                                     {
-                                        step.VariableName = "AppMigrationProjectName";
+                                        step.VariableName = AppMigrationProjectName;
                                         step.ValueExpression = new LiteralExpression("*.EntityFrameworkCore.DbMigrations.csproj");
                                     })
                                 .Then<SetVariable>(
                                     step =>
                                     {
-                                        step.VariableName = "ModuleMigrationProjectName";
+                                        step.VariableName = ModuleMigrationProjectName;
                                         step.ValueExpression = new LiteralExpression("*.HttpApi.Host.csproj");
                                     })
                                 .Then(ActivityNames.SearchFiles)
@@ -40,13 +45,13 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                 .Then<SetVariable>(
                                     step =>
                                     {
-                                        step.VariableName = "AppMigrationProjectName";
+                                        step.VariableName = AppMigrationProjectName;
                                         step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOptions.MigrationProjectName)}");
                                     })
                                 .Then<SetVariable>(
                                     step =>
                                     {
-                                        step.VariableName = "ModuleMigrationProjectName";
+                                        step.VariableName = ModuleMigrationProjectName;
                                         step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOptions.MigrationProjectName)}");
                                     })
                                 .Then(ActivityNames.SearchFiles)
@@ -64,8 +69,8 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                 .Then<FileFinderStep>(
                                     step =>
                                     {
-                                        step.SearchFileName = new JavaScriptExpression<string>("AppMigrationProjectName");
-                                        step.ResultVariableName = new LiteralExpression("MigrationProjectFile");
+                                        step.SearchFileName = new JavaScriptExpression<string>(AppMigrationProjectName);
+                                        step.ResultVariableName = new LiteralExpression(MigrationProjectFile);
                                     }
                                 )
                                 .Then<IfElse>(
@@ -78,7 +83,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                                 step =>
                                                 {
                                                     step.SearchFileName = new LiteralExpression("*.Web.csproj");
-                                                    step.ResultVariableName = new LiteralExpression<string>("StartupProjectFile");
+                                                    step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
                                                 })
                                             .Then(ActivityNames.RunMigration)
                                             ;
@@ -93,7 +98,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                                 step =>
                                                 {
                                                     step.SearchFileName = new LiteralExpression("*.DbMigrator.csproj");
-                                                    step.ResultVariableName = new LiteralExpression<string>("StartupProjectFile");
+                                                    step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
                                                 })
                                             .Then(ActivityNames.RunMigration)
                                             ;
@@ -104,15 +109,15 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                 .Then<FileFinderStep>(
                                     step =>
                                     {
-                                        step.SearchFileName = new JavaScriptExpression<string>("ModuleMigrationProjectName");
-                                        step.ResultVariableName = new LiteralExpression("MigrationProjectFile");
+                                        step.SearchFileName = new JavaScriptExpression<string>(ModuleMigrationProjectName);
+                                        step.ResultVariableName = new LiteralExpression(MigrationProjectFile);
                                     }
                                 )
                                 .Then<FileFinderStep>(
                                     step =>
                                     {
-                                        step.SearchFileName = new JavaScriptExpression<string>("ModuleMigrationProjectName"); // For module, the startup project is same with the migration project
-                                        step.ResultVariableName = new LiteralExpression<string>("StartupProjectFile");
+                                        step.SearchFileName = new JavaScriptExpression<string>(ModuleMigrationProjectName); // For module, the startup project is same with the migration project
+                                        step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
                                     }
                                 )
                                 .Then(ActivityNames.RunMigration)
