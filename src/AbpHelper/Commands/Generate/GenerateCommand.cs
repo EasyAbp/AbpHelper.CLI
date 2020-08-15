@@ -12,6 +12,8 @@ namespace EasyAbp.AbpHelper.Commands.Generate
     {
         public GenerateCommand(IServiceProvider serviceProvider) : base(serviceProvider, "generate", "Generate files for ABP projects. See 'abphelper generate --help' for details")
         {
+            AddAlias("gen");
+            
             AddCommand<CrudCommand>();
             AddCommand<ServiceCommand>();
             AddCommand<MethodsCommand>();
