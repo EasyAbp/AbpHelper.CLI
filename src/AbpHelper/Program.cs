@@ -33,7 +33,7 @@ namespace EasyAbp.AbpHelper
                 application.Initialize();
 
                 var parser = new CommandLineBuilder(application.ServiceProvider, "abphelper")
-                    .AddCommand<GenerateCommand>()
+                    .AddAllRootCommands()
                     .UseDefaults()
                     .Build();
 
