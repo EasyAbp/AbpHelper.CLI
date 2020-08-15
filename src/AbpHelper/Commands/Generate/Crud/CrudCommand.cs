@@ -14,7 +14,7 @@ using Elsa.Services;
 
 namespace EasyAbp.AbpHelper.Commands.Generate.Crud
 {
-    public class CrudCommand : CommandWithOption<CrudCommandOptions>
+    public class CrudCommand : CommandWithOption<CrudCommandOption>
     {
         private const string DbMigrations = "DbMigrations";
         private const string TestGeneration = "TestGeneration";
@@ -24,7 +24,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
         {
         }
 
-        protected override IActivityBuilder ConfigureBuild(CrudCommandOptions option, IActivityBuilder activityBuilder)
+        protected override IActivityBuilder ConfigureBuild(CrudCommandOption option, IActivityBuilder activityBuilder)
         {
             var entityFileName = option.Entity + ".cs";
 
@@ -41,7 +41,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                 .Then<EntityParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipEntityConstructors)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipEntityConstructors)}"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -55,7 +55,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                 .AddEntityUsingGenerationWorkflow("EntityUsing")
                 .AddEfCoreConfigurationWorkflow()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.CustomRepository)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.CustomRepository)}"),
                     ifElse =>
                     {
                         ifElse
@@ -71,7 +71,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                 )
                 .AddServiceGenerationWorkflow("ServiceGeneration")
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipLocalization)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipLocalization)}"),
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
@@ -83,7 +83,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                             ;
                     })
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipUi)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipUi)}"),
                     ifElse =>
                     {
                         ifElse
@@ -117,7 +117,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                     }
                 ).WithName(ActivityNames.Ui)
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipTest)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipTest)}"),
                     ifElse =>
                     {
                         ifElse
@@ -132,7 +132,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                     }
                 ).WithName(TestGeneration)
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOptions.SkipDbMigrations)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipDbMigrations)}"),
                     ifElse =>
                     {
                         ifElse
