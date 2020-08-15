@@ -9,13 +9,13 @@
     <Copyright>EasyAbp Team</Copyright>
     <PackageProjectUrl>https://github.com/EasyAbp/AbpHelper.CLI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/EasyAbp/AbpHelper.CLI</RepositoryUrl>
-    <PackageVersion>0.5.0</PackageVersion>
+    <PackageVersion>0.4.9</PackageVersion>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>abphelper</ToolCommandName>
     <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
     <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
-    <AssemblyVersion>0.5.0</AssemblyVersion>
-    <FileVersion>0.5.0</FileVersion>
+    <AssemblyVersion>0.4.9</AssemblyVersion>
+    <FileVersion>0.4.9</FileVersion>
     <Authors>EasyAbp Team</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>abp helper generator</PackageTags>
@@ -36,6 +36,7 @@
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Volo.Abp.Http" Version="3.0.3" />
+    <PackageReference Include="NuGet.Protocol" Version="5.6.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,6 @@
   
   <PropertyGroup>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <Version>0.5.0</Version>
+    <Version>0.4.9</Version>
   </PropertyGroup>
 </Project>

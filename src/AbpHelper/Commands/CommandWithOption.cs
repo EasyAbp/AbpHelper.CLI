@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Attributes;
 using EasyAbp.AbpHelper.Extensions;
+using EasyAbp.AbpHelper.Services;
 using Elsa.Activities;
 using Elsa.Expressions;
 using Elsa.Models;
@@ -40,6 +41,8 @@ namespace EasyAbp.AbpHelper.Commands
         protected virtual async Task RunCommand(TOption option)
         {
             option.Directory = GetBaseDirectory(option.Directory);
+
+            await ServiceProvider.GetService<ICheckUpdateService>().CheckUpdate();
 
             await RunWorkflow(builder =>
             {
