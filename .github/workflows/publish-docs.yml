@@ -29,8 +29,8 @@ jobs:
           rm -rf docs/abphelper/${{ github.event.repository.name }}
           rm -rf docs/.vuepress/public/abphelper/${{ github.event.repository.name }}
           mkdir -p docs/abphelper/${{ github.event.repository.name }}
-          cp -rf ../docs/ docs/abphelper/${{ github.event.repository.name }}
           mkdir -p docs/.vuepress/public/abphelper/${{ github.event.repository.name }}
+          cp -rf ../docs/ docs/abphelper/${{ github.event.repository.name }}
           cp -rf ../docs/ docs/.vuepress/public/abphelper/${{ github.event.repository.name }}
           git add --all
           echo "##[set-output name=diff;]$(git diff --staged)"
