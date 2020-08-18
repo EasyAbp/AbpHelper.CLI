@@ -97,4 +97,3 @@ TODO: Describe how to custom the generating steps, and custom templates.
 - [x] Support ABP module solutions
 - [ ] Support MogoDB generation
 - [ ] Support Angular UI generation
-
