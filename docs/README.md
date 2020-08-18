@@ -31,7 +31,6 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
         public string Content { get; set; }
         public bool Done { get; set; }
     }
-
     ```
 
 1. Run AbpHelper
