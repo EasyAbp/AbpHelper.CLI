@@ -60,7 +60,14 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             else
             {
                 uiFramework = UiFramework.None;
-                context.SetVariable("AspNetCoreDir", baseDirectory);
+                if (templateType == TemplateType.Application)
+                {
+                    context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
+                }
+                else
+                {
+                    context.SetVariable("AspNetCoreDir", baseDirectory);
+                }
             }
 
             var tiered = false;
