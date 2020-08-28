@@ -9,6 +9,7 @@ using {{ ProjectInfo.FullName }}.Controllers;
 {{~ end ~}}
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 
 namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }}
 {
