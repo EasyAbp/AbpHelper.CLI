@@ -29,13 +29,13 @@ namespace EasyAbp.AbpHelper.Steps.Common
         {
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
-            var excludedDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
-            LogInput(() => excludedDirectories);
+            var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
+            LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
             var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
             LogInput(() => SearchFileName);
             var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 
-            var files = SearchFilesInDirectory(baseDirectory, searchFileName, excludedDirectories).ToArray();
+            var files = SearchFilesInDirectory(baseDirectory, searchFileName, excludeDirectories).ToArray();
 
             if (files.Length == 0) throw new FileNotFoundException();
 

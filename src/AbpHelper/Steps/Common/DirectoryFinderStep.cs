@@ -27,7 +27,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
             var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
-            LogInput(() => excludeDirectories);
+            LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
             LogInput(() => SearchDirectoryName);
             var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
 

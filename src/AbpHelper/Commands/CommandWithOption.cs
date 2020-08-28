@@ -63,7 +63,7 @@ namespace EasyAbp.AbpHelper.Commands
                         step =>
                         {
                             step.VariableName = ExcludeDirectoriesVariableName;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"{OptionVariableName}.{nameof(CommandOptionsBase.ExcludeDirectories)}");
+                            step.ValueExpression = new JavaScriptExpression<string[]>($"{OptionVariableName}.{nameof(CommandOptionsBase.Exclude)}");
                         })
                     .Then<SetVariable>(
                         step =>

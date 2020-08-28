@@ -14,15 +14,15 @@ namespace EasyAbp.AbpHelper.Steps.Abp
         {
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
-            var excludedDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
-            LogInput(() => excludedDirectories);
+            var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
+            LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
 
             TemplateType templateType;
-            if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludedDirectories))
+            if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludeDirectories))
             {
                 templateType = TemplateType.Application;
             }
-            else if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludedDirectories))
+            else if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories))
             {
                 templateType = TemplateType.Module;
             }
@@ -33,14 +33,14 @@ namespace EasyAbp.AbpHelper.Steps.Abp
 
 
             // Assume the domain project must be existed for an ABP project
-            var domainCsprojFile = SearchFileInDirectory(baseDirectory, "*.Domain.csproj", excludedDirectories);
+            var domainCsprojFile = SearchFileInDirectory(baseDirectory, "*.Domain.csproj", excludeDirectories);
             if (domainCsprojFile == null) throw new NotSupportedException($"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {baseDirectory}");
 
             var fileName = Path.GetFileName(domainCsprojFile);
             var fullName = fileName.RemovePostFix(".Domain.csproj");
 
             UiFramework uiFramework;
-            if (FileExistsInDirectory(baseDirectory, "*.cshtml", excludedDirectories))
+            if (FileExistsInDirectory(baseDirectory, "*.cshtml", excludeDirectories))
             {
                 uiFramework = UiFramework.RazorPages;
                 if (templateType == TemplateType.Application)
@@ -52,7 +52,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                     context.SetVariable("AspNetCoreDir", baseDirectory);
                 }
             }
-            else if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludedDirectories))
+            else if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludeDirectories))
             {
                 uiFramework = UiFramework.Angular;
                 context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
@@ -66,7 +66,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             var tiered = false;
             if (templateType == TemplateType.Application)
             {
-                tiered = FileExistsInDirectory(baseDirectory, "*.IdentityServer.csproj", excludedDirectories);
+                tiered = FileExistsInDirectory(baseDirectory, "*.IdentityServer.csproj", excludeDirectories);
             }
 
             var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
