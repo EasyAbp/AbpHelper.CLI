@@ -21,7 +21,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                     )
                     /* Add repository configuration to EntityFrameworkCoreModule */
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = new LiteralExpression("*EntityFrameworkCoreModule.cs")
+                        step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}EntityFrameworkCoreModule.cs`")
                     )
                     .Then<EntityFrameworkCoreModuleStep>()
                     .Then<FileModifierStep>()

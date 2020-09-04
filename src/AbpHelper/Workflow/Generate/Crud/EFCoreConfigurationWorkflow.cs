@@ -39,7 +39,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                     )
                     /* Add entity configuration to DbContextModelCreatingExtensions */
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = new LiteralExpression("*DbContextModelCreatingExtensions.cs")
+                        step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContextModelCreatingExtensions.cs`")
                     ).WithName(ActivityNames.DbContextModel)
                     .Then<DbContextModelCreatingExtensionsStep>()
                     .Then<FileModifierStep>()

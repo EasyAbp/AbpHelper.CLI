@@ -45,7 +45,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         }
                     )
                     /* Add mapping */
-                    .Then<FileFinderStep>(step => step.SearchFileName = new LiteralExpression("*ApplicationAutoMapperProfile.cs")).WithName(ActivityNames.AutoMapper)
+                    .Then<FileFinderStep>(step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}ApplicationAutoMapperProfile.cs`")).WithName(ActivityNames.AutoMapper)
                     .Then<ApplicationAutoMapperProfileStep>()
                     .Then<FileModifierStep>()
                 ;
