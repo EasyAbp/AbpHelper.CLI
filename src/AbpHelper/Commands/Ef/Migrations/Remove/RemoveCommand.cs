@@ -12,10 +12,10 @@ namespace EasyAbp.AbpHelper.Commands.Ef.Migrations.Remove
 {
     public class RemoveCommand : CommandWithOption<RemoveCommandOption>
     {
-        private const string AddCommandDescription = @"Removes the last migration. The usage is the same as `dotnet ef migrations remove`, 
+        private const string RemoveCommandDescription = @"Removes the last migration. The usage is the same as `dotnet ef migrations remove`, 
 except providing the default value for the `--project` and `--startup-project` options.";
 
-        public RemoveCommand(IServiceProvider serviceProvider) : base(serviceProvider, "add", AddCommandDescription)
+        public RemoveCommand(IServiceProvider serviceProvider) : base(serviceProvider, "remove", RemoveCommandDescription)
         {
         }
 
