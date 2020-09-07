@@ -8,7 +8,8 @@
         public const string DbContextModel = nameof(DbContextModel);
         public const string LocalizationGeneration = nameof(LocalizationGeneration);
         public const string SearchFiles = nameof(SearchFiles);
-        public const string RunMigration = nameof(RunMigration);
+        public const string AddMigration = nameof(AddMigration);
+        public const string RemoveMigration = nameof(RemoveMigration);
         public const string AutoMapper = nameof(AutoMapper);
         public const string UiRazor = nameof(UiRazor);
     }

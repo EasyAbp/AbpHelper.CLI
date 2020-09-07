@@ -12,7 +12,7 @@ namespace EasyAbp.AbpHelper.Commands.Ef.Migrations.Add
 {
     public class AddCommand : CommandWithOption<AddCommandOption>
     {
-        private const string AddCommandDescription = @"Add a new migration. The usage is the same as `dotnet ef migrations add`, 
+        private const string AddCommandDescription = @"Adds a new migration. The usage is the same as `dotnet ef migrations add`, 
 except providing the default value for the `--project` and `--startup-project` options.";
 
         public AddCommand(IServiceProvider serviceProvider) : base(serviceProvider, "add", AddCommandDescription)
@@ -29,10 +29,10 @@ except providing the default value for the `--project` and `--startup-project` o
                         step.ValueExpression = new LiteralExpression(efOptions);
 
                     })
-                    .AddConfigureMigrationProjectsWorkflow(ActivityNames.RunMigration)
+                    .AddConfigureMigrationProjectsWorkflow(ActivityNames.AddMigration)
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add ${Option.Name} -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\" ${EfOptions || ''}`")
-                    ).WithName(ActivityNames.RunMigration)
+                    ).WithName(ActivityNames.AddMigration)
                 ;
         }
     }
