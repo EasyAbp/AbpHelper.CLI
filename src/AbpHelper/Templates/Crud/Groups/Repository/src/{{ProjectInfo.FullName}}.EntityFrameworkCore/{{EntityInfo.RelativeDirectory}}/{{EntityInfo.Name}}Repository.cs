@@ -1,3 +1,10 @@
+{{~
+if ProjectInfo.TemplateType == 'Module'
+    dbContextName = "I" + ProjectInfo.Name + "DbContext"
+else
+    dbContextName = ProjectInfo.Name + "DbContext"
+end
+~}}
 using System;
 using {{ ProjectInfo.FullName }}.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
@@ -12,9 +19,9 @@ namespace {{ EntityInfo.Namespace }}
         primaryKeyText = ", " + EntityInfo.PrimaryKey
     end
 ~}}
-    public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ ProjectInfo.Name }}DbContext, {{ EntityInfo.Name }}{{ primaryKeyText }}>, I{{ EntityInfo.Name }}Repository
+    public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ dbContextName }}, {{ EntityInfo.Name }}{{ primaryKeyText }}>, I{{ EntityInfo.Name }}Repository
     {
-        public {{ EntityInfo.Name }}Repository(IDbContextProvider<{{ ProjectInfo.Name }}DbContext> dbContextProvider) : base(dbContextProvider)
+        public {{ EntityInfo.Name }}Repository(IDbContextProvider<{{ dbContextName }}> dbContextProvider) : base(dbContextProvider)
         {
         }
     }
