@@ -62,7 +62,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Controller
                                 step =>
                                 {
                                     step.GroupName = "Controller";
-                                    step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                                    step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                                 })
                             ;
                         ifElse.When(OutcomeNames.False)
@@ -82,7 +82,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Controller
                                             step =>
                                             {
                                                 step.GroupName = "Controller";
-                                                step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                                                step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                                             })
                                         ;
                                     found.When(OutcomeNames.True)

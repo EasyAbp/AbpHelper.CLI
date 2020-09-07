@@ -5,6 +5,7 @@ using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
@@ -67,7 +68,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Methods
                                 step =>
                                 {
                                     step.GroupName = "Service";
-                                    step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                                    step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                                 }
                             )
                             .Then(branch)

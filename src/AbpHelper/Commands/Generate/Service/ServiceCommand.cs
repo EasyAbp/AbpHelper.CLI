@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
@@ -42,7 +43,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Service
                     step =>
                     {
                         step.GroupName = "Service";
-                        step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                        step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                     });
         }
     }

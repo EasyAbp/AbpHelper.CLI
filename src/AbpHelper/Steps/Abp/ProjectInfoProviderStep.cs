@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Workflow;
 
 namespace EasyAbp.AbpHelper.Steps.Abp
 {
@@ -45,30 +46,32 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 uiFramework = UiFramework.RazorPages;
                 if (templateType == TemplateType.Application)
                 {
-                    context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
+                    context.SetVariable(VariableNames.AspNetCoreDir, baseDirectory);
                 }
                 else
                 {
-                    context.SetVariable("AspNetCoreDir", baseDirectory);
+                    context.SetVariable(VariableNames.AspNetCoreDir, baseDirectory);
                 }
             }
             else if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludeDirectories))
             {
                 uiFramework = UiFramework.Angular;
-                context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
+                context.SetVariable(VariableNames.AspNetCoreDir, Path.Combine(baseDirectory, "aspnet-core"));
             }
             else
             {
                 uiFramework = UiFramework.None;
                 if (templateType == TemplateType.Application)
                 {
-                    context.SetVariable("AspNetCoreDir", Path.Combine(baseDirectory, "aspnet-core"));
+                    context.SetVariable(VariableNames.AspNetCoreDir, Path.Combine(baseDirectory, "aspnet-core"));
                 }
                 else
                 {
-                    context.SetVariable("AspNetCoreDir", baseDirectory);
+                    context.SetVariable(VariableNames.AspNetCoreDir, baseDirectory);
                 }
             }
+
+            CheckSlnExists(context, fullName);
 
             var tiered = false;
             if (templateType == TemplateType.Application)
@@ -77,11 +80,22 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             }
 
             var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
+
             context.SetLastResult(projectInfo);
             context.SetVariable("ProjectInfo", projectInfo);
             LogOutput(() => projectInfo);
 
             return Done();
+        }
+
+        private void CheckSlnExists(WorkflowExecutionContext context, string projectName)
+        {
+            string aspNetCoreDir = context.GetVariable<string>(VariableNames.AspNetCoreDir);
+            string slnFile = Path.Combine(aspNetCoreDir, $"{projectName}.sln");
+            if (!File.Exists(slnFile))
+            {
+                throw new FileNotFoundException($"The solution file {projectName}.sln is not found in '{aspNetCoreDir}'. Make sure you specific the right folder.");
+            }
         }
     }
 }

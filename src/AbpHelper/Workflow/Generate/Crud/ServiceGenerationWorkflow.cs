@@ -18,7 +18,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         step =>
                         {
                             step.GroupName = "Service";
-                            step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                            step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                         }
                     ).WithName(name)
                     /* Generate permissions */
