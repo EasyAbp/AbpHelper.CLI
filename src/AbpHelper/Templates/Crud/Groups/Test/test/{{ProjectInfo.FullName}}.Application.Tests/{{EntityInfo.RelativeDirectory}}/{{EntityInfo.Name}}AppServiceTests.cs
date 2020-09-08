@@ -13,6 +13,7 @@ namespace {{ EntityInfo.Namespace }}
             _{{ EntityInfo.Name | abp.camel_case }}AppService = GetRequiredService<I{{ EntityInfo.Name }}AppService>();
         }
 
+        /*
         [Fact]
         public async Task Test1()
         {
@@ -22,5 +23,6 @@ namespace {{ EntityInfo.Namespace }}
 
             // Assert
         }
+        */
     }
 }

@@ -10,6 +10,7 @@ namespace {{ EntityInfo.Namespace }}
         {
         }
 
+        /*
         [Fact]
         public async Task Test1()
         {
@@ -19,5 +20,6 @@ namespace {{ EntityInfo.Namespace }}
 
             // Assert
         }
+        */
     }
 }

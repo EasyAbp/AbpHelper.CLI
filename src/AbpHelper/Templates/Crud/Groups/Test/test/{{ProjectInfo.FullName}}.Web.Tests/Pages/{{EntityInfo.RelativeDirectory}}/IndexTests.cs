@@ -7,6 +7,7 @@ namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.RelativeNamespace}}
 {
     public class Index_Tests : {{ ProjectInfo.Name }}WebTestBase
     {
+        /*
         [Fact]
         public async Task Index_Page_Test()
         {
@@ -18,5 +19,6 @@ namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.RelativeNamespace}}
             // Assert
             response.ShouldNotBeNull();
         }
+        */
     }
 }
