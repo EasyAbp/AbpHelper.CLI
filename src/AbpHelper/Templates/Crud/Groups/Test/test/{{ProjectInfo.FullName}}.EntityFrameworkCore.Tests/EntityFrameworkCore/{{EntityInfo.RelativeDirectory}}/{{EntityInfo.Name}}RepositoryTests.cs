@@ -24,6 +24,7 @@ namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.RelativeN
             _{{ EntityInfo.Name | abp.camel_case }}Repository = GetRequiredService<{{ repository }}>();
         }
 
+        /*
         [Fact]
         public async Task Test1()
         {
@@ -36,5 +37,6 @@ namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.RelativeN
                 //Assert
             });
         }
+        */
     }
 }
