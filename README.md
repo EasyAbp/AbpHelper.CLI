@@ -93,6 +93,12 @@ Providing code generation and more features to help you develop applications and
 
     [Demo GIF](doc/images/controller.gif)
 
+  * ef
+
+    A shortcut to run 'dotnet ef' commands
+
+    [Demo GIF](doc/images/ef.gif)
+
 ## Extensibility
 
 TODO: Describe how to custom the generating steps, and custom templates.
