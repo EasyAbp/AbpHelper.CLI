@@ -1,11 +1,11 @@
-{{- if Option.CustomRepository
-repository = "I" + EntityInfo.Name + "Repository"
-else
+{{- if Option.SkipCustomRepository
     if EntityInfo.CompositeKeyName
         repository = "IRepository<" + EntityInfo.Name + ">"
     else
         repository = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + ">"
     end
+else
+    repository = "I" + EntityInfo.Name + "Repository"
 end ~}}
 using System;
 using System.Threading.Tasks;

@@ -6,16 +6,16 @@ else
     createDto = "CreateUpdate" + EntityInfo.Name + "Dto"
     updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
 end
-if Option.CustomRepository
-    repositoryType = "I" + EntityInfo.Name + "Repository"
-    repositoryName = "_repository"
-else
+if Option.SkipCustomRepository
     if EntityInfo.CompositeKeyName
         repositoryType = "IRepository<" + EntityInfo.Name + ">"
     else
         repositoryType = "IRepository<" + EntityInfo.Name + ", " + EntityInfo.PrimaryKey + ">"
     end
     repositoryName = "Repository"
+else
+    repositoryType = "I" + EntityInfo.Name + "Repository"
+    repositoryName = "_repository"
 end ~}}
 using System;
 {{~ if !EntityInfo.CompositeKeyName
@@ -34,7 +34,7 @@ using {{ ProjectInfo.FullName }}.Permissions;
 using {{ EntityInfo.Namespace }}.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-{{~ if !Option.CustomRepository ~}}
+{{~ if Option.SkipCustomRepository ~}}
 using Volo.Abp.Domain.Repositories;
 {{~ end ~}}
 
@@ -51,7 +51,7 @@ namespace {{ EntityInfo.Namespace }}
         protected override string DeletePolicyName { get; set; } = {{ permissionNamesPrefix }}.Delete;
         {{~ end ~}}
 
-        {{~ if Option.CustomRepository ~}}
+        {{~ if !Option.SkipCustomRepository ~}}
         private readonly {{ repositoryType }} {{ repositoryName }};
         
         public {{ EntityInfo.Name }}AppService({{ repositoryType }} repository) : base(repository)

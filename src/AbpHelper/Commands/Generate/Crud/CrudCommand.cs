@@ -54,16 +54,16 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                 .AddEntityUsingGenerationWorkflow("EntityUsing")
                 .AddEfCoreConfigurationWorkflow()
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.CustomRepository)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipCustomRepository)}"),
                     ifElse =>
                     {
                         ifElse
-                            .When(OutcomeNames.True)
+                            .When(OutcomeNames.False)
                             .AddCustomRepositoryGeneration()
                             .Then("ServiceGeneration")
                             ;
                         ifElse
-                            .When(OutcomeNames.False)
+                            .When(OutcomeNames.True)
                             .Then("ServiceGeneration")
                             ;
                     }

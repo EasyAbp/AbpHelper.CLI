@@ -22,8 +22,8 @@ This argument takes effect only if '--skip-db-migrations' is NOT specified.";
         [Option("separate-dto", Description = "Generate separate Create and Update DTO files")]
         public bool SeparateDto { get; set; }
 
-        [Option("custom-repository", Description = "Generate custom repository interface and class for the entity")]
-        public bool CustomRepository { get; set; }
+        [Option("skip-custom-repository", Description = "Skip generating custom repository interface and class for the entity")]
+        public bool SkipCustomRepository { get; set; }
 
         [Option("skip-db-migrations", Description = "Skip performing db migration and update")]
         public bool SkipDbMigrations { get; set; }
