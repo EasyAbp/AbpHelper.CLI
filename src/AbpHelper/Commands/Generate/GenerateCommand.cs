@@ -7,7 +7,7 @@ using EasyAbp.AbpHelper.Commands.Generate.Service;
 
 namespace EasyAbp.AbpHelper.Commands.Generate
 {
-    public class GenerateCommand : CommandWithOption<GenerateCommandOption>
+    public class GenerateCommand : CommandBase
     {
         public GenerateCommand(IServiceProvider serviceProvider) : base(serviceProvider, "generate", "Generate files for ABP projects. See 'abphelper generate --help' for details")
         {
