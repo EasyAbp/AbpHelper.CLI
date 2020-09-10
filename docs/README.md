@@ -86,14 +86,15 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 
     [Demo GIF](/docs/images/localization.gif)
 
-## Extensibility
+  * controller
 
-TODO: Describe how to custom the generating steps, and custom templates.
+    Generate controller class and methods according to the specified service
 
-## Roadmap
+    [Demo GIF](/docs/images/controller.gif)
 
-- [ ] More CLI parameters
-- [x] Support ABP module solutions
-- [ ] Support MogoDB generation
-- [ ] Support Angular UI generation
+  * ef
+
+    A shortcut to run 'dotnet ef' commands
+
+    [Demo GIF](/docs/images/ef.gif)
 
