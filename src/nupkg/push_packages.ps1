@@ -2,7 +2,7 @@
 
 # Get the version
 [xml]$proj = Get-Content (Join-Path $rootFolder "AbpHelper/AbpHelper.csproj")
-$version = $proj.Project.PropertyGroup.Version
+$version = $proj.Project.PropertyGroup.AssemblyVersion
 
 # Publish all packages
 & dotnet nuget push ("EasyAbp.AbpHelper." + "$version".Trim() + ".nupkg") -s https://api.nuget.org/v3/index.json

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa.Expressions;
@@ -10,11 +11,19 @@ using Elsa.Results;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
     public abstract class CSharpModificationCreatorStep : Step
     {
+        protected TextGenerator TextGenerator;
+
+        protected CSharpModificationCreatorStep(TextGenerator textGenerator)
+        {
+            TextGenerator = textGenerator;
+        }
+
         public WorkflowExpression<string> SourceFile
         {
             get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
@@ -30,7 +39,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             var tree = CSharpSyntaxTree.ParseText(sourceText);
             var root = tree.GetCompilationUnitRoot();
 
-            var builders = CreateModifications(context);
+            var builders = CreateModifications(context, root);
             var modifications = builders
                     .Where(builder => builder.ModifyCondition(root))
                     .Select(builder => builder.Build(root))
@@ -44,6 +53,6 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             return Done();
         }
 
-        protected abstract IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context);
+        protected abstract IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit);
     }
 }

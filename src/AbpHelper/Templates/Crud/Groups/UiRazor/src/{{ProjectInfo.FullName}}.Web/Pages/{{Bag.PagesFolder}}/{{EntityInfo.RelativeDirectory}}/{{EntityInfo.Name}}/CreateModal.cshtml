@@ -1,0 +1,19 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal;
+@using {{ ProjectInfo.FullName }}.Localization
+@inject IHtmlLocalizer<{{ ProjectInfo.Name }}Resource> L
+{{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+@model {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}.CreateModalModel
+@{
+    Layout = null;
+}
+<abp-dynamic-form abp-model="ViewModel" data-ajaxForm="true" asp-page="CreateModal">
+    <abp-modal>
+        <abp-modal-header title="@L["Create{{ EntityInfo.Name }}"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-form-content />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form>

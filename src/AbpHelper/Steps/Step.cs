@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq.Expressions;
-using Elsa.Services;
+﻿using Elsa.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System;
+using System.Linq.Expressions;
 
 namespace EasyAbp.AbpHelper.Steps
 {
@@ -27,7 +27,7 @@ namespace EasyAbp.AbpHelper.Steps
 
         private void LogParameter<TParameter>(string parameterType, Expression<Func<TParameter>> parameterExpression, object? customValue = null)
         {
-            var memberExpr = (MemberExpression) parameterExpression.Body;
+            var memberExpr = (MemberExpression)parameterExpression.Body;
             var value = customValue ?? $"'{parameterExpression.Compile().Invoke()}'";
             Logger.LogDebug($"{Type} {parameterType} [{memberExpr.Member.Name}]: {value}");
         }

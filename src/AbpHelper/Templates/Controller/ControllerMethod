@@ -1,0 +1,13 @@
+﻿{{~ route = method | abp.get_route ~}}
+{{~ defined_http_verb = method | abp.get_http_verb ~}}
+
+        {{~ if defined_http_verb != "" ~}}
+        [{{ defined_http_verb }}]
+        {{~ end ~}}
+        {{~ if route ~}}
+        [Route("{{ method | abp.get_route }}")]
+        {{~ end ~}}
+        {{ method.Accessor }} virtual {{ method.ReturnType }} {{  method.Name }}({{ for param in method.Parameters }}{{ param.Type }} {{ param.Name }}{{if !for.last }}, {{ end }}{{ end }})
+        {
+            {{ if method.ReturnType != "void" }}return {{ end }}_service.{{ method.Name }}({{ for param in method.Parameters }}{{ param.Name }}{{if !for.last }}, {{ end }}{{ end }});
+        }

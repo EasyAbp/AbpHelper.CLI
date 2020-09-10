@@ -1,0 +1,19 @@
+{{- if InterfaceInfo.MethodsCount > 0 ~}}
+
+{{~ end -}}
+{{- for name in Option.MethodNames -}}
+    {{- if Option.NoOutput
+        return = "Task"
+    else
+        return = "Task<" + name + "Output>"
+    end -}}
+    {{- if Option.NoInput
+        parameter = ""
+    else
+        parameter = name + "Input input"
+    end ~}}
+        {{ return }} {{ name }}Async({{ parameter }});
+    {{~ if !for.last ~}}
+
+    {{~ end ~}}
+{{- end -}}

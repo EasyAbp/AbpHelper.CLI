@@ -1,31 +1,43 @@
 ﻿using System;
 using System.IO;
+using EasyAbp.AbpHelper.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Scriban;
 using Scriban.Runtime;
+using Volo.Abp.DependencyInjection;
 
 namespace EasyAbp.AbpHelper.Generator
 {
-    public static class TextGenerator
+    public class TextGenerator : ISingletonDependency
     {
-        public static string GenerateByTemplateName(string templateDirectory, string templateName, object model)
+        private readonly IFileProvider _fileProvider;
+        private readonly ITemplateLoader _templateLoader;
+
+        public TextGenerator(IFileProvider fileProvider, ITemplateLoader templateLoader)
+        {
+            _fileProvider = fileProvider;
+            _templateLoader = templateLoader;
+        }
+
+        public string GenerateByTemplateName(string templateDirectory, string templateName, object model)
         {
             return GenerateByTemplateName(templateDirectory, templateName, model, out _);
         }
         
-        public static string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
+        public string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
         {
-            var appDir = AppDomain.CurrentDomain.BaseDirectory!;
-            var templateFile = Path.Combine(appDir, templateDirectory, templateName + ".sbntxt");
-            var templateText = File.ReadAllText(templateFile);
+            string path = Path.Combine(templateDirectory, templateName).NormalizePath();
+            var templateFile = _fileProvider.GetFileInfo(path);
+            var templateText = templateFile.ReadAsString();
             return GenerateByTemplateText(templateText, model, out context);
         }
 
-        public static string GenerateByTemplateText(string templateText, object model)
+        public string GenerateByTemplateText(string templateText, object model, string? templateDirectory = null)
         {
             return GenerateByTemplateText(templateText, model, out _);
         }
 
-        public static string GenerateByTemplateText(string templateText, object model, out TemplateContext context)
+        public string GenerateByTemplateText(string templateText, object model, out TemplateContext context)
         {
             context = new TemplateContext();
             var scriptObject = new ScriptObject();
@@ -33,6 +45,7 @@ namespace EasyAbp.AbpHelper.Generator
             scriptObject.Import(model, renamer: member => member.Name);
             context.PushGlobal(scriptObject);
             context.MemberRenamer = member => member.Name;
+            context.TemplateLoader = _templateLoader;
 
             var template = Template.Parse(templateText);
             var text = template.Render(context).Replace("\r\n", Environment.NewLine);

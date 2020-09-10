@@ -4,6 +4,7 @@ using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
 using Elsa.Services.Models;
+using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -11,7 +12,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
 {
     public class AppServiceClassStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>("TemplateDirectory");
@@ -36,6 +37,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
                     classContents
                 ),
             };
+        }
+
+        public AppServiceClassStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        {
         }
     }
 }

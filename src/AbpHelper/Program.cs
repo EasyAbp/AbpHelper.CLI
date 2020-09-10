@@ -1,8 +1,8 @@
 ﻿using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using System.IO;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Commands;
+using EasyAbp.AbpHelper.Commands.Generate;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
@@ -20,7 +20,6 @@ namespace EasyAbp.AbpHelper
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Volo.Abp", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
-                .WriteTo.File(Path.Combine("Logs", "logs.txt"))
                 .WriteTo.Console()
                 .CreateLogger();
 
@@ -34,7 +33,7 @@ namespace EasyAbp.AbpHelper
                 application.Initialize();
 
                 var parser = new CommandLineBuilder(application.ServiceProvider, "abphelper")
-                    .AddCommand<GenerateCommand>()
+                    .AddAllRootCommands()
                     .UseDefaults()
                     .Build();
 

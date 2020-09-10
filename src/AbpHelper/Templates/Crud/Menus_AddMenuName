@@ -1,0 +1,1 @@
+        public const string {{ EntityInfo.Name }} = Prefix + ".{{ EntityInfo.Name }}";

@@ -16,12 +16,12 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         step =>
                         {
                             step.GroupName = "Repository"; 
-                            step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                            step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                         }
                     )
                     /* Add repository configuration to EntityFrameworkCoreModule */
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = new LiteralExpression("*EntityFrameworkCoreModule.cs")
+                        step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}EntityFrameworkCoreModule.cs`")
                     )
                     .Then<EntityFrameworkCoreModuleStep>()
                     .Then<FileModifierStep>()

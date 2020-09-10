@@ -17,7 +17,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
             var option = context.GetVariable<object>("Option");
             var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            var serviceInfo = context.GetVariable<ServiceInfo>("ServiceInfo");
+            var interfaceInfo = context.GetVariable<TypeInfo>("InterfaceInfo");
+            var classInfo = context.GetVariable<TypeInfo>("ClassInfo");
             var variables = context.GetVariables().Where(v => v.Key.StartsWith("Bag."));
             var bag = new ExpandoObject();
             foreach (var variable in variables)
@@ -30,7 +31,8 @@ namespace EasyAbp.AbpHelper.Steps.Abp
                 ProjectInfo = projectInfo,
                 Option = option,
                 EntityInfo = entityInfo,
-                ServiceInfo = serviceInfo,
+                InterfaceInfo = interfaceInfo,
+                ClassInfo = classInfo,
                 Bag = bag,
             });
             return Task.FromResult(Done());

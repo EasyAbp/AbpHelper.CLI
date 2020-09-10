@@ -1,9 +1,0 @@
-{{~
-permissionVarName = EntityInfo.Name | abp.camel_case + "Permission"
-permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.Name
-~}}
-
-            var {{ permissionVarName }} = myGroup.AddPermission({{ permissionNamesPrefix }}.Default, L("Permission:{{ EntityInfo.Name }}"));
-            {{ permissionVarName }}.AddChild({{ permissionNamesPrefix }}.Create, L("Permission:Create"));
-            {{ permissionVarName }}.AddChild({{ permissionNamesPrefix }}.Update, L("Permission:Update"));
-            {{ permissionVarName }}.AddChild({{ permissionNamesPrefix }}.Delete, L("Permission:Delete"));

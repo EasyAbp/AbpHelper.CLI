@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EasyAbp.AbpHelper.Extensions;
 using Humanizer;
 
 namespace EasyAbp.AbpHelper.Models
@@ -12,7 +13,7 @@ namespace EasyAbp.AbpHelper.Models
             Name = name;
             BaseType = baseType;
             PrimaryKey = primaryKey;
-            RelativeDirectory = relativeDirectory.Replace('\\', '/');
+            RelativeDirectory = relativeDirectory.NormalizePath();
         }
 
         public string Namespace { get; }
@@ -26,17 +27,5 @@ namespace EasyAbp.AbpHelper.Models
         public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
         public string? CompositeKeyName { get; set; }
         public List<PropertyInfo> CompositeKeys { get; } = new List<PropertyInfo>();
-    }
-
-    public class PropertyInfo
-    {
-        public PropertyInfo(string type, string name)
-        {
-            Type = type;
-            Name = name;
-        }
-
-        public string Type { get; }
-        public string Name { get; }
     }
 }

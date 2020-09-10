@@ -29,11 +29,11 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                     }
                                 )
                                 .Then<SetModelVariableStep>()
-                                .Then("UiRazor")
+                                .Then(ActivityNames.UiRazor)
                                 ;
                             ifElse
                                 .When(OutcomeNames.False)
-                                .Then("UiRazor")
+                                .Then(ActivityNames.UiRazor)
                                 ;
                         }
                     )
@@ -42,9 +42,15 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         step =>
                         {
                             step.GroupName = "UiRazor";
-                            step.TargetDirectory = new JavaScriptExpression<string>("AspNetCoreDir");
+                            step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                         }
-                    ).WithName("UiRazor")
+                    ).WithName(ActivityNames.UiRazor)
+                    /* Add menu name */
+                    .Then<FileFinderStep>(
+                        step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}Menus.cs`")
+                    )
+                    .Then<MenuNameStep>()
+                    .Then<FileModifierStep>() 
                     /* Add menu */
                     .Then<FileFinderStep>(
                         step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MenuContributor.cs`")
