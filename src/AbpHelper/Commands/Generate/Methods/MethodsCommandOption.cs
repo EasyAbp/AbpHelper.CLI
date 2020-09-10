@@ -2,7 +2,7 @@
 
 namespace EasyAbp.AbpHelper.Commands.Generate.Methods
 {
-    public class MethodsCommandOption : CommandOptionsBase
+    public class MethodsCommandOption : GenerateCommandOption
     {
         [Option('s', "service-name", Description = "The service name(without 'AppService' postfix)")]
         public string ServiceName { get; set; } = null!;
