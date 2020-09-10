@@ -34,7 +34,6 @@ namespace EasyAbp.AbpHelper.Commands
         protected virtual string OptionVariableName => CommandConsts.OptionVariableName;
         protected virtual string BaseDirectoryVariableName => CommandConsts.BaseDirectoryVariableName;
         protected virtual string ExcludeDirectoriesVariableName => CommandConsts.ExcludeDirectoriesVariableName;
-        protected virtual string OverwriteVariableName => CommandConsts.OverwriteVariableName;
 
         public ILogger<CommandWithOption<TOption>> Logger { get; set; }
 

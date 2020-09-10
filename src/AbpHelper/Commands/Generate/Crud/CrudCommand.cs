@@ -4,6 +4,7 @@ using EasyAbp.AbpHelper.Models;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow;
+using EasyAbp.AbpHelper.Workflow.Generate;
 using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
 using Elsa.Activities;
@@ -29,6 +30,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
             var entityFileName = option.Entity + ".cs";
 
             return base.ConfigureBuild(option, activityBuilder)
+                .AddOverwriteWorkflow()
                 .Then<SetVariable>(
                     step =>
                     {
