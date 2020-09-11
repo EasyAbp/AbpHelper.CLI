@@ -45,41 +45,30 @@ namespace EasyAbp.AbpHelper.Commands.Module.Install
 
         protected override IActivityBuilder ConfigureBuild(InstallCommandOption option, IActivityBuilder activityBuilder)
         {
-            var packageNames = typeof(ModuleCommandOption).GetProperties()
+            var projectNames = typeof(ModuleCommandOption).GetProperties()
                     .Where(prop => prop.PropertyType == typeof(bool) && (bool) prop.GetValue(option)!)
-                    .Select(prop => prop.Name)
+                    .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
                     .ToArray()
                 ;
-            var projectNames = packageNames.Select(name => _packageProjectMap[name])
-                    .ToArray()
-                ;
+
             return base.ConfigureBuild(option, activityBuilder)
                     .Then<SetVariable>(
                         step =>
                         {
-                            step.VariableName = VariableNames.PackageNames;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"[{string.Join(",", packageNames)}]");
+                            step.VariableName = VariableNames.ProjectNames;
+                            step.ValueExpression = new JavaScriptExpression<string[]>($"[{string.Join(",", projectNames.Select(n => $"'{n}'"))}]");
                         }
                     )
                     .Then<ForEach>(
-                        x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>(VariableNames.PackageNames); },
+                        x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>(VariableNames.ProjectNames); },
                         branch =>
                             branch.When(OutcomeNames.Iterate)
-                                .Then<LocalizationJsonModificationCreatorStep>(
-                                    step =>
-                                    {
-                                        step.TargetFile = new JavaScriptExpression<string>("CurrentValue");
-                                        step.LocalizationJson = new JavaScriptExpression<string>(TextGenerationStep.DefaultGeneratedTextParameterName);
-                                    }
+                                .Then<RunCommandStep>(
+                                    step => step.Command = new JavaScriptExpression<string>(
+                                        @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${CurrentValue} && dotnet add package ${Option.ModuleName}.${CurrentValue}`"
+                                    )
                                 )
                                 .Then(branch)
-                    )
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = VariableNames.ProjectNames;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"[{string.Join(",", projectNames)}]");
-                        }
                     )
                 ;
         }
