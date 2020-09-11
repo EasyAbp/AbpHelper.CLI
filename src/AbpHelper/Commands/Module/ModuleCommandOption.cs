@@ -1,4 +1,5 @@
-﻿using EasyAbp.AbpHelper.Attributes;
+﻿using System.Linq;
+using EasyAbp.AbpHelper.Attributes;
 
 namespace EasyAbp.AbpHelper.Commands.Module
 {
@@ -6,6 +7,8 @@ namespace EasyAbp.AbpHelper.Commands.Module
     {
         [Argument("module-name", Description = "The module name")]
         public string ModuleName { get; set; } = null!;
+
+        public string ModuleNameLastPart => ModuleName.Split('.').Last();
 
         [Option('s', ModuleConsts.Shared, Description = "Install the {module-name}.Domain.Shared nuget package")]
         public bool Shared { get; set; }
@@ -19,7 +22,7 @@ namespace EasyAbp.AbpHelper.Commands.Module
         [Option('m', ModuleConsts.MongoDB, Description = "Install the {module-name}.MongoDB nuget package")]
         public bool MongoDB { get; set; }
 
-        [Option('c', ModuleConsts.Contract, Description = "Install the {module-name}.Contract nuget package")]
+        [Option('c', ModuleConsts.Contracts, Description = "Install the {module-name}.Contract nuget package")]
         public bool Contract { get; set; }
 
         [Option('a', ModuleConsts.Application, Description = "Install the {module-name}.Application nuget package")]
