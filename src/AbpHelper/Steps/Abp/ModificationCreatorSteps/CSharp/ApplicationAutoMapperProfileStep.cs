@@ -3,6 +3,7 @@ using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
@@ -17,7 +18,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             var model = context.GetVariable<object>("Model");
             string entityUsingText = context.GetVariable<string>("EntityUsingText");
             string entityDtoUsingText = context.GetVariable<string>("EntityDtoUsingText");
-            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string contents = TextGenerator.GenerateByTemplateName(templateDir, "ApplicationAutoMapperProfile_CreateMap", model);
             
             return new List<ModificationBuilder<CSharpSyntaxNode>>

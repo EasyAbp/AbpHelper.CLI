@@ -3,6 +3,7 @@ using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
@@ -16,7 +17,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         {
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
             var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string addMenuItemText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
 
             CSharpSyntaxNode MainMenu(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()

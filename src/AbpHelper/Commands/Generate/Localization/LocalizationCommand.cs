@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Workflow;
 using EasyAbp.AbpHelper.Workflow.Generate;
 using Elsa;
 using Elsa.Activities;
@@ -26,7 +27,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Localization
                 .Then<SetVariable>(
                     step =>
                     {
-                        step.VariableName = "TemplateDirectory";
+                        step.VariableName = VariableNames.TemplateDirectory;
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Localization");
                     })
                 .Then<SetModelVariableStep>()

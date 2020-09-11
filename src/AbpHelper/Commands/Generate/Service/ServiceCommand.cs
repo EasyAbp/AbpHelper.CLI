@@ -37,7 +37,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Service
                 .Then<SetVariable>(
                     step =>
                     {
-                        step.VariableName = "TemplateDirectory";
+                        step.VariableName = VariableNames.TemplateDirectory;
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Service");
                     })
                 .Then<SetModelVariableStep>()

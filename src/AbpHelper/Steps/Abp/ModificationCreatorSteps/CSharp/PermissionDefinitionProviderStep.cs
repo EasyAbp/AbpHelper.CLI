@@ -3,6 +3,7 @@ using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
@@ -15,13 +16,13 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string groupName = rootUnit.Descendants<LocalDeclarationStatementSyntax>()
                 .Single(stat => stat.ToFullString().Contains("context.AddGroup"))
                 .Descendants<VariableDeclarationSyntax>().Single()
                 .Variables[0].Identifier.Text;
             var model = context.GetVariable<dynamic>("Model");
-            model.Bag.groupName = groupName;
+            model.Bag.GroupName = groupName;
             string permissionDefinitionsText = TextGenerator.GenerateByTemplateName(templateDir, "Permissions_Definitions", model);
 
             var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();

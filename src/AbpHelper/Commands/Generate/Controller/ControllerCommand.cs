@@ -29,7 +29,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Controller
                 .Then<SetVariable>(
                     step =>
                     {
-                        step.VariableName = "TemplateDirectory";
+                        step.VariableName = VariableNames.TemplateDirectory;
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Controller");
                     })
                 .Then<IfElse>(

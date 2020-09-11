@@ -2,6 +2,7 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 
@@ -13,7 +14,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
             WorkflowExecutionContext context)
         {
             var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string importContents = TextGenerator.GenerateByTemplateName(templateDir, "RoutingModule_ImportList", model);
             string moduleContents = TextGenerator.GenerateByTemplateName(templateDir, "RoutingModule_Routes", model);
 

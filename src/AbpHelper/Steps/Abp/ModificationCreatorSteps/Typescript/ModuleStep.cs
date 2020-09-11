@@ -2,6 +2,7 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 
@@ -14,7 +15,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.Typescript
         {
             var model = context.GetVariable<object>("Model");
             var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string importContents = TextGenerator.GenerateByTemplateName(templateDir, "Module_ImportSharedModule", model);
             string sharedModuleContents = TextGenerator.GenerateByTemplateName(templateDir, "Module_SharedModule", model);
 

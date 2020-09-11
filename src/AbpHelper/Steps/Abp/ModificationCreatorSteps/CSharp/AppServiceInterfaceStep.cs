@@ -3,6 +3,7 @@ using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
@@ -15,7 +16,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string usingTaskContents = TextGenerator.GenerateByTemplateName(templateDir, "AppService_UsingTask", model);
             string usingDtoContents = TextGenerator.GenerateByTemplateName(templateDir, "AppService_UsingDto", model);
             string interfaceContents = TextGenerator.GenerateByTemplateName(templateDir, "AppServiceInterface", model);

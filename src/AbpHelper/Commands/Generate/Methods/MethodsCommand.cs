@@ -42,7 +42,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Methods
                 .Then<SetVariable>(
                     step =>
                     {
-                        step.VariableName = "TemplateDirectory";
+                        step.VariableName = VariableNames.TemplateDirectory;
                         step.ValueExpression = new LiteralExpression<string>("/Templates/Methods");
                     })
                 .Then<FileFinderStep>(

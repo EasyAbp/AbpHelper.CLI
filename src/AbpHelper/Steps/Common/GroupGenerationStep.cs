@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Scripting.JavaScript;
@@ -22,7 +23,7 @@ namespace EasyAbp.AbpHelper.Steps.Common
 
         public WorkflowExpression<string> TemplateDirectory
         {
-            get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>("TemplateDirectory"));
+            get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>(VariableNames.TemplateDirectory));
             set => SetState(value);
         }
         

@@ -3,6 +3,7 @@ using System.Linq;
 using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Generator;
 using EasyAbp.AbpHelper.Models;
+using EasyAbp.AbpHelper.Workflow;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
@@ -21,7 +22,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             var serviceInterfaceInfo = context.GetVariable<TypeInfo>("InterfaceInfo");
             var serviceClassInfo = context.GetVariable<TypeInfo>("ClassInfo");
             var controllerInfo = context.GetVariable<TypeInfo>("ControllerInfo");
-            string templateDir = context.GetVariable<string>("TemplateDirectory");
+            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
 
             // Generate added methods
             var modifications = new List<ModificationBuilder<CSharpSyntaxNode>>();
