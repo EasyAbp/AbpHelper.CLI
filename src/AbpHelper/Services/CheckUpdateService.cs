@@ -45,7 +45,7 @@ namespace EasyAbp.AbpHelper.Services
             if (currentVersion < latestVersion)
             {
                 Log.Warning($"There is a new version of ABPHelper: {latestVersion.ToString(3)}");
-                Log.Warning($"Use `dotnet tool update EasyAbp.AbpHelper -g` to update");
+                Log.Warning($"Use `dotnet tool update {PackageId} -g` to update");
             }
         }
     }

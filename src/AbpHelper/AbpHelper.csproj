@@ -44,6 +44,10 @@
     <Content Remove="Templates\**\*.*" />
     <EmbeddedResource Include="Templates\**\*.*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Steps\Abp\ModuleSteps" />
+  </ItemGroup>
   
   <PropertyGroup>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
