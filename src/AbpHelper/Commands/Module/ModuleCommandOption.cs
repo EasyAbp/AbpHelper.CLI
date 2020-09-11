@@ -20,7 +20,7 @@ namespace EasyAbp.AbpHelper.Commands.Module
         public bool EntityFrameworkCore { get; set; }
 
         [Option('m', ModuleConsts.MongoDB, Description = "Install the {module-name}.MongoDB nuget package")]
-        public bool MongoDB { get; set; }
+        public bool MongoDb { get; set; }
 
         [Option('c', ModuleConsts.Contracts, Description = "Install the {module-name}.Contract nuget package")]
         public bool Contract { get; set; }

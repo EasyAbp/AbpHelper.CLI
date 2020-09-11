@@ -93,6 +93,27 @@ namespace EasyAbp.AbpHelper.Commands.Module.Install
                                     step => { step.SearchFileName = new JavaScriptExpression<string>($"`${{ProjectInfo.Name}}${{{VariableNames.ModuleClassNamePostfix}}}Module.cs`"); })
                                 .Then<DependsOnStep>()
                                 .Then<FileModifierStep>()
+                                .Then<IfElse>(
+                                    step => step.ConditionExpression = new JavaScriptExpression<bool>("CurrentValue == 'EntityFrameworkCore'"),
+                                    ifElse =>
+                                    {
+                                        // For "EntityFrameCore" package, we generate a "builder.ConfigureXXX();" in the migrations context class */
+                                        ifElse
+                                            .When(OutcomeNames.True)
+                                            .Then<FileFinderStep>(
+                                                 step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MigrationsDbContext.cs`"); }
+                                            )
+                                            .Then<MigrationsContextStep>()
+                                            .Then<FileModifierStep>()
+                                            .Then(ActivityNames.NextProject)
+                                            ;
+                                        ifElse
+                                            .When(OutcomeNames.False)
+                                            .Then(ActivityNames.NextProject)
+                                            ;
+                                    }
+                                )
+                                .Then<EmptyStep>().WithName(ActivityNames.NextProject)
                                 .Then(branch)
                     )
                 ;

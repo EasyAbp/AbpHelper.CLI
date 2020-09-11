@@ -1,1 +1,8 @@
-using {{ Option.ModuleName }};
+{{~
+if Bag.ModuleClassNamePostfix == "EntityFrameworkCore" || Bag.ModuleClassNamePostfix == "Web"
+    subNamespace = "." + Bag.ModuleClassNamePostfix
+else
+    subNamespace = ""
+end
+~}}
+using {{ Option.ModuleName }}{{ subNamespace }};
