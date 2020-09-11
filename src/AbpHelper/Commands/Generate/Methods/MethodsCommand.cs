@@ -6,6 +6,7 @@ using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow;
+using EasyAbp.AbpHelper.Workflow.Generate;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
@@ -37,6 +38,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Methods
             IActivityBuilder activityBuilder)
         {
             return base.ConfigureBuild(option, activityBuilder)
+                .AddOverwriteWorkflow()
                 .Then<SetVariable>(
                     step =>
                     {

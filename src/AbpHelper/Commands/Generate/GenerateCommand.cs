@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using EasyAbp.AbpHelper.Commands.Generate.Controller;
 using EasyAbp.AbpHelper.Commands.Generate.Crud;
 using EasyAbp.AbpHelper.Commands.Generate.Localization;
@@ -13,7 +12,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate
         public GenerateCommand(IServiceProvider serviceProvider) : base(serviceProvider, "generate", "Generate files for ABP projects. See 'abphelper generate --help' for details")
         {
             AddAlias("gen");
-            
+
             AddCommand<CrudCommand>();
             AddCommand<ServiceCommand>();
             AddCommand<MethodsCommand>();

@@ -10,8 +10,5 @@ namespace EasyAbp.AbpHelper.Commands
 
         [Option("exclude", Description = "Exclude directories when searching files, arguments can contain a combination of valid literal path and wildcard (* and ?) characters. Use double asterisk(**) to search all directories. Example: --exclude *Folder1,Folder2/Folder*,**/*Folder?,**/*Folder*")]
         public virtual string[] Exclude { get; set; } = Array.Empty<string>();
-
-        [Option("no-overwrite", Description = "Specify not to overwrite existing files or content")]
-        public bool NoOverwrite { get; set; }
     }
 }

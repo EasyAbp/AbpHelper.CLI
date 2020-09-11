@@ -4,6 +4,7 @@ using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow;
+using EasyAbp.AbpHelper.Workflow.Generate;
 using Elsa.Activities;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
@@ -32,6 +33,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Service
         protected override IActivityBuilder ConfigureBuild(ServiceCommandOption option, IActivityBuilder activityBuilder)
         {
             return base.ConfigureBuild(option, activityBuilder)
+                .AddOverwriteWorkflow()
                 .Then<SetVariable>(
                     step =>
                     {

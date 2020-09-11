@@ -4,6 +4,8 @@ using EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Steps.Abp.ParseStep;
 using EasyAbp.AbpHelper.Steps.Common;
 using EasyAbp.AbpHelper.Workflow;
+using EasyAbp.AbpHelper.Workflow.Generate;
+using EasyAbp.AbpHelper.Workflow.Generate.Crud;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
@@ -23,6 +25,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Controller
         protected override IActivityBuilder ConfigureBuild(ControllerCommandOption option, IActivityBuilder activityBuilder)
         {
             return base.ConfigureBuild(option, activityBuilder)
+                .AddOverwriteWorkflow()
                 .Then<SetVariable>(
                     step =>
                     {

@@ -2,7 +2,7 @@
 
 namespace EasyAbp.AbpHelper.Commands.Generate.Controller
 {
-    public class ControllerCommandOption : CommandOptionsBase
+    public class ControllerCommandOption : GenerateCommandOption
     {
         [Argument("name", Description = "The service name(without 'AppService' postfix)")]
         public string Name { get; set; } = null!;

@@ -2,7 +2,7 @@
 
 namespace EasyAbp.AbpHelper.Commands.Generate.Crud
 {
-    public class CrudCommandOption : CommandOptionsBase
+    public class CrudCommandOption : GenerateCommandOption
     {
         private const string MigrationProjectNameDescription = @"Specify the name of the migration project.
 For ABP applications, the default value is '*.EntityFrameworkCore.DbMigrations.csproj';
