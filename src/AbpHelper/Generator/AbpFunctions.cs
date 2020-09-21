@@ -54,7 +54,7 @@ namespace EasyAbp.AbpHelper.Generator
             var idParameterModel = method.Parameters.FirstOrDefault(param => param.Name == "id");
             if (idParameterModel != null)
             {
-                var type = Type.GetType(idParameterModel.FullType)!;
+                var type = Type.GetType(idParameterModel.FullType);
                 if (TypeHelper.IsPrimitiveExtended(type, includeEnums: true))
                 {
                     url += "/{id}";
