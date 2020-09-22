@@ -1,11 +1,10 @@
-{{- SKIP_GENERATE = !Option.SeparateDto -}}
 using System;
-using System.ComponentModel;
+{{~ if !Option.SkipLocalization }}using System.ComponentModel;{{ end ~}}
 
 namespace {{ EntityInfo.Namespace }}.Dtos
 {
     [Serializable]
-    public class Update{{ EntityInfo.Name }}Dto
+    public class {{ DtoInfo.CreateTypeName }}
     {
         {{~ for prop in EntityInfo.Properties ~}}
         {{~ if prop | abp.is_ignore_property; continue; end ~}}

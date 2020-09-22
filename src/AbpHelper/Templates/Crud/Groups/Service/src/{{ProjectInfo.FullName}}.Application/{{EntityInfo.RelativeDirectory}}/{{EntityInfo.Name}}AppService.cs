@@ -1,11 +1,4 @@
 {{-
-if Option.SeparateDto
-    createDto = "Create" + EntityInfo.Name + "Dto"
-    updateDto = "Update" + EntityInfo.Name + "Dto"
-else
-    createDto = "CreateUpdate" + EntityInfo.Name + "Dto"
-    updateDto = "CreateUpdate" + EntityInfo.Name + "Dto"
-end
 if Option.SkipCustomRepository
     if EntityInfo.CompositeKeyName
         repositoryType = "IRepository<" + EntityInfo.Name + ">"
@@ -40,7 +33,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace {{ EntityInfo.Namespace }}
 {
-    public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto, {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, PagedAndSortedResultRequestDto, {{ createDto }}, {{ updateDto }}>,
+    public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo.Name }}, {{ DtoInfo.ReadTypeName }}, {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, PagedAndSortedResultRequestDto, {{ DtoInfo.CreateTypeName }}, {{ DtoInfo.UpdateTypeName }}>,
         I{{ EntityInfo.Name }}AppService
     {
         {{~ if !Option.SkipPermissions ~}}
