@@ -4,7 +4,7 @@
             {{ EntityInfo.PrimaryKey }} id
             {{- end -}}
             {{- for prop in EntityInfo.Properties -}}
-            {{- if EntityInfo.PrimaryKey }}, {{ end }}
+            {{- if EntityInfo.PrimaryKey }},{{ end }}
             {{ prop.Type }} {{ prop.Name | abp.camel_case }}
             {{- if for.last; "\r\n"; else; ; end -}}
             {{- end ~}}

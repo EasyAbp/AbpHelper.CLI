@@ -48,13 +48,13 @@ $(function () {
                                 },
                                 action: function (data) {
 {{~ if EntityInfo.CompositeKeyName ~}}
-                                        service.delete({
+                                    service.delete({
     {{~ for prop in EntityInfo.CompositeKeys ~}}
                                             {{ prop.Name | abp.camel_case}}: data.record.{{ prop.Name | abp.camel_case}}{{if !for.last}},{{end}}
     {{~ end ~}}
                                         })
 {{~ else ~}}
-                                        service.delete(data.record.id)
+                                    service.delete(data.record.id)
 {{~ end ~}}
                                         .then(function () {
                                             abp.notify.info(l('SuccessfullyDeleted'));
