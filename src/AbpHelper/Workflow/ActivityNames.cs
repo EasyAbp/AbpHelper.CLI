@@ -13,5 +13,6 @@
         public const string AutoMapper = nameof(AutoMapper);
         public const string UiRazor = nameof(UiRazor);
         public const string NextProject = nameof(NextProject);
+        public const string AddDependsOn = nameof(AddDependsOn);
     }
 }

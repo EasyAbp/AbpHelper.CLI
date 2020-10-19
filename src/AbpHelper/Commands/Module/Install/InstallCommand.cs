@@ -84,11 +84,30 @@ namespace EasyAbp.AbpHelper.Commands.Module.Install
                                         step.VariableName = VariableNames.DependsOnModuleClassName;
                                         step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleNameLastPart)} + {VariableNames.ModuleClassNamePostfix} + 'Module'");
                                     }
-                                ).Then<RunCommandStep>(
-                                    step => step.Command = new JavaScriptExpression<string>(
-                                        @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${CurrentValue} && dotnet add package ${Option.ModuleName}.${CurrentValue}`"
-                                    )
                                 )
+                                .Then<IfElse>(
+                                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{CommandConsts.OptionVariableName}.{nameof(InstallCommandOption.Version)} != null"),
+                                    ifElse =>
+                                    {
+                                        ifElse
+                                            .When(OutcomeNames.True) // with version specified 
+                                            .Then<RunCommandStep>(
+                                                step => step.Command = new JavaScriptExpression<string>(
+                                                    @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${CurrentValue} && dotnet add package ${Option.ModuleName}.${CurrentValue} -v ${Option.Version}`"
+                                                ))
+                                            .Then(ActivityNames.AddDependsOn)
+                                            ;
+                                        ifElse
+                                            .When(OutcomeNames.False) // no version
+                                            .Then<RunCommandStep>(
+                                                step => step.Command = new JavaScriptExpression<string>(
+                                                    @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${CurrentValue} && dotnet add package ${Option.ModuleName}.${CurrentValue}`"
+                                                ))
+                                            .Then(ActivityNames.AddDependsOn)
+                                            ;
+                                    }
+                                )
+                                .Then<EmptyStep>().WithName(ActivityNames.AddDependsOn)
                                 .Then<FileFinderStep>(
                                     step => { step.SearchFileName = new JavaScriptExpression<string>($"`${{ProjectInfo.Name}}${{{VariableNames.ModuleClassNamePostfix}}}Module.cs`"); })
                                 .Then<DependsOnStep>()
@@ -101,7 +120,7 @@ namespace EasyAbp.AbpHelper.Commands.Module.Install
                                         ifElse
                                             .When(OutcomeNames.True)
                                             .Then<FileFinderStep>(
-                                                 step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MigrationsDbContext.cs`"); }
+                                                step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MigrationsDbContext.cs`"); }
                                             )
                                             .Then<MigrationsContextStep>()
                                             .Then<FileModifierStep>()
