@@ -14,5 +14,6 @@
         public const string UiRazor = nameof(UiRazor);
         public const string NextProject = nameof(NextProject);
         public const string AddDependsOn = nameof(AddDependsOn);
+        public const string RemoveDependsOn = nameof(RemoveDependsOn);
     }
 }

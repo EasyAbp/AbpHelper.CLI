@@ -22,6 +22,16 @@ namespace EasyAbp.AbpHelper.Extensions
             return node.DescendantNodes().OfType<T>();
         }
 
+        public static bool DescendantsContain<T>(this CSharpSyntaxNode node, string text) where T : CSharpSyntaxNode
+        {
+            return node.Descendants<T>().Any(child => ContainsIgnoreWhitespace(child.ToFullString(), text));
+        }
+
+        public static bool Contains(this CSharpSyntaxNode node, string text)
+        {
+            return ContainsIgnoreWhitespace(node.ToFullString(), text);
+        }
+        
         public static bool DescendantsNotContain<T>(this CSharpSyntaxNode node, string text) where T : CSharpSyntaxNode
         {
             return node.Descendants<T>().All(child => !ContainsIgnoreWhitespace(child.ToFullString(), text));

@@ -44,11 +44,11 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
     AbpHelper will generate all the CRUD stuffs , even include adding migration and database updating!
 
 1. Run the `DbMigrator` to seed the database
-1. Startup your application 
+1. Startup your application
 1. Login with the default admin account, and see the magic happens!
 
     ![running_demo](/docs/images/2020-02-10-14-09-22.png)
-    
+
     > If you don't see the TODO menu, check your permissions and make sure the TODO related permissions are granted
 
 ## Usage
@@ -92,9 +92,13 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 
     [Demo GIF](/docs/images/controller.gif)
 
-  * ef
+* ef
 
-    A shortcut to run 'dotnet ef' commands
+  A shortcut to run 'dotnet ef' commands. See 'abphelper ef --help' for details
 
-    [Demo GIF](/docs/images/ef.gif)
+  [Demo GIF](/docs/images/ef.gif)
+
+* module
+
+  Help quickly add/update/remove ABP modules. See 'abphelper module --help' for details
 

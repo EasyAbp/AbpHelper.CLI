@@ -9,5 +9,6 @@ namespace EasyAbp.AbpHelper.Workflow
         public const string ProjectNames = nameof(ProjectNames);
         public const string ModuleClassNamePostfix = nameof(ModuleClassNamePostfix);
         public const string DependsOnModuleClassName = nameof(DependsOnModuleClassName);
+        public const string Action = nameof(Action);
     }
 }
