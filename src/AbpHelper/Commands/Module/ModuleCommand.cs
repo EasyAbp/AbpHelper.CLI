@@ -1,5 +1,5 @@
 ﻿using System;
-using EasyAbp.AbpHelper.Commands.Module.Install;
+using EasyAbp.AbpHelper.Commands.Module.Add;
 using JetBrains.Annotations;
 
 namespace EasyAbp.AbpHelper.Commands.Module
@@ -9,7 +9,7 @@ namespace EasyAbp.AbpHelper.Commands.Module
         public ModuleCommand([NotNull] IServiceProvider serviceProvider) 
             : base(serviceProvider, "module", "Help quickly install/update/uninstall ABP modules. See 'abphelper module --help' for details")
         {
-            AddCommand<InstallCommand>();
+            AddCommand<AddCommand>();
         }
     }
 }

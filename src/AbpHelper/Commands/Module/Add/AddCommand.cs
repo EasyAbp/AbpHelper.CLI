@@ -14,9 +14,9 @@ using Elsa.Scripting.JavaScript;
 using Elsa.Services;
 using JetBrains.Annotations;
 
-namespace EasyAbp.AbpHelper.Commands.Module.Install
+namespace EasyAbp.AbpHelper.Commands.Module.Add
 {
-    public class InstallCommand : CommandWithOption<InstallCommandOption>
+    public class AddCommand : CommandWithOption<AddCommandOption>
     {
         private readonly IDictionary<string, string> _packageProjectMap = new Dictionary<string, string>
         {
@@ -31,20 +31,20 @@ namespace EasyAbp.AbpHelper.Commands.Module.Install
             {ModuleConsts.Web, "Web"},
         };
 
-        public InstallCommand([NotNull] IServiceProvider serviceProvider) : base(serviceProvider, "install", "Install ABP module according to the specified packages")
+        public AddCommand([NotNull] IServiceProvider serviceProvider) : base(serviceProvider, "add", "Add ABP module according to the specified packages")
         {
             AddValidator(result =>
             {
                 if (!result.Children.Any(sr => sr.Symbol is Option opt && _packageProjectMap.Keys.Contains(opt.Name)))
                 {
-                    return "You must specify at least one package to install.";
+                    return "You must specify at least one package to add.";
                 }
 
                 return null;
             });
         }
 
-        protected override IActivityBuilder ConfigureBuild(InstallCommandOption option, IActivityBuilder activityBuilder)
+        protected override IActivityBuilder ConfigureBuild(AddCommandOption option, IActivityBuilder activityBuilder)
         {
             var projectNames = typeof(ModuleCommandOption).GetProperties()
                     .Where(prop => prop.PropertyType == typeof(bool) && (bool) prop.GetValue(option)!)
@@ -86,7 +86,7 @@ namespace EasyAbp.AbpHelper.Commands.Module.Install
                                     }
                                 )
                                 .Then<IfElse>(
-                                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{CommandConsts.OptionVariableName}.{nameof(InstallCommandOption.Version)} != null"),
+                                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{CommandConsts.OptionVariableName}.{nameof(AddCommandOption.Version)} != null"),
                                     ifElse =>
                                     {
                                         ifElse
