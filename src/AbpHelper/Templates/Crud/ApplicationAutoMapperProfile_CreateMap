@@ -1,7 +1,5 @@
-            CreateMap<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Dto>();
-{{~ if Option.SeparateDto ~}}
-            CreateMap<Create{{ EntityInfo.Name }}Dto, {{ EntityInfo.Name }}>(MemberList.Source);
-            CreateMap<Update{{ EntityInfo.Name }}Dto, {{ EntityInfo.Name }}>(MemberList.Source);
-{{~ else ~}}
-            CreateMap<CreateUpdate{{ EntityInfo.Name }}Dto, {{ EntityInfo.Name }}>(MemberList.Source);
+            CreateMap<{{ EntityInfo.Name }}, {{ DtoInfo.ReadTypeName }}>();
+            CreateMap<{{ DtoInfo.CreateTypeName }}, {{ EntityInfo.Name }}>(MemberList.Source);
+{{~ if DtoInfo.CreateTypeName != DtoInfo.UpdateTypeName ~}}            
+            CreateMap<{{ DtoInfo.UpdateTypeName }}, {{ EntityInfo.Name }}>(MemberList.Source);
 {{~ end ~}}

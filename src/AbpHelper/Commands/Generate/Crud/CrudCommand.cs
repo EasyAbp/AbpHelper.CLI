@@ -40,6 +40,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                 .Then<FileFinderStep>(
                     step => { step.SearchFileName = new LiteralExpression(entityFileName); })
                 .Then<EntityParserStep>()
+                .Then<BuildDtoInfoStep>()
                 .Then<SetModelVariableStep>()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipEntityConstructors)}"),

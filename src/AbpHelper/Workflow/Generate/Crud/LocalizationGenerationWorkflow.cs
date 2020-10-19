@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
 using Elsa;
