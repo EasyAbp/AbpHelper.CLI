@@ -61,7 +61,7 @@ namespace EasyAbp.AbpHelper.Generator
                 }
                 else
                 {
-                    var properties = type
+                    var properties = type!
                         .GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
                     foreach (var property in properties)

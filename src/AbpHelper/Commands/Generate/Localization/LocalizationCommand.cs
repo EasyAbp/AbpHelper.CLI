@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using EasyAbp.AbpHelper.Steps.Abp;
 using EasyAbp.AbpHelper.Steps.Common;
@@ -42,7 +43,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Localization
                     }
                 )
                 .Then<ForEach>(
-                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>(MultiFileFinderStep.DefaultFileParameterName); },
+                    x => { x.CollectionExpression = new JavaScriptExpression<IList>(MultiFileFinderStep.DefaultFileParameterName); },
                     branch =>
                         branch.When(OutcomeNames.Iterate)
                             .Then<LocalizationJsonModificationCreatorStep>(
