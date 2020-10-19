@@ -34,3 +34,4 @@ Desktop.ini
 
 src/Logs/logs.txt
 /**/*.nupkg
+/.idea/.idea.AbpHelper/.idea/codeStyles/codeStyleConfig.xml
