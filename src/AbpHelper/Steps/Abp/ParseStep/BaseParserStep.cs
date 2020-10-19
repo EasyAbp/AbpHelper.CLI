@@ -113,11 +113,12 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ParseStep
                 symbol.ReturnType.ToDisplayString(),
                 symbol.Name
             );
+
             methodInfo.Parameters.AddRange(
                 symbol.Parameters
                     .Select(ps => new ParameterInfo(
                         ps.Type.ToMinimalQualifiedName(),
-                        ps.Type.ToDisplayString(),
+                        ps.Type.ToFullName(),
                         ps.Name)
                     )
             ); 
