@@ -1,15 +1,10 @@
 ﻿{{-
-    if Option.SeparateDto
-       dtoType = "Create" + EntityInfo.Name + "Dto"
-       if Option.SkipViewModel
-            viewModelType = dtoType;
-        else
-            viewModelType = "Create" + EntityInfo.Name + "ViewModel"
-        end
+    dtoType = DtoInfo.UpdateTypeName
+    if Option.SkipViewModel
+        viewModelType = dtoType
     else
-        dtoType = "CreateUpdate" + EntityInfo.Name + "Dto"
-        if Option.SkipViewModel
-            viewModelType = dtoType;
+        if Option.SeparateDto
+            viewModelType = "Create" + EntityInfo.Name + "ViewModel"
         else
             viewModelType = "CreateEdit" + EntityInfo.Name + "ViewModel"
         end
