@@ -56,7 +56,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Methods
                 .Then<AppServiceInterfaceStep>()
                 .Then<FileModifierStep>()
                 .Then<ForEach>(
-                    x => { x.CollectionExpression = new JavaScriptExpression<IList>($"{OptionVariableName}.{nameof(MethodsCommandOption.MethodNames)}"); },
+                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>($"{OptionVariableName}.{nameof(MethodsCommandOption.MethodNames)}"); },
                     branch =>
                         branch.When(OutcomeNames.Iterate)
                             .Then<SetVariable>(

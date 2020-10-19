@@ -27,7 +27,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         }
                     )
                     .Then<ForEach>(
-                        x => { x.CollectionExpression = new JavaScriptExpression<IList>(MultiFileFinderStep.DefaultFileParameterName); },
+                        x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>(MultiFileFinderStep.DefaultFileParameterName); },
                         branch =>
                             branch.When(OutcomeNames.Iterate)
                                 .Then<LocalizationJsonModificationCreatorStep>(
