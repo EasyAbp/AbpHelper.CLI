@@ -1,33 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Commands.Generate.Crud;
-using EasyAbp.AbpHelper.Extensions;
 using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.Common;
-using Elsa.Expressions;
 using Elsa.Results;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 
 namespace EasyAbp.AbpHelper.Steps.Abp
 {
     public class BuildDtoInfoStep : Step
-    {        
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+    {
+        protected override ActivityExecutionResult OnExecute(WorkflowExecutionContext context)
         {
             var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
             var option = context.GetVariable<object>("Option") as CrudCommandOption;
 
             try
             {
-                string[] actionNames = new string[] { string.Empty, string.Empty, string.Empty};                
+                string[] actionNames = { string.Empty, string.Empty, string.Empty};                
 
                 if (option != null && option.SeparateDto)
                 {
