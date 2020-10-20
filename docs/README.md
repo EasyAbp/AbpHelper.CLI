@@ -102,3 +102,5 @@ AbpHelper is a tool that help you with developing Abp vNext applications.
 
   Help quickly add/update/remove ABP modules. See 'abphelper module --help' for details
 
+  [Demo GIF](/docs/images/module.gif)
+
