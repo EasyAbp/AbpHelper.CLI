@@ -103,7 +103,10 @@ namespace EasyAbp.AbpHelper.Commands.Module.Remove
                                             .Then<FileFinderStep>(
                                                 step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MigrationsDbContext.cs`"); }
                                             )
-                                            .Then<MigrationsContextStep>()
+                                            .Then<MigrationsContextStep>(step =>
+                                            {
+                                                step.Action = new LiteralExpression<MigrationsContextStep.ActionType>(((int)MigrationsContextStep.ActionType.Remove).ToString());
+                                            })
                                             .Then<FileModifierStep>()
                                             .Then(ActivityNames.RemoveDependsOn)
                                             ;

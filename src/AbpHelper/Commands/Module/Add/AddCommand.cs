@@ -125,7 +125,10 @@ namespace EasyAbp.AbpHelper.Commands.Module.Add
                                             .Then<FileFinderStep>(
                                                 step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MigrationsDbContext.cs`"); }
                                             )
-                                            .Then<MigrationsContextStep>()
+                                            .Then<MigrationsContextStep>(step =>
+                                            {
+                                                step.Action = new LiteralExpression<MigrationsContextStep.ActionType>(((int)MigrationsContextStep.ActionType.Add).ToString());
+                                            })
                                             .Then<FileModifierStep>()
                                             .Then(ActivityNames.NextProject)
                                             ;
