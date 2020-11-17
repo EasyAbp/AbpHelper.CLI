@@ -66,8 +66,11 @@ $(function () {
                 }
             },
             {{~ for prop in EntityInfo.Properties ~}}
-            {{~ if prop | abp.is_ignore_property; continue; end ~}} 
-            { data: "{{ prop.Name | abp.camel_case }}" },
+            {{~ if prop | abp.is_ignore_property; continue; end ~}}
+            {
+                title: l('{{ EntityInfo.Name + prop.Name }}'),
+                data: "{{ prop.Name | abp.camel_case }}"
+            },
             {{~ end ~}}
         ]
     }));

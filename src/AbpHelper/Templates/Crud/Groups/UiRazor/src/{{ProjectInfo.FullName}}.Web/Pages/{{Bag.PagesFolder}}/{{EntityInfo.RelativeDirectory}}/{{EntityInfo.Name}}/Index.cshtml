@@ -53,16 +53,6 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap">
-            <thead>
-            <tr>
-                <th>@L["Actions"]</th>
-                {{~ for prop in EntityInfo.Properties ~}}
-                {{~ if prop | abp.is_ignore_property; continue; end ~}}
-                <th>@L["{{ EntityInfo.Name + prop.Name }}"]</th>
-                {{~ end ~}}
-            </tr>
-            </thead>
-        </abp-table>
+        <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap"/>
     </abp-card-body>
 </abp-card>
