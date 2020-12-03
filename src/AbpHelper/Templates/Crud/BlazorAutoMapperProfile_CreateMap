@@ -1,0 +1,26 @@
+{{~ 
+    if Option.SeparateDto 
+        if Option.SkipViewModel
+~}}
+            CreateMap<{{ DtoInfo.ReadTypeName }}, {{ DtoInfo.UpdateTypeName }}>();
+{{~
+        else
+~}}
+            CreateMap<{{ DtoInfo.ReadTypeName }}, Edit{{ EntityInfo.Name }}ViewModel>();
+            CreateMap<Create{{ EntityInfo.Name }}ViewModel, {{ DtoInfo.CreateTypeName }}>();
+            CreateMap<Edit{{ EntityInfo.Name }}ViewModel, {{ DtoInfo.UpdateTypeName }}>();
+{{~
+        end 
+    else
+        if Option.SkipViewModel
+~}}
+            CreateMap<{{ DtoInfo.ReadTypeName }}, {{ DtoInfo.CreateTypeName }}>();
+{{~
+        else
+~}}
+            CreateMap<{{ DtoInfo.ReadTypeName }}, CreateEdit{{ EntityInfo.Name }}ViewModel>();
+            CreateMap<CreateEdit{{ EntityInfo.Name }}ViewModel, {{ DtoInfo.CreateTypeName }}>();
+{{~
+        end
+    end
+~}}

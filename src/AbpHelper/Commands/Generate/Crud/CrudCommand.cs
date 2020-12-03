@@ -105,7 +105,6 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                                         .AddUIRazorPagesGenerationWorkflow()
                                         .Then(TestGeneration);
 
-
                                     @switch.When(UIFramework.Blazor.ToString("D"))
                                         .AddUIBlazorGenerationWorkflow()
                                         .Then(TestGeneration);

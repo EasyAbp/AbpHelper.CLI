@@ -31,22 +31,22 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                     }
                                 )
                                 .Then<SetModelVariableStep>()
-                                .Then(ActivityNames.UIRazor)
+                                .Then(ActivityNames.UIBlazor)
                                 ;
                             ifElse
                                 .When(OutcomeNames.False)
-                                .Then(ActivityNames.UIRazor)
+                                .Then(ActivityNames.UIBlazor)
                                 ;
                         }
                     )
-                    /* Generate razor pages ui files*/
+                    /* Generate blazor ui files*/
                     .Then<GroupGenerationStep>(
                         step =>
                         {
                             step.GroupName = "UIBlazor";
                             step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                         }
-                    ).WithName(ActivityNames.UIRazor)
+                    ).WithName(ActivityNames.UIBlazor)
                     /* Add menu name */
                     .Then<MultiFileFinderStep>(
                         step =>
@@ -82,9 +82,9 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         step =>
                         {
                             step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src`");
-                            step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}WebAutoMapperProfile.cs`");
+                            step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}BlazorAutoMapperProfile.cs`");
                         })
-                    .Then<WebAutoMapperProfileStep>()
+                    .Then<BlazorAutoMapperProfileStep>()
                     .Then<FileModifierStep>()
                 ;
         }

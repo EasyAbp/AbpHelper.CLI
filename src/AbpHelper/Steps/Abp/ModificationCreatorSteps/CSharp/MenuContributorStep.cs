@@ -19,6 +19,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             var model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string addMenuItemText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
+            string configureMainMenuText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_ConfigureMainMenu", model);
 
             CSharpSyntaxNode MainMenu(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
                 .Single(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
@@ -35,6 +36,24 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
                         usingForAppText,
                         modifyCondition: root => root.NotContains(usingForAppText)
                     ));
+
+                if (projectInfo.UIFramework == UIFramework.Blazor)
+                {
+                    builders.Add(
+                        new ReplacementBuilder<CSharpSyntaxNode>(
+                            root => MainMenu(root).GetStartLine(),
+                            root => MainMenu(root).GetStartLine(),
+                            configureMainMenuText,
+                            modifyCondition: root => root.NotContains(configureMainMenuText)
+                        ));
+
+                    builders.Add(new DeletionBuilder<CSharpSyntaxNode>(
+                        root => MainMenu(root).GetEndLine() - 1,
+                        root => MainMenu(root).GetEndLine() - 1,
+                        modifyCondition: root => !root.NotContains("return Task.CompletedTask;")
+                    ));
+                }
+
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
                         root => MainMenu(root).GetEndLine(),
@@ -45,7 +64,6 @@ namespace EasyAbp.AbpHelper.Steps.Abp.ModificationCreatorSteps.CSharp
             }
             else if (projectInfo.TemplateType == TemplateType.Module)
             {
-                string configureMainMenuText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_ConfigureMainMenu", model);
                 string usingForModuleText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_UsingForModule", model);
                 string localizerText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_Localizer", model);
                 builders.Add(

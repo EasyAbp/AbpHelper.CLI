@@ -41,13 +41,13 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             var fullName = fileName.RemovePostFix(".Domain.csproj");
 
             UIFramework uiFramework;
-            if (FileExistsInDirectory(baseDirectory, "*.cshtml", excludeDirectories))
-            {
-                uiFramework = UIFramework.RazorPages;
-            }
-            else if (FileExistsInDirectory(baseDirectory, "*.razor", excludeDirectories))
+            if (FileExistsInDirectory(baseDirectory, "*.razor", excludeDirectories))
             {
                 uiFramework = UIFramework.Blazor;
+            }
+            else if (FileExistsInDirectory(baseDirectory, "*.cshtml", excludeDirectories))
+            {
+                uiFramework = UIFramework.RazorPages;
             }
             else if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludeDirectories))
             {

@@ -2,13 +2,14 @@
 {{~ if !Option.SkipPermissions ~}}
 @attribute [Authorize({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Default)]
 @using {{ ProjectInfo.FullName }}.Permissions
+@using Microsoft.AspNetCore.Authorization
 {{~ end ~}}
 @using Microsoft.Extensions.Localization
 @using {{ ProjectInfo.FullName }}.Localization
 @using Volo.Abp.Application.Dtos
 @using {{ ProjectInfo.FullName }}.{{ EntityInfo.RelativeNamespace }}
 @using {{ ProjectInfo.FullName }}.{{ EntityInfo.RelativeNamespace }}.Dtos
-@inject IStringLocalizer<{ ProjectInfo.Name }}Resource> L
+@inject IStringLocalizer<{{ ProjectInfo.Name }}Resource> L
 {{~ if Option.SeparateDto ~}}
 @inherits AbpCrudPageBase<I{{ EntityInfo.Name }}AppService, {{ EntityInfo.Name }}Dto, Guid, PagedAndSortedResultRequestDto, Create{{ EntityInfo.Name }}Dto, Update{{ EntityInfo.Name }}Dto>
 {{~ else ~}}
@@ -52,14 +53,13 @@
                         </EntityActions>
                     </DisplayTemplate>
                 </DataGridEntityActionsColumn>
+            {{~ for prop in EntityInfo.Properties ~}}
+            {{~ if prop | abp.is_ignore_property; continue; end ~}}
                 <DataGridColumn TItem="{{ EntityInfo.Name }}Dto"
-                                Field="@nameof({{ EntityInfo.Name }}Dto.Name)"
-                                Caption="@L["{{ EntityInfo.Name }}Name"]">
+                                Field="@nameof({{ EntityInfo.Name }}Dto.{{ prop.Name }})"
+                                Caption="@L["{{ EntityInfo.Name }}{{ prop.Name }}"]">
                 </DataGridColumn>
-                <DataGridColumn TItem="{{ EntityInfo.Name }}Dto"
-                                Field="@nameof({{ EntityInfo.Name }}Dto.Done)"
-                                Caption="@L["{{ EntityInfo.Name }}Done"]">
-                </DataGridColumn>
+            {{~ end ~}}
             </DataGridColumns>
         </DataGrid>
     </CardBody>
@@ -74,14 +74,13 @@
                 <CloseButton Clicked="CloseCreateModalAsync"/>
             </ModalHeader>
             <ModalBody>
+                {{~ for prop in EntityInfo.Properties ~}}
+                {{~ if prop | abp.is_ignore_property; continue; end ~}}
                 <Field>
-                    <FieldLabel>@L["{{ EntityInfo.Name }}Name"]</FieldLabel>
-                    <TextEdit @bind-text="EditingEntity.Name"/>
+                    <FieldLabel>@L["{{ EntityInfo.Name }}{{ prop.Name }}"]</FieldLabel>
+                    <TextEdit @bind-text="EditingEntity.{{ prop.Name }}"/>
                 </Field>
-                <Field>
-                    <FieldLabel>@L["{{ EntityInfo.Name }}Done"]</FieldLabel>
-                    <Check TValue="bool" @bind-Checked="@NewEntity.Done"/>
-                </Field>
+                {{~ end ~}}
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Secondary"
@@ -108,14 +107,13 @@
                 <CloseButton Clicked="CloseEditModalAsync"/>
             </ModalHeader>
             <ModalBody>
+                {{~ for prop in EntityInfo.Properties ~}}
+                {{~ if prop | abp.is_ignore_property; continue; end ~}}
                 <Field>
-                    <FieldLabel>@L["{{ EntityInfo.Name }}Name"]</FieldLabel>
-                    <TextEdit @bind-text="EditingEntity.Name"/>
+                    <FieldLabel>@L["{{ EntityInfo.Name }}{{ prop.Name }}"]</FieldLabel>
+                    <TextEdit @bind-text="EditingEntity.{{ prop.Name }}"/>
                 </Field>
-                <Field>
-                    <FieldLabel>@L["{{ EntityInfo.Name }}Done"]</FieldLabel>
-                    <Check TValue="bool" @bind-Checked="EditingEntity.Done"/>
-                </Field>
+                {{~ end ~}}
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Secondary"
