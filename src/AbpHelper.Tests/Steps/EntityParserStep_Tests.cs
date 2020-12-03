@@ -65,7 +65,7 @@ namespace Acme.BookStore.Books
                 {
                     // Arrange
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
-                    ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Application, UiFramework.RazorPages, false));
+                    ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Application, UIFramework.RazorPages, false));
 
                     // Act
                     await _step.ExecuteAsync(ctx, CancellationToken.None);
@@ -125,7 +125,7 @@ namespace Acme.BookStore.EasyAbp.BookStore.UserRoles
                 {
                     // Arrange
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
-                    ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Module, UiFramework.RazorPages, false));
+                    ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Module, UIFramework.RazorPages, false));
 
                     // Act
                     await _step.ExecuteAsync(ctx, CancellationToken.None);

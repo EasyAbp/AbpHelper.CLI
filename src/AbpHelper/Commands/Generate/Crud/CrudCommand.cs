@@ -78,14 +78,14 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                     {
                         ifElse.When(OutcomeNames.False)
                             .AddLocalizationGenerationWorkflow()
-                            .Then(ActivityNames.Ui)
+                            .Then(ActivityNames.UI)
                             ;
                         ifElse.When(OutcomeNames.True)
-                            .Then(ActivityNames.Ui)
+                            .Then(ActivityNames.UI)
                             ;
                     })
                 .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipUi)}"),
+                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipUI)}"),
                     ifElse =>
                     {
                         ifElse
@@ -93,21 +93,26 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                             .Then<Switch>(
                                 @switch =>
                                 {
-                                    @switch.Expression = new JavaScriptExpression<string>("(ProjectInfo.UiFramework)");
-                                    @switch.Cases = Enum.GetValues(typeof(UiFramework)).Cast<int>().Select(u => u.ToString()).ToArray();
+                                    @switch.Expression = new JavaScriptExpression<string>("(ProjectInfo.UIFramework)");
+                                    @switch.Cases = Enum.GetValues(typeof(UIFramework)).Cast<int>().Select(u => u.ToString()).ToArray();
                                 },
                                 @switch =>
                                 {
-                                    @switch.When(UiFramework.None.ToString("D"))
+                                    @switch.When(UIFramework.None.ToString("D"))
                                         .Then(TestGeneration);
 
-                                    @switch.When(UiFramework.RazorPages.ToString("D"))
-                                        .AddUiRazorPagesGenerationWorkflow()
+                                    @switch.When(UIFramework.RazorPages.ToString("D"))
+                                        .AddUIRazorPagesGenerationWorkflow()
                                         .Then(TestGeneration);
 
-                                    @switch.When(UiFramework.Angular.ToString("D"))
+
+                                    @switch.When(UIFramework.Blazor.ToString("D"))
+                                        .AddUIBlazorGenerationWorkflow()
+                                        .Then(TestGeneration);
+
+                                    @switch.When(UIFramework.Angular.ToString("D"))
                                         // TODO
-                                        //.AddUiAngularGenerationWorkflow()
+                                        //.AddUIAngularGenerationWorkflow()
                                         .Then(TestGeneration);
                                 }
                             )
@@ -117,7 +122,7 @@ namespace EasyAbp.AbpHelper.Commands.Generate.Crud
                             .Then(TestGeneration)
                             ;
                     }
-                ).WithName(ActivityNames.Ui)
+                ).WithName(ActivityNames.UI)
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipTest)}"),
                     ifElse =>

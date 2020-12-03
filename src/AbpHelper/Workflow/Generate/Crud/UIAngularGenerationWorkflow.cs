@@ -6,9 +6,9 @@ using Elsa.Services;
 
 namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
-    public static class UiAngularGenerationWorkflow
+    public static class UIAngularGenerationWorkflow
     {
-        public static IActivityBuilder AddUiAngularGenerationWorkflow(this IOutcomeBuilder builder)
+        public static IActivityBuilder AddUIAngularGenerationWorkflow(this IOutcomeBuilder builder)
         {
             return builder
                     /* Add angular module */
@@ -52,7 +52,7 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                         ))
                     /* Generate XXX.ts */
                     .Then<GroupGenerationStep>(
-                        step => { step.GroupName = "UiAngular"; }
+                        step => { step.GroupName = "UIAngular"; }
                     )
                 ;
         }

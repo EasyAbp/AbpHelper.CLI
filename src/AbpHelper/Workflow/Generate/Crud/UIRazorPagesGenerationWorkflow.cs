@@ -11,9 +11,9 @@ using Elsa.Services;
 
 namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
 {
-    public static class UiRazorPagesGenerationWorkflow
+    public static class UIRazorPagesGenerationWorkflow
     {
-        public static IActivityBuilder AddUiRazorPagesGenerationWorkflow(this IOutcomeBuilder builder)
+        public static IActivityBuilder AddUIRazorPagesGenerationWorkflow(this IOutcomeBuilder builder)
         {
             return builder
                     .Then<IfElse>(
@@ -31,11 +31,11 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                                     }
                                 )
                                 .Then<SetModelVariableStep>()
-                                .Then(ActivityNames.UiRazor)
+                                .Then(ActivityNames.UIRazor)
                                 ;
                             ifElse
                                 .When(OutcomeNames.False)
-                                .Then(ActivityNames.UiRazor)
+                                .Then(ActivityNames.UIRazor)
                                 ;
                         }
                     )
@@ -43,10 +43,10 @@ namespace EasyAbp.AbpHelper.Workflow.Generate.Crud
                     .Then<GroupGenerationStep>(
                         step =>
                         {
-                            step.GroupName = "UiRazor";
+                            step.GroupName = "UIRazor";
                             step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
                         }
-                    ).WithName(ActivityNames.UiRazor)
+                    ).WithName(ActivityNames.UIRazor)
                     /* Add menu name */
                     .Then<MultiFileFinderStep>(
                         step =>

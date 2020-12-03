@@ -76,7 +76,7 @@ namespace EasyAbp.AbpHelper.Workflow.Common
                                 )
                                 .Then<IfElse>(
                                     ie => ie.ConditionExpression = new JavaScriptExpression<bool>
-                                        ($"ProjectInfo.UiFramework == {UiFramework.RazorPages:D}"),
+                                        ($"ProjectInfo.UIFramework == {UIFramework.RazorPages:D}"),
                                     ie =>
                                     {
                                         ie.When(OutcomeNames.True)
@@ -91,7 +91,7 @@ namespace EasyAbp.AbpHelper.Workflow.Common
                                     })
                                 .Then<IfElse>(
                                     ie => ie.ConditionExpression = new JavaScriptExpression<bool>
-                                        ($"ProjectInfo.UiFramework == {UiFramework.None:D}"),
+                                        ($"ProjectInfo.UIFramework == {UIFramework.None:D}"),
                                     ie =>
                                     {
                                         ie.When(OutcomeNames.True)

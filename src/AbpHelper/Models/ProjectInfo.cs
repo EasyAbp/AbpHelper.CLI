@@ -4,11 +4,11 @@ namespace EasyAbp.AbpHelper.Models
 {
     public class ProjectInfo
     {
-        public ProjectInfo(string baseDirectory, string fullName, TemplateType templateType, UiFramework uiFramework, bool tiered)
+        public ProjectInfo(string baseDirectory, string fullName, TemplateType templateType, UIFramework uiFramework, bool tiered)
         {
             BaseDirectory = baseDirectory;
             TemplateType = templateType;
-            UiFramework = uiFramework;
+            UIFramework = uiFramework;
             Tiered = tiered;
             FullName = fullName;
         }
@@ -17,12 +17,12 @@ namespace EasyAbp.AbpHelper.Models
         public string FullName { get; }
         public string Name => FullName.Split('.').Last();
         public TemplateType TemplateType { get; }
-        public UiFramework UiFramework { get; }
+        public UIFramework UIFramework { get; }
         public bool Tiered { get; }
 
         public override string ToString()
         {
-            return $"{nameof(BaseDirectory)}: {BaseDirectory}, {nameof(FullName)}: {FullName}, {nameof(Name)}: {Name}, {nameof(TemplateType)}: {TemplateType}, {nameof(UiFramework)}: {UiFramework}, {nameof(Tiered)}: {Tiered}";
+            return $"{nameof(BaseDirectory)}: {BaseDirectory}, {nameof(FullName)}: {FullName}, {nameof(Name)}: {Name}, {nameof(TemplateType)}: {TemplateType}, {nameof(UIFramework)}: {UIFramework}, {nameof(Tiered)}: {Tiered}";
         }
     }
 
@@ -32,10 +32,11 @@ namespace EasyAbp.AbpHelper.Models
         Module
     }
 
-    public enum UiFramework
+    public enum UIFramework
     {
         None,
         RazorPages,
-        Angular
+        Angular,
+        Blazor
     }
 }

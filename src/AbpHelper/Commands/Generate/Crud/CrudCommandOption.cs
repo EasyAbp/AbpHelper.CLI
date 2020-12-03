@@ -35,7 +35,7 @@ This argument takes effect only if '--skip-db-migrations' is NOT specified.";
         public bool SkipDbMigrations { get; set; }
 
         [Option("skip-ui", Description = "Skip generating UI")]
-        public bool SkipUi { get; set; }
+        public bool SkipUI { get; set; }
 
         [Option("skip-view-model", Description = "Skip generating 'CreateUpdateViewModel`, use 'CreateUpdateDto' directly")]
         public bool SkipViewModel { get; set; }
