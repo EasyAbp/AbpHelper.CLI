@@ -1,0 +1,134 @@
+@page "/{{ EntityInfo.RelativeNamespace }}/{{ EntityInfo.Name }}"
+{{~ if !Option.SkipPermissions ~}}
+@attribute [Authorize({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Default)]
+@using {{ ProjectInfo.FullName }}.Permissions
+{{~ end ~}}
+@using Microsoft.Extensions.Localization
+@using {{ ProjectInfo.FullName }}.Localization
+@using Volo.Abp.Application.Dtos
+@using {{ ProjectInfo.FullName }}.{{ EntityInfo.RelativeNamespace }}
+@using {{ ProjectInfo.FullName }}.{{ EntityInfo.RelativeNamespace }}.Dtos
+@inject IStringLocalizer<{ ProjectInfo.Name }}Resource> L
+{{~ if Option.SeparateDto ~}}
+@inherits AbpCrudPageBase<I{{ EntityInfo.Name }}AppService, {{ EntityInfo.Name }}Dto, Guid, PagedAndSortedResultRequestDto, Create{{ EntityInfo.Name }}Dto, Update{{ EntityInfo.Name }}Dto>
+{{~ else ~}}
+@inherits AbpCrudPageBase<I{{ EntityInfo.Name }}AppService, {{ EntityInfo.Name }}Dto, Guid, PagedAndSortedResultRequestDto, CreateUpdate{{ EntityInfo.Name }}Dto, CreateUpdate{{ EntityInfo.Name }}Dto>
+{{~ end ~}}
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h2>@L["{{ EntityInfo.Name }}"]</h2>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Paragraph Alignment="TextAlignment.Right">
+                    <Button Color="Color.Primary"
+                            Clicked="OpenCreateModalAsync">
+                        @L["Create{{ EntityInfo.Name }}"]
+                    </Button>
+                </Paragraph>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="{{ EntityInfo.Name }}Dto"
+                  Data="Entities"
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  PageSize="PageSize">
+            <DataGridColumns>
+                <DataGridEntityActionsColumn TItem="{{ EntityInfo.Name }}Dto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="{{ EntityInfo.Name }}Dto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="{{ EntityInfo.Name }}Dto"
+                                          Text="@L["Edit"]"
+                                          Clicked="() => OpenEditModalAsync(context)"/>
+                            <EntityAction TItem="{{ EntityInfo.Name }}Dto"
+                                          Text="@L["Delete"]"
+                                          Clicked="() => DeleteEntityAsync(context)"
+                                          ConfirmationMessage="() => GetDeleteConfirmationMessage(context)"/>
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+                <DataGridColumn TItem="{{ EntityInfo.Name }}Dto"
+                                Field="@nameof({{ EntityInfo.Name }}Dto.Name)"
+                                Caption="@L["{{ EntityInfo.Name }}Name"]">
+                </DataGridColumn>
+                <DataGridColumn TItem="{{ EntityInfo.Name }}Dto"
+                                Field="@nameof({{ EntityInfo.Name }}Dto.Done)"
+                                Caption="@L["{{ EntityInfo.Name }}Done"]">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+<Modal @ref="CreateModal">
+    <ModalBackdrop/>
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@L["Create{{ EntityInfo.Name }}"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field>
+                    <FieldLabel>@L["{{ EntityInfo.Name }}Name"]</FieldLabel>
+                    <TextEdit @bind-text="EditingEntity.Name"/>
+                </Field>
+                <Field>
+                    <FieldLabel>@L["{{ EntityInfo.Name }}Done"]</FieldLabel>
+                    <Check TValue="bool" @bind-Checked="@NewEntity.Done"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <Button Color="Color.Primary"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="CreateEntityAsync">
+                    @L["Save"]
+                </Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="EditModal">
+    <ModalBackdrop/>
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@L["Edit{{ EntityInfo.Name }}"]</ModalTitle>
+                <CloseButton Clicked="CloseEditModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field>
+                    <FieldLabel>@L["{{ EntityInfo.Name }}Name"]</FieldLabel>
+                    <TextEdit @bind-text="EditingEntity.Name"/>
+                </Field>
+                <Field>
+                    <FieldLabel>@L["{{ EntityInfo.Name }}Done"]</FieldLabel>
+                    <Check TValue="bool" @bind-Checked="EditingEntity.Done"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <Button Color="Color.Primary"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="UpdateEntityAsync">
+                    @L["Save"]
+                </Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
