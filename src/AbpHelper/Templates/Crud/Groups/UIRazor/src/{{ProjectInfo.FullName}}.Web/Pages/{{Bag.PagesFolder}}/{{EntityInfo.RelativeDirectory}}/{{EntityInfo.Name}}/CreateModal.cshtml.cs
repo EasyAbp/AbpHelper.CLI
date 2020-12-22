@@ -1,5 +1,5 @@
 ﻿{{-
-    dtoType = DtoInfo.UpdateTypeName
+    dtoType = DtoInfo.CreateTypeName
     if Option.SkipViewModel
         viewModelType = dtoType
     else

@@ -41,7 +41,7 @@ namespace EasyAbp.AbpHelper.Commands
         {
             option.Directory = GetBaseDirectory(option.Directory);
 
-            await ServiceProvider.GetService<ICheckUpdateService>().CheckUpdate();
+            await ServiceProvider.GetRequiredService<ICheckUpdateService>().CheckUpdate();
 
             await RunWorkflow(builder =>
             {
@@ -101,7 +101,7 @@ namespace EasyAbp.AbpHelper.Commands
             var workflowDefinition = builder(workflowBuilder);
             // Start the workflow.
             Logger.LogInformation($"Command '{Name}' started.");
-            var invoker = ServiceProvider.GetService<IWorkflowInvoker>();
+            var invoker = ServiceProvider.GetRequiredService<IWorkflowInvoker>();
             var ctx = await invoker.StartAsync(workflowDefinition);
             if (ctx.Workflow.Status == WorkflowStatus.Finished)
             {
