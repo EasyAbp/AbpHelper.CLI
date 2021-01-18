@@ -14,10 +14,10 @@ jobs:
           fetch-depth: 0
 
       - name: Find and Replace
-        uses: shitiomatic/str-replace@master
+        uses: jacobtomlinson/gha-find-replace@master
         with:
           find: \]\((/docs/)
-          replace: "](/abphelper/${{ github.event.repository.name }}/"
+          replace: "](/modules/${{ github.event.repository.name }}/"
           include: docs/
 
       - name: Pull repo and change files
@@ -26,15 +26,12 @@ jobs:
           ls
           git clone https://github.com/EasyAbp/easyabp.github.io
           cd easyabp.github.io
-          rm -rf docs/abphelper/${{ github.event.repository.name }}
-          rm -rf docs/.vuepress/public/abphelper/${{ github.event.repository.name }}
-          mkdir -p docs/abphelper
-          mkdir -p docs/.vuepress/public/abphelper
-          cp -rf ../docs/ docs/abphelper/${{ github.event.repository.name }}
-          cp -rf ../docs/ docs/.vuepress/public/abphelper/${{ github.event.repository.name }}
+          rm -rf docs/modules/${{ github.event.repository.name }}
+          rm -rf docs/.vuepress/public/modules/${{ github.event.repository.name }}
+          cp -rf ../docs/ docs/modules/${{ github.event.repository.name }}
+          cp -rf ../docs/ docs/.vuepress/public/modules/${{ github.event.repository.name }}
           git add --all
           echo "##[set-output name=diff;]$(git diff --staged)"
-
       - name: Commit files
         if: steps.change.outputs.diff
         run: |
@@ -43,7 +40,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git commit -m "Update the docs of ${{ github.event.repository.name }}" -a
-
       - name: Push changes
         if: steps.change.outputs.diff
         uses: ad-m/github-push-action@master
