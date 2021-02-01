@@ -41,7 +41,11 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             var fullName = fileName.RemovePostFix(".Domain.csproj");
 
             UIFramework uiFramework;
-            if (FileExistsInDirectory(baseDirectory, "*.razor", excludeDirectories))
+            if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludeDirectories))
+            {
+                uiFramework = UIFramework.Angular;
+            }
+            else if (FileExistsInDirectory(baseDirectory, "*.razor", excludeDirectories))
             {
                 uiFramework = UIFramework.Blazor;
             }
@@ -49,14 +53,10 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             {
                 uiFramework = UIFramework.RazorPages;
             }
-            else if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludeDirectories))
-            {
-                uiFramework = UIFramework.Angular;
-            }
+
             else
             {
                 uiFramework = UIFramework.None;
-
             }
 
             string aspNetCoreDir = Path.Combine(baseDirectory, "aspnet-core");
@@ -68,6 +68,7 @@ namespace EasyAbp.AbpHelper.Steps.Abp
             {
                 context.SetVariable(VariableNames.AspNetCoreDir, baseDirectory);
             }
+
             EnsureSlnFileExists(context, fullName);
 
             var tiered = false;
