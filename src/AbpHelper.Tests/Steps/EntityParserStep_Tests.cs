@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.Abp;
-using EasyAbp.AbpHelper.Steps.Common;
+using EasyAbp.AbpHelper.Core.Models;
+using EasyAbp.AbpHelper.Core.Steps.Abp;
+using EasyAbp.AbpHelper.Core.Steps.Common;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;

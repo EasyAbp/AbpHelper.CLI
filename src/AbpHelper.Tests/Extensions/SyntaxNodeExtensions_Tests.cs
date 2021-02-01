@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using EasyAbp.AbpHelper.Extensions;
+using EasyAbp.AbpHelper.Core.Extensions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Shouldly;

@@ -2,19 +2,69 @@ name: publish to nuget
 on:
   push:
     branches:
-      - master # Default release branch
+      - master
+      - main
 jobs:
   publish:
-    name: list on nuget
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: NuGet/setup-nuget@v1.0.5
 
-      # Publish
-      - name: publish AbpHelper.CLI
-        uses: brandedoutcast/publish-nuget@v2
+      - name: read common.props
+        id: commonProps
+        uses: juliangruber/read-file-action@v1
         with:
-          PROJECT_FILE_PATH: src/AbpHelper/AbpHelper.csproj
-          VERSION_FILE_PATH: src/AbpHelper/AbpHelper.csproj
-          VERSION_REGEX: <AssemblyVersion>(.*)<\/AssemblyVersion>
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          path: ./common.props
+
+      - name: get version
+        id: getVersion
+        uses: AsasInnab/regex-action@v1
+        with:
+          regex_pattern: '(?<=>)[^<>]+(?=</Version>)'
+          regex_flags: 'gim'
+          search_string: '${{ steps.commonProps.outputs.content }}'
+
+      - name: dotnet restore
+        run: dotnet restore -s "https://api.nuget.org/v3/index.json"
+
+      - name: dotnet build
+        run: dotnet build -c Release
+
+      - name: dotnet pack
+        run: dotnet pack -c Release --no-build -o dest
+
+      - name: remove unused packages
+        run: |
+          cd dest
+          del * -Exclude EasyAbp.*
+          del * -Exclude *.${{ steps.getVersion.outputs.first_match }}.nupkg
+          del *.HttpApi.Client.ConsoleTestApp*
+          del *.Host.Shared*
+          dir -name
+
+      - name: dotnet nuget push to GitHub
+        uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
+        with:
+          nupkg-path:  'dest\*.nupkg'
+          repo-owner:  'EasyAbp'
+          gh-user:  'EasyAbp'
+          token:  ${{ secrets.GITHUB_TOKEN }}
+
+      - name: dotnet nuget push to NuGet
+        run: dotnet nuget push dest\*.nupkg -k ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: determine if the tag exists
+        uses: mukunku/tag-exists-action@v1.0.0
+        id: checkTag
+        with:
+          tag: ${{ steps.getVersion.outputs.first_match }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: add git tag
+        if: ${{ steps.checkTag.outputs.exists == 'false' }}
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.getVersion.outputs.first_match }}

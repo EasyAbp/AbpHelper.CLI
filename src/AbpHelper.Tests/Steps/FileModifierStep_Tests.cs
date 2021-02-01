@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Models;
-using EasyAbp.AbpHelper.Steps.Common;
-using EasyApp.AbpHelper.Tests.Steps;
+using EasyAbp.AbpHelper.Core.Models;
+using EasyAbp.AbpHelper.Core.Steps.Common;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AbpHelper.Tests.Parsers
+namespace EasyApp.AbpHelper.Tests.Steps
 {
     public class FileModifierStep_Tests : StepTestsBase
     {
