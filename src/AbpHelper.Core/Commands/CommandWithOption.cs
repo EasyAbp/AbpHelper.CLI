@@ -37,7 +37,7 @@ namespace EasyAbp.AbpHelper.Core.Commands
 
         public ILogger<CommandWithOption<TOption>> Logger { get; set; }
 
-        protected virtual async Task RunCommand(TOption option)
+        public virtual async Task RunCommand(TOption option)
         {
             option.Directory = GetBaseDirectory(option.Directory);
 

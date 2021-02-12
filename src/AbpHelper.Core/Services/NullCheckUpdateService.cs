@@ -4,7 +4,7 @@ using Volo.Abp.DependencyInjection;
 namespace EasyAbp.AbpHelper.Core.Services
 {
     [Dependency(TryRegister = true)]
-    public class NullCheckUpdateService : ICheckUpdateService
+    public class NullCheckUpdateService : ICheckUpdateService, ITransientDependency
     {
         public Task CheckUpdateAsync()
         {

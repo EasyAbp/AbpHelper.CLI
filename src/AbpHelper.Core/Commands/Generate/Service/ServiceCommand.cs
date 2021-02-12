@@ -20,7 +20,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Service
         {
         }
 
-        protected override Task RunCommand(ServiceCommandOption option)
+        public override Task RunCommand(ServiceCommandOption option)
         {
             if (option.Folder.IsNullOrEmpty())
             {
