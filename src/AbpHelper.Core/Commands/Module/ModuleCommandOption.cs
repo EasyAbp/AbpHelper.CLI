@@ -31,7 +31,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module
             set => _moduleCompanyName = value;
         }
 
-        public string ModuleNameWithoutCompanyName => ModuleName.Substring(ModuleCompanyName.IsNullOrEmpty() ? 0 : ModuleCompanyName.Length + 1).Replace(".", "");
+        public string ModuleGroupNameWithoutCompanyName => ModuleName.Substring(ModuleCompanyName.IsNullOrEmpty() ? 0 : ModuleCompanyName.Length + 1).Replace(".", "");
 
         [Option('s', ModuleConsts.Shared, Description = "Install the {module-name}.Domain.Shared nuget package")]
         public bool Shared { get; set; }

@@ -118,7 +118,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                                     step =>
                                     {
                                         step.VariableName = VariableNames.DependsOnModuleClassName;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleNameWithoutCompanyName)} + {VariableNames.ModuleClassNamePostfix} + 'Module'");
+                                        step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleGroupNameWithoutCompanyName)} + {VariableNames.ModuleClassNamePostfix} + 'Module'");
                                     }
                                 )
                                 .Then<IfElse>(

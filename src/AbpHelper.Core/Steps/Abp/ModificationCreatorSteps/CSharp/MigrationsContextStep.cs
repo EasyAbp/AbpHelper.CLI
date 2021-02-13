@@ -36,6 +36,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             var model = context.GetVariable<dynamic>("Model");
             model.Bag.SubmoduleUsingTextPostfix = submoduleUsingTextPostfix;
+            model.Bag.SubmoduleNameText = submoduleUsingTextPostfix.Replace(".", "");
             string usingText = TextGenerator.GenerateByTemplateName(templateDir, "MigrationsContext_Using", model);
             string configText = TextGenerator.GenerateByTemplateName(templateDir, "MigrationsContext_ConfigureModule", model);
 
