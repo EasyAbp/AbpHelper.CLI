@@ -45,8 +45,8 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module
         [Option('m', ModuleConsts.MongoDB, Description = "Install the {module-name}.MongoDB nuget package")]
         public bool MongoDb { get; set; }
 
-        [Option('c', ModuleConsts.Contracts, Description = "Install the {module-name}.Contract nuget package")]
-        public bool Contract { get; set; }
+        [Option('c', ModuleConsts.Contracts, Description = "Install the {module-name}.Application.Contracts nuget package")]
+        public bool Contracts { get; set; }
 
         [Option('a', ModuleConsts.Application, Description = "Install the {module-name}.Application nuget package")]
         public bool Application { get; set; }
@@ -60,7 +60,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module
         [Option('w', ModuleConsts.Web, Description = "Install the {module-name}.Web nuget package")]
         public bool Web { get; set; }
         
-        [Option("custom", Description = "Specify which module is added to (or removed from) which app project. e.g. \"Web:Web,StackExchangeRedis:Web\" means the Web module and the StackExchangeRedis module were added to (or removed from) the Web app project.")]
+        [Option("custom", Description = "Specify which module is added to (or removed from) which app project. e.g. \"Web:Web,Orders.Web:Web:Orders\" means the Web module and the Orders.Web module were added to (or removed from) the Web app project, the last optional \"Orders\" is the submodule name used to make up the using namespace.")]
         public string Custom { get; set; }
     }
 }

@@ -5,18 +5,21 @@ using Microsoft.Extensions.FileProviders;
 using Scriban;
 using Scriban.Runtime;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.VirtualFileSystem;
 
 namespace EasyAbp.AbpHelper.Core.Generator
 {
     public class TextGenerator : ISingletonDependency
     {
-        private readonly IFileProvider _fileProvider;
         private readonly ITemplateLoader _templateLoader;
+        private readonly IVirtualFileProvider _virtualFileProvider;
 
-        public TextGenerator(IFileProvider fileProvider, ITemplateLoader templateLoader)
+        public TextGenerator(
+            ITemplateLoader templateLoader,
+            IVirtualFileProvider virtualFileProvider)
         {
-            _fileProvider = fileProvider;
             _templateLoader = templateLoader;
+            _virtualFileProvider = virtualFileProvider;
         }
 
         public string GenerateByTemplateName(string templateDirectory, string templateName, object model)
@@ -27,7 +30,7 @@ namespace EasyAbp.AbpHelper.Core.Generator
         public string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
         {
             string path = Path.Combine(templateDirectory, templateName).NormalizePath();
-            var templateFile = _fileProvider.GetFileInfo(path);
+            var templateFile = _virtualFileProvider.GetFileInfo(path);
             var templateText = templateFile.ReadAsString();
             return GenerateByTemplateText(templateText, model, out context);
         }

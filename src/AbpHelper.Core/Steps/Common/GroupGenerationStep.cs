@@ -12,13 +12,14 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Runtime;
+using Volo.Abp.VirtualFileSystem;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
     public class GroupGenerationStep : Step
     {
         private readonly TextGenerator _textGenerator;
-        private readonly IFileProvider _fileProvider;
+        private readonly IVirtualFileProvider _virtualFileProvider;
         private const string SkipGenerate = "SKIP_GENERATE";
 
         public WorkflowExpression<string> TemplateDirectory
@@ -51,10 +52,12 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             set => SetState(value);
         }
 
-        public GroupGenerationStep(TextGenerator textGenerator, IFileProvider fileProvider)
+        public GroupGenerationStep(
+            TextGenerator textGenerator,
+            IVirtualFileProvider virtualFileProvider)
         {
             _textGenerator = textGenerator;
-            _fileProvider = fileProvider;
+            _virtualFileProvider = virtualFileProvider;
         }
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
@@ -77,7 +80,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
 
         private async Task GenerateFile(string groupDirectory, string targetDirectory, object model, bool overwrite)
         {
-            foreach (var (path, file) in _fileProvider.GetFilesRecursively(groupDirectory))
+            foreach (var (path, file) in _virtualFileProvider.GetFilesRecursively(groupDirectory))
             {
                 Logger.LogDebug($"Generating using template file: {path}");
                 var targetFilePathNameTemplate = path.Replace(groupDirectory, targetDirectory);

@@ -1,1 +1,1 @@
-using {{ Option.ModuleName }}.EntityFrameworkCore;
+using {{ Option.ModuleName }}{{ Bag.SubmoduleUsingTextPostfix }}.EntityFrameworkCore;

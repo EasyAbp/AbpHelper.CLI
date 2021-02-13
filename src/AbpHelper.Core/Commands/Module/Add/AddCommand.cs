@@ -96,15 +96,22 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                                 .Then<SetVariable>(
                                     step =>
                                     {
+                                        step.VariableName = VariableNames.SubmoduleUsingTextPostfix;
+                                        step.ValueExpression = new JavaScriptExpression<string>("CurrentValue.split(':').length > 2 ? '.' + CurrentValue.split(':')[2] : ''");
+                                    }
+                                )
+                                .Then<SetVariable>(
+                                    step =>
+                                    {
                                         step.VariableName = VariableNames.ModuleClassNamePostfix;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName}.replace('.', '')");
+                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName}.replace(/\\./g, '')");
                                     }
                                 )
                                 .Then<SetVariable>(
                                     step =>
                                     {
                                         step.VariableName = VariableNames.AppProjectClassNamePostfix;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.TargetAppProjectName}.replace('.', '')");
+                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.TargetAppProjectName}.replace(/\\./g, '')");
                                     }
                                 )
                                 .Then<SetVariable>(

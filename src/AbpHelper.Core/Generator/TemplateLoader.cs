@@ -4,16 +4,17 @@ using Scriban;
 using Scriban.Parsing;
 using Scriban.Runtime;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.VirtualFileSystem;
 
 namespace EasyAbp.AbpHelper.Core.Generator
 {
     public class TemplateLoader : ITemplateLoader, ISingletonDependency
     {
-        private readonly IFileProvider _fileProvider;
+        private readonly IVirtualFileProvider _virtualFileProvider;
 
-        public TemplateLoader(IFileProvider fileProvider)
+        public TemplateLoader(IVirtualFileProvider virtualFileProvider)
         {
-            _fileProvider = fileProvider;
+            _virtualFileProvider = virtualFileProvider;
         }
 
         public string GetPath(TemplateContext context, SourceSpan callerSpan, string templateName)
@@ -23,12 +24,12 @@ namespace EasyAbp.AbpHelper.Core.Generator
 
         public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)
         {
-            return _fileProvider.GetFileInfo(templatePath).ReadAsString();
+            return _virtualFileProvider.GetFileInfo(templatePath).ReadAsString();
         }
 
         public async ValueTask<string> LoadAsync(TemplateContext context, SourceSpan callerSpan, string templatePath)
         {
-            return await _fileProvider.GetFileInfo(templatePath).ReadAsStringAsync();
+            return await _virtualFileProvider.GetFileInfo(templatePath).ReadAsStringAsync();
         }
     }
 }
