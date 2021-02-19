@@ -7,7 +7,6 @@
     <AssemblyName>EasyAbp.AbpHelper.Core</AssemblyName>
     <RootNamespace>EasyAbp.AbpHelper.Core</RootNamespace>
     <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
