@@ -1,4 +1,5 @@
-﻿using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript;
+﻿using System.Runtime.InteropServices;
+using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript;
 using EasyAbp.AbpHelper.Core.Steps.Common;
 using Elsa.Expressions;
 using Elsa.Scripting.JavaScript;
@@ -10,11 +11,12 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
     {
         public static IActivityBuilder AddUiAngularGenerationWorkflow(this IOutcomeBuilder builder)
         {
+            string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
             return builder
                     /* Add angular module */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>(
-                            @"`cd /d ${BaseDirectory}/angular && yarn ng generate module ${EntityInfo.NamespaceLastPart.toLowerCase()} --route ${EntityInfo.NamespaceLastPart.toLowerCase()} --module app.module`"
+                            @$"`cd{cdOption} ${{BaseDirectory}}/angular && yarn ng generate module ${{EntityInfo.NamespaceLastPart.toLowerCase()}} --route ${{EntityInfo.NamespaceLastPart.toLowerCase()}} --module app.module`"
                         ))
                     /* Modify app-routing.module.ts */
                     .Then<FileFinderStep>(
@@ -27,7 +29,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                     /* Add list component */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>(
-                            @"`cd /d ${BaseDirectory}/angular && yarn ng generate component ${EntityInfo.NamespaceLastPart.toLowerCase()}/${EntityInfo.Name.toLowerCase()}-list`"
+                            @$"`cd{cdOption} ${{BaseDirectory}}/angular && yarn ng generate component ${{EntityInfo.NamespaceLastPart.toLowerCase()}}/${{EntityInfo.Name.toLowerCase()}}-list`"
                         ))
                     /* Modify XXX.module.ts */
                     .Then<FileFinderStep>(
@@ -48,7 +50,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                     /* Create state */
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>(
-                            @"`cd /d ${BaseDirectory}/angular && yarn ng generate ngxs-schematic:state ${EntityInfo.NamespaceLastPart.toLowerCase()}`"
+                            @$"`cd{cdOption} ${{BaseDirectory}}/angular && yarn ng generate ngxs-schematic:state ${{EntityInfo.NamespaceLastPart.toLowerCase()}}`"
                         ))
                     /* Generate XXX.ts */
                     .Then<GroupGenerationStep>(

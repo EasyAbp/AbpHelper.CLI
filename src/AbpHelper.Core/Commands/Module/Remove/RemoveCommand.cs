@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
+using System.Runtime.InteropServices;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
@@ -51,6 +52,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                     .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
                     .ToArray()
                 ;
+            string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
 
             return base.ConfigureBuild(option, activityBuilder)
                     .Then<SetVariable>(
@@ -118,7 +120,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                                 .Then<EmptyStep>().WithName(ActivityNames.RemoveDependsOn)
                                 .Then<RunCommandStep>(
                                     step => step.Command = new JavaScriptExpression<string>(
-                                        @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${CurrentValue} && dotnet remove package ${Option.ModuleName}.${CurrentValue}`"
+                                        $@"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.${{CurrentValue}} && dotnet remove package ${{Option.ModuleName}}.${{CurrentValue}}`"
                                     ))
                                 .Then(branch)
                     )
