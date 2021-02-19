@@ -33,7 +33,7 @@ namespace EasyAbp.AbpHelper.Services
                     NullLogger.Instance, 
                     cancellationToken);
 
-                latestVersion = versions.Max(ver => ver.Version);
+                latestVersion = versions.Max(ver => ver.Version)!;
             }
             catch (Exception)
             {
