@@ -28,11 +28,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ParseStep
             set => SetState(value);
         }
 
-        public abstract WorkflowExpression<string> OutputVariableName
-        {
-            get;
-            set;
-        }
+        public abstract WorkflowExpression<string> OutputVariableName { get; set; }
 
         protected abstract IEnumerable<MethodInfo> GetMethodInfos(TType typeDeclarationSyntax, INamedTypeSymbol typeSymbol);
 
@@ -82,7 +78,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ParseStep
                 var model = compilation.GetSemanticModel(tree);
                 var typeSymbol = model.GetDeclaredSymbol(typeDeclarationSyntax)!;
                 var methods = GetMethodInfos(typeDeclarationSyntax, typeSymbol);
-                
+
                 var typeInfo = new TypeInfo(@namespace, typeName, relativeDirectory);
                 typeInfo.Usings.AddRange(usings);
                 typeInfo.Attributes.AddRange(attributes);
@@ -103,8 +99,8 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ParseStep
                 throw;
             }
         }
-        
-        
+
+
         protected MethodInfo GetMethodInfoFromSymbol(IMethodSymbol symbol)
         {
             var methodInfo = new MethodInfo(
@@ -116,12 +112,9 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ParseStep
 
             methodInfo.Parameters.AddRange(
                 symbol.Parameters
-                    .Select(ps => new ParameterInfo(
-                        ps.Type.ToMinimalQualifiedName(),
-                        ps.Type.ToFullName(),
-                        ps.Name)
+                    .Select(ps => new ParameterInfo(ps)
                     )
-            ); 
+            );
 
             methodInfo.Attributes.AddRange(
                 symbol.GetAttributes()

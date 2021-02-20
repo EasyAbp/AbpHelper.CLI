@@ -1,20 +1,22 @@
 ﻿using System;
+using EasyAbp.AbpHelper.Core.Extensions;
+using Microsoft.CodeAnalysis;
 
 namespace EasyAbp.AbpHelper.Core.Models
 {
     public class ParameterInfo : IEquatable<ParameterInfo>
     {
-        public string Type { get; }
+        public string Type => ParameterSymbol.Type.ToMinimalQualifiedName();
 
-        public string FullType { get; }
+        public string FullType => ParameterSymbol.Type.ToFullName();
 
-        public string Name { get; }
+        public string Name => ParameterSymbol.Name;
 
-        public ParameterInfo(string type, string fullType, string name)
+        public IParameterSymbol ParameterSymbol { get; }
+
+        public ParameterInfo(IParameterSymbol parameterSymbol)
         {
-            Type = type;
-            FullType = fullType;
-            Name = name;
+            ParameterSymbol = parameterSymbol;
         }
 
         public bool Equals(ParameterInfo? other)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
 using Scriban.Runtime;
 using Volo.Abp.Http;
 using Volo.Abp.Reflection;
@@ -55,14 +56,15 @@ namespace EasyAbp.AbpHelper.Core.Generator
             if (idParameterModel != null)
             {
                 var type = Type.GetType(idParameterModel.FullType);
-                if (TypeHelper.IsPrimitiveExtended(type, includeEnums: true))
+                if (type != null && TypeHelper.IsPrimitiveExtended(type, includeEnums: true))
                 {
                     url += "/{id}";
                 }
                 else
                 {
-                    var properties = type!
-                        .GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                    // For the composite key, the type is null here, so we can not use reflection,
+                    // use ParameterSymbol.Type.GetMembers instead
+                    var properties = idParameterModel.ParameterSymbol.Type.GetMembers().OfType<IPropertySymbol>();
 
                     foreach (var property in properties)
                     {
