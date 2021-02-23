@@ -3,10 +3,11 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using EasyAbp.AbpHelper.Core.Models;
+using Volo.Abp.DependencyInjection;
 
 namespace EasyAbp.AbpHelper.Core.Services
 {
-    public class ListPackageService : IListPackageService
+    public class ListPackageService : IListPackageService, ITransientDependency
     {
         public Task<Dictionary<string, List<PackageInfo>>> GetInstalledPackagesAsync(string baseDirectory)
         {
