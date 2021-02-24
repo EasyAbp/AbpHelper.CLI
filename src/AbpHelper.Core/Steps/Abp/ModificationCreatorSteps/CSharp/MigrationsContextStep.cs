@@ -32,8 +32,11 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
         protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
         {
             var action = context.EvaluateAsync(Action, CancellationToken.None).GetAwaiter().GetResult();
+            var submoduleUsingTextPostfix = context.GetVariable<string>(VariableNames.SubmoduleUsingTextPostfix);
             string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             var model = context.GetVariable<dynamic>("Model");
+            model.Bag.SubmoduleUsingTextPostfix = submoduleUsingTextPostfix;
+            model.Bag.SubmoduleNameText = submoduleUsingTextPostfix.Replace(".", "");
             string usingText = TextGenerator.GenerateByTemplateName(templateDir, "MigrationsContext_Using", model);
             string configText = TextGenerator.GenerateByTemplateName(templateDir, "MigrationsContext_ConfigureModule", model);
 

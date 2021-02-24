@@ -34,11 +34,13 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
         {
             var action = context.EvaluateAsync(Action, CancellationToken.None).GetAwaiter().GetResult();
             var moduleClassNamePostfix = context.GetVariable<string>(VariableNames.ModuleClassNamePostfix);
+            var submoduleUsingTextPostfix = context.GetVariable<string>(VariableNames.SubmoduleUsingTextPostfix);
             var dependsOnClassName = context.GetVariable<string>(VariableNames.DependsOnModuleClassName);
             string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             var model = context.GetVariable<dynamic>("Model");
             model.Bag.ModuleClassNamePostfix = moduleClassNamePostfix;
             model.Bag.DependsOnModuleClassName = dependsOnClassName;
+            model.Bag.SubmoduleUsingTextPostfix = submoduleUsingTextPostfix;
             string usingText = TextGenerator.GenerateByTemplateName(templateDir, "ModuleClass_Using", model);
             string dependsOnText = TextGenerator.GenerateByTemplateName(templateDir, "ModuleClass_DependsOn", model);
 

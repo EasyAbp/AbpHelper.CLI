@@ -23,7 +23,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Methods
         {
         }
 
-        protected override Task RunCommand(MethodsCommandOption option)
+        public override Task RunCommand(MethodsCommandOption option)
         {
             for (var i = 0; i < option.MethodNames.Length; i++)
             {
