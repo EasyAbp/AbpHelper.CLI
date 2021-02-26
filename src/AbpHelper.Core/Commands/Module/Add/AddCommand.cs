@@ -47,17 +47,23 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
 
         protected override IActivityBuilder ConfigureBuild(AddCommandOption option, IActivityBuilder activityBuilder)
         {
-            var moduleNameToAppProjectNameMapping = typeof(ModuleCommandOption).GetProperties()
+            var moduleNameToAppProjectNamesMapping = typeof(ModuleCommandOption).GetProperties()
                 .Where(prop => prop.PropertyType == typeof(bool) && (bool) prop.GetValue(option)!)
                 .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
-                .ToDictionary(x => x, x => x);
+                .ToDictionary(x => x, x => new List<string> {x});
             
             if (!option.Custom.IsNullOrEmpty())
             {
                 foreach (var customPart in option.Custom.Split(','))
                 {
                     var s = customPart.Split(":", 2);
-                    moduleNameToAppProjectNameMapping.Add(s[0], s[1]);
+
+                    if (!moduleNameToAppProjectNamesMapping.ContainsKey(s[0]))
+                    {
+                        moduleNameToAppProjectNamesMapping.Add(s[0], new List<string>());
+                    }
+                    
+                    moduleNameToAppProjectNamesMapping[s[0]].Add(s[1]);
                 }
             }
 
@@ -73,7 +79,8 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                         step =>
                         {
                             step.VariableName = VariableNames.ProjectNames;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"[{string.Join(",", moduleNameToAppProjectNameMapping.Select(n => $"\"{n.Key}:{n.Value}\""))}]");
+                            step.ValueExpression = new JavaScriptExpression<string[]>(
+                                $"[{string.Join(",", moduleNameToAppProjectNamesMapping.Select(n => n.Value.Select(m => $"\"{n.Key}:{m}\"").JoinAsString(",")))}]");
                         }
                     )
                     .Then<SetModelVariableStep>()
