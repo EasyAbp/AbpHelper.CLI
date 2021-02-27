@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
+using System.Runtime.InteropServices;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
@@ -59,6 +60,8 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                     moduleNameToAppProjectNameMapping.Add(s[0], s[1]);
                 }
             }
+            
+            string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
 
             return base.ConfigureBuild(option, activityBuilder)
                     .Then<SetVariable>(
@@ -98,6 +101,13 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                                     {
                                         step.VariableName = VariableNames.SubmoduleUsingTextPostfix;
                                         step.ValueExpression = new JavaScriptExpression<string>("CurrentValue.split(':').length > 2 ? '.' + CurrentValue.split(':')[2] : ''");
+                                    }
+                                )
+                                .Then<SetVariable>(
+                                    step =>
+                                    {
+                                        step.VariableName = VariableNames.PackageName;
+                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName} != '' ? {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)} + '.' + {VariableNames.CurrentModuleName} : {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)}");
                                     }
                                 )
                                 .Then<SetVariable>(
@@ -154,7 +164,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                                 .Then<EmptyStep>().WithName(ActivityNames.RemoveDependsOn)
                                 .Then<RunCommandStep>(
                                     step => step.Command = new JavaScriptExpression<string>(
-                                        @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${TargetAppProjectName} && dotnet remove package ${Option.ModuleName}.${CurrentModuleName}`"
+                                        $@"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.${{TargetAppProjectName}} && dotnet remove package ${{PackageName}}`"
                                     ))
                                 .Then(branch)
                     )

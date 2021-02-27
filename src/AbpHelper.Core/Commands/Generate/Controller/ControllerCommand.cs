@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ParseStep;
@@ -23,6 +24,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Controller
 
         protected override IActivityBuilder ConfigureBuild(ControllerCommandOption option, IActivityBuilder activityBuilder)
         {
+            string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
             return base.ConfigureBuild(option, activityBuilder)
                 .AddOverwriteWorkflow()
                 .Then<SetVariable>(
@@ -38,7 +40,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Controller
                         ifElse.When(OutcomeNames.False)
                             .Then<RunCommandStep>(
                                 step => step.Command = new JavaScriptExpression<string>(
-                                    @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.Application && dotnet build`"
+                                    @$"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.Application && dotnet build`"
                                 ))
                             .Then(ActivityNames.SearchServiceInterface)
                             ;

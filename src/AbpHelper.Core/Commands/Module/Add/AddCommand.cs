@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
+using System.Runtime.InteropServices;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
@@ -46,20 +47,27 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
 
         protected override IActivityBuilder ConfigureBuild(AddCommandOption option, IActivityBuilder activityBuilder)
         {
-            var moduleNameToAppProjectNameMapping = typeof(ModuleCommandOption).GetProperties()
+            var moduleIdToCustomsMapping = typeof(ModuleCommandOption).GetProperties()
                 .Where(prop => prop.PropertyType == typeof(bool) && (bool) prop.GetValue(option)!)
                 .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
-                .ToDictionary(x => x, x => x);
+                .ToDictionary(x => x, x => new List<string>(new[] {$"{x}:{x}"}));
             
             if (!option.Custom.IsNullOrEmpty())
             {
                 foreach (var customPart in option.Custom.Split(','))
                 {
-                    var s = customPart.Split(":", 2);
-                    moduleNameToAppProjectNameMapping.Add(s[0], s[1]);
+                    var moduleId = customPart.Substring(0, customPart.IndexOf(':'));
+                    
+                    if (!moduleIdToCustomsMapping.ContainsKey(moduleId))
+                    {
+                        moduleIdToCustomsMapping.Add(moduleId, new List<string>());
+                    }
+                    
+                    moduleIdToCustomsMapping[moduleId].Add(customPart);
                 }
             }
 
+            string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
             return base.ConfigureBuild(option, activityBuilder)
                     .Then<SetVariable>(
                         step =>
@@ -71,7 +79,8 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                         step =>
                         {
                             step.VariableName = VariableNames.ProjectNames;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"[{string.Join(",", moduleNameToAppProjectNameMapping.Select(n => $"\"{n.Key}:{n.Value}\""))}]");
+                            step.ValueExpression = new JavaScriptExpression<string[]>(
+                                $"[{string.Join(",", moduleIdToCustomsMapping.SelectMany(x => x.Value).Select(x => $"\"{x}\"").JoinAsString(","))}]");
                         }
                     )
                     .Then<SetModelVariableStep>()
@@ -103,6 +112,13 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                                 .Then<SetVariable>(
                                     step =>
                                     {
+                                        step.VariableName = VariableNames.PackageName;
+                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName} != '' ? {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)} + '.' + {VariableNames.CurrentModuleName} : {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)}");
+                                    }
+                                )
+                                .Then<SetVariable>(
+                                    step =>
+                                    {
                                         step.VariableName = VariableNames.ModuleClassNamePostfix;
                                         step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName}.replace(/\\./g, '')");
                                     }
@@ -129,7 +145,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                                             .When(OutcomeNames.True) // with version specified 
                                             .Then<RunCommandStep>(
                                                 step => step.Command = new JavaScriptExpression<string>(
-                                                    @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${TargetAppProjectName} && dotnet add package ${Option.ModuleName}.${CurrentModuleName} -v ${Option.Version}`"
+                                                    @$"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.${{TargetAppProjectName}} && dotnet add package ${{PackageName}} -v ${{Option.Version}}`"
                                                 ))
                                             .Then(ActivityNames.AddDependsOn)
                                             ;
@@ -137,7 +153,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                                             .When(OutcomeNames.False) // no version
                                             .Then<RunCommandStep>(
                                                 step => step.Command = new JavaScriptExpression<string>(
-                                                    @"`cd /d ${AspNetCoreDir}/src/${ProjectInfo.FullName}.${TargetAppProjectName} && dotnet add package ${Option.ModuleName}.${CurrentModuleName}`"
+                                                    @$"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.${{TargetAppProjectName}} && dotnet add package ${{PackageName}}`"
                                                 ))
                                             .Then(ActivityNames.AddDependsOn)
                                             ;

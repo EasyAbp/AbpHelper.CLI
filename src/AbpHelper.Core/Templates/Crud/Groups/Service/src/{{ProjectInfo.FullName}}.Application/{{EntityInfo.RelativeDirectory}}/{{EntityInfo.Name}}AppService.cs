@@ -79,6 +79,12 @@ namespace {{ EntityInfo.Namespace }}
                 )
             ); 
         }
-       {{~ end ~}} 
+
+        protected override IQueryable<{{ EntityInfo.Name }}> ApplyDefaultSorting(IQueryable<{{ EntityInfo.Name }}> query)
+        {
+            // TODO: AbpHelper generated
+            return query.OrderBy(e => e.{{ EntityInfo.CompositeKeys[0].Name }});
+        }
+        {{~ end ~}} 
     }
 }
