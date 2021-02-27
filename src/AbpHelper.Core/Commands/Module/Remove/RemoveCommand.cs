@@ -106,6 +106,13 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                                 .Then<SetVariable>(
                                     step =>
                                     {
+                                        step.VariableName = VariableNames.PackageName;
+                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName} != '' ? {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)} + '.' + {VariableNames.CurrentModuleName} : {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)}");
+                                    }
+                                )
+                                .Then<SetVariable>(
+                                    step =>
+                                    {
                                         step.VariableName = VariableNames.ModuleClassNamePostfix;
                                         step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName}.replace(/\\./g, '')");
                                     }
@@ -157,7 +164,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                                 .Then<EmptyStep>().WithName(ActivityNames.RemoveDependsOn)
                                 .Then<RunCommandStep>(
                                     step => step.Command = new JavaScriptExpression<string>(
-                                        $@"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.${{TargetAppProjectName}} && dotnet remove package ${{Option.ModuleName}}.${{CurrentModuleName}}`"
+                                        $@"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.${{TargetAppProjectName}} && dotnet remove package ${{PackageName}}`"
                                     ))
                                 .Then(branch)
                     )
