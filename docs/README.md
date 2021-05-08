@@ -1,7 +1,9 @@
 # AbpHelper.CLI
 
+[![ABP version](https://img.shields.io/badge/dynamic/xml?style=flat-square&color=yellow&label=abp&query=%2F%2FProject%2FPropertyGroup%2FAbpVersion&url=https%3A%2F%2Fraw.githubusercontent.com%2FEasyAbp%2FAbpHelper.CLI%2Fmaster%2FDirectory.Build.props)](https://abp.io)
 [![NuGet](https://img.shields.io/nuget/v/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
 [![NuGet Download](https://img.shields.io/nuget/dt/EasyAbp.AbpHelper.svg?style=flat-square)](https://www.nuget.org/packages/EasyAbp.AbpHelper)
+[![GitHub stars](https://img.shields.io/github/stars/EasyAbp/AbpHelper.CLI?style=social)](https://www.github.com/EasyAbp/AbpHelper.CLI)
 
 AbpHelper is a tool that help you with developing Abp vNext applications.
 
