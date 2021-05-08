@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <PackageId>EasyAbp.AbpHelper.Core</PackageId>
     <AssemblyName>EasyAbp.AbpHelper.Core</AssemblyName>
     <RootNamespace>EasyAbp.AbpHelper.Core</RootNamespace>
     <LangVersion>8.0</LangVersion>

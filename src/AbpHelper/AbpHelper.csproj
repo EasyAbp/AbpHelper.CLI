@@ -9,6 +9,7 @@
     <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>abphelper</ToolCommandName>
+    <PackageId>EasyAbp.AbpHelper</PackageId>
     <AssemblyName>EasyAbp.AbpHelper</AssemblyName>
     <RootNamespace>EasyAbp.AbpHelper</RootNamespace>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
