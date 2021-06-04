@@ -22,9 +22,9 @@ namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }}
     [RemoteService(Name = "{{ ProjectInfo.Name }}{{ Option.Name }}")]
     {{~ end ~}}
     {{~ if ProjectInfo.TemplateType == 'Application' ~}}
-    [Route("/api/app/{{ Option.Name | abp.camel_case }}")]
+    [Route("/api/app/{{ Option.Name | abp.kebab_case }}")]
     {{~ else if ProjectInfo.TemplateType == 'Module' ~}}
-    [Route("/api/{{ ProjectInfo.Name | abp.camel_case }}/{{ Option.Name | abp.camel_case }}")]
+    [Route("/api/{{ ProjectInfo.Name | abp.kebab_case }}/{{ Option.Name | abp.kebab_case }}")]
     {{~ end ~}}
     public class {{ Option.Name }}Controller : {{ ProjectInfo.Name }}Controller, I{{ Option.Name }}AppService
     {
