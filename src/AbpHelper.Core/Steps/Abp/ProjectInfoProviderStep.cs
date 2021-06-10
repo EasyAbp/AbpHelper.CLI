@@ -19,19 +19,17 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
 
             TemplateType templateType;
-            if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludeDirectories))
-            {
-                templateType = TemplateType.Application;
-            }
-            else if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories))
+            if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories))
             {
                 templateType = TemplateType.Module;
+            } else if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludeDirectories))
+            {
+                templateType = TemplateType.Application;
             }
             else
             {
                 throw new NotSupportedException($"Unknown ABP project structure. Directory: {baseDirectory}");
             }
-
 
             // Assume the domain project must be existed for an ABP project
             var domainCsprojFile = SearchFileInDirectory(baseDirectory, "*.Domain.csproj", excludeDirectories);
