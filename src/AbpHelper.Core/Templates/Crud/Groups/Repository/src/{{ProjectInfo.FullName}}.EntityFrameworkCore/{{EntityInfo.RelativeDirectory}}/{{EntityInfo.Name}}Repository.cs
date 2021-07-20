@@ -24,5 +24,10 @@ namespace {{ EntityInfo.Namespace }}
         public {{ EntityInfo.Name }}Repository(IDbContextProvider<{{ dbContextName }}> dbContextProvider) : base(dbContextProvider)
         {
         }
+        
+        public override async Task<IQueryable<{{ EntityInfo.Name }}>> WithDetailsAsync()
+        {
+            return (await GetQueryableAsync()).IncludeDetails();
+        }
     }
 }
