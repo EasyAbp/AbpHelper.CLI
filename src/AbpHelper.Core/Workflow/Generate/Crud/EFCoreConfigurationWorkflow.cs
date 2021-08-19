@@ -36,18 +36,22 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                                 ;
                         }
                     )
-                    /* Add entity configuration to DbContextModelCreatingExtensions */
+                    /* Add entity configuration to DbContextModelCreating */
+                    .Then<FileFinderStep>(
+                        step => { 
+                            step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContextModelCreatingExtensions.cs`");
+                            step.ErrorIfNotFound = new JavaScriptExpression<bool>("false");
+                        }).WithName(ActivityNames.DbContextModel)
                     .IfElse(
-                        step => step.ConditionExpression = new JavaScriptExpression<bool>(VariableNames.HasDbMigrations),
+                        step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult != null"),
                         ifElse =>
                         {
+                            /* abp4.4 before app and module default using DbContextModelCreatingExtensions */
                             ifElse
                                 .When(OutcomeNames.True)
-                                .Then<FileFinderStep>(
-                                    step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContextModelCreatingExtensions.cs`")
-                                )
                                 .Then("DbContextModelCreating")
                                 ;
+                            /* abp4.4 after app default using DbContext */
                             ifElse
                                 .When(OutcomeNames.False)
                                 .Then<FileFinderStep>(
@@ -56,7 +60,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                                 .Then("DbContextModelCreating")
                                 ;
                         }
-                    ).WithName(ActivityNames.DbContextModel)
+                    )
                     .Then<DbContextModelCreatingExtensionsStep>().WithName("DbContextModelCreating")
                     .Then<FileModifierStep>()
                 ;
