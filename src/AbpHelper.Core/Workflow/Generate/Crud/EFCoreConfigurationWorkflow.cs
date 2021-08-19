@@ -9,12 +9,12 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
 {
     public static class EfCoreConfigurationWorkflow
     {
-        public static IActivityBuilder AddEfCoreConfigurationWorkflow(this IActivityBuilder builder)
+        public static IActivityBuilder AddEfCoreConfigurationWorkflow(this IActivityBuilder builder, string name)
         {
             return builder
                     /* Add entity property to DbContext class*/
                     .Then<FileFinderStep>(
-                        step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); })
+                        step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); }).WithName(name)
                     .Then<DbContextClassStep>()
                     .Then<FileModifierStep>()
                     .IfElse(
@@ -37,10 +37,27 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                         }
                     )
                     /* Add entity configuration to DbContextModelCreatingExtensions */
-                    .Then<FileFinderStep>(
-                        step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContextModelCreatingExtensions.cs`")
+                    .IfElse(
+                        step => step.ConditionExpression = new JavaScriptExpression<bool>(VariableNames.HasDbMigrations),
+                        ifElse =>
+                        {
+                            ifElse
+                                .When(OutcomeNames.True)
+                                .Then<FileFinderStep>(
+                                    step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContextModelCreatingExtensions.cs`")
+                                )
+                                .Then("DbContextModelCreating")
+                                ;
+                            ifElse
+                                .When(OutcomeNames.False)
+                                .Then<FileFinderStep>(
+                                    step => step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`")
+                                )
+                                .Then("DbContextModelCreating")
+                                ;
+                        }
                     ).WithName(ActivityNames.DbContextModel)
-                    .Then<DbContextModelCreatingExtensionsStep>()
+                    .Then<DbContextModelCreatingExtensionsStep>().WithName("DbContextModelCreating")
                     .Then<FileModifierStep>()
                 ;
         }
