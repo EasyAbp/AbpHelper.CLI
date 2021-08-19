@@ -9,12 +9,12 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
 {
     public static class EfCoreConfigurationWorkflow
     {
-        public static IActivityBuilder AddEfCoreConfigurationWorkflow(this IActivityBuilder builder, string name)
+        public static IActivityBuilder AddEfCoreConfigurationWorkflow(this IActivityBuilder builder)
         {
             return builder
                     /* Add entity property to DbContext class*/
                     .Then<FileFinderStep>(
-                        step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); }).WithName(name)
+                        step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); })
                     .Then<DbContextClassStep>()
                     .Then<FileModifierStep>()
                     .IfElse(
@@ -36,7 +36,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                                 ;
                         }
                     )
-                    /* Add entity configuration to DbContextModelCreating */
+                    /* Add entity configuration to ModelCreating */
                     .Then<FileFinderStep>(
                         step => { 
                             step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContextModelCreatingExtensions.cs`");
@@ -46,12 +46,12 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                         step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult != null"),
                         ifElse =>
                         {
-                            /* abp4.4 before app and module default using DbContextModelCreatingExtensions */
+                            /* For app using abp v4.4 before version and all versions of the module, using DbContextModelCreatingExtensions by default */
                             ifElse
                                 .When(OutcomeNames.True)
                                 .Then("DbContextModelCreating")
                                 ;
-                            /* abp4.4 after app default using DbContext */
+                            /* For app using abp v4.4 after version, using ProjectNameDbContext by default */
                             ifElse
                                 .When(OutcomeNames.False)
                                 .Then<FileFinderStep>(

@@ -56,8 +56,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Crud
                             ;
                     })
                 .AddEntityUsingGenerationWorkflow("EntityUsing")
-                .AddConfigureHasDbMigrationsWorkflow("EfCoreConfiguration")
-                .AddEfCoreConfigurationWorkflow("EfCoreConfiguration")
+                .AddEfCoreConfigurationWorkflow()
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipCustomRepository)}"),
                     ifElse =>
@@ -135,13 +134,14 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Crud
                             ;
                     }
                 ).WithName(TestGeneration)
+                
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipDbMigrations)}"),
                     ifElse =>
                     {
                         ifElse
                             .When(OutcomeNames.False)
-                            .AddMigrationAndUpdateDatabaseWorkflow("MigrationAndUpdateDatabase")
+                            .AddMigrationAndUpdateDatabaseWorkflow()
                             ;
                     }
                 ).WithName(DbMigrations);
