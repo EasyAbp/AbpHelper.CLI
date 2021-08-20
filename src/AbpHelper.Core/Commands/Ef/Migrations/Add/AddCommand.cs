@@ -28,8 +28,7 @@ except providing the default value for the `--project` and `--startup-project` o
                         step.ValueExpression = new LiteralExpression(efOptions);
 
                     })
-                    .AddConfigureHasDbMigrationsWorkflow("ConfigureMigrationProjects")
-                    .AddConfigureMigrationProjectsWorkflow("ConfigureMigrationProjects", ActivityNames.AddMigration)
+                    .AddConfigureMigrationProjectsWorkflow(ActivityNames.AddMigration)
                     .Then<RunCommandStep>(
                         step => step.Command = new JavaScriptExpression<string>("`dotnet ef migrations add ${Option.Name} -p \"${MigrationProjectFile}\" -s \"${StartupProjectFile}\" ${EfOptions || ''}`")
                     ).WithName(ActivityNames.AddMigration)

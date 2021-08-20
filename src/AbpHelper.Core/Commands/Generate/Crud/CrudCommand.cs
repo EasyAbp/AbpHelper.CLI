@@ -4,7 +4,6 @@ using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
 using EasyAbp.AbpHelper.Core.Workflow;
-using EasyAbp.AbpHelper.Core.Workflow.Common;
 using EasyAbp.AbpHelper.Core.Workflow.Generate;
 using EasyAbp.AbpHelper.Core.Workflow.Generate.Crud;
 using Elsa;
@@ -134,7 +133,6 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Crud
                             ;
                     }
                 ).WithName(TestGeneration)
-                
                 .Then<IfElse>(
                     step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipDbMigrations)}"),
                     ifElse =>

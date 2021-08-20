@@ -18,9 +18,10 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Common
         private const string ModuleMigrationProjectName = nameof(ModuleMigrationProjectName);
         private const string AppMigrationProjectName = nameof(AppMigrationProjectName);
 
-        public static IActivityBuilder AddConfigureMigrationProjectsWorkflow(this IActivityBuilder builder, string name, string nextActivityName)
+        public static IActivityBuilder AddConfigureMigrationProjectsWorkflow(this IActivityBuilder builder, string nextActivityName)
         {
             return builder
+                    .AddConfigureHasDbMigrationsWorkflow("SearchMigrationProject")
                     .Then<IfElse>(
                         ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOption.MigrationProjectName)} == null"),
                         ifElse =>
@@ -79,7 +80,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Common
                                 ;
                         }
                     )
-                    .WithName(name)
+                    .WithName("SearchMigrationProject")
                     .Then<IfElse>(
                         ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>
                             ($"ProjectInfo.TemplateType == {TemplateType.Application:D}"),
