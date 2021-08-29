@@ -21,24 +21,45 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Common
         public static IActivityBuilder AddConfigureMigrationProjectsWorkflow(this IActivityBuilder builder, string nextActivityName)
         {
             return builder
+                    .AddConfigureHasDbMigrationsWorkflow("SearchMigrationProject")
                     .Then<IfElse>(
                         ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOption.MigrationProjectName)} == null"),
                         ifElse =>
                         {
                             ifElse
                                 .When(OutcomeNames.True)    // No migration project name provided
-                                .Then<SetVariable>(
-                                    step =>
+                                .Then<IfElse>(
+                                    ifElse1 => ifElse1.ConditionExpression = new JavaScriptExpression<bool>(VariableNames.HasDbMigrations),
+                                    ifElse1 => 
                                     {
-                                        step.VariableName = AppMigrationProjectName;
-                                        step.ValueExpression = new LiteralExpression("*.EntityFrameworkCore.DbMigrations.csproj");
-                                    })
+                                        ifElse1
+                                            .When(OutcomeNames.True)
+                                            .Then<SetVariable>(
+                                                step =>
+                                                {
+                                                    step.VariableName = AppMigrationProjectName;
+                                                    step.ValueExpression = new LiteralExpression("*.EntityFrameworkCore.DbMigrations.csproj");
+                                                })
+                                            .Then("SearchHttpApiHostProject")
+                                            ;
+                                        ifElse1
+                                            .When(OutcomeNames.False)
+                                            .Then<SetVariable>(
+                                                step =>
+                                                {
+                                                    step.VariableName = AppMigrationProjectName;
+                                                    step.ValueExpression = new LiteralExpression("*.EntityFrameworkCore.csproj");
+                                                })
+                                            .Then("SearchHttpApiHostProject")
+                                            ;
+                                    }
+                                )
                                 .Then<SetVariable>(
                                     step =>
                                     {
                                         step.VariableName = ModuleMigrationProjectName;
                                         step.ValueExpression = new LiteralExpression("*.HttpApi.Host.csproj");
-                                    })
+                                    }).WithName("SearchHttpApiHostProject")
                                 .Then(ActivityNames.SearchFiles)
                                 ;
                             ifElse
@@ -59,6 +80,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Common
                                 ;
                         }
                     )
+                    .WithName("SearchMigrationProject")
                     .Then<IfElse>(
                         ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>
                             ($"ProjectInfo.TemplateType == {TemplateType.Application:D}"),
