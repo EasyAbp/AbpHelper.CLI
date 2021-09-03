@@ -7,6 +7,7 @@ using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
 using EasyAbp.AbpHelper.Core.Workflow;
+using EasyAbp.AbpHelper.Core.Workflow.Common;
 using Elsa;
 using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
@@ -174,13 +175,12 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                                         // For "EntityFrameCore" package, we generate a "builder.ConfigureXXX();" in the migrations context class */
                                         ifElse
                                             .When(OutcomeNames.True)
-                                            .Then<FileFinderStep>(
-                                                step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MigrationsDbContext.cs`"); }
-                                            )
+                                            .Then<EmptyStep>()
+                                            .AddConfigureFindDbContextWorkflow("AddAction")
                                             .Then<MigrationsContextStep>(step =>
                                             {
                                                 step.Action = new LiteralExpression<MigrationsContextStep.ActionType>(((int)MigrationsContextStep.ActionType.Add).ToString());
-                                            })
+                                            }).WithName("AddAction")
                                             .Then<FileModifierStep>()
                                             .Then(ActivityNames.NextProject)
                                             ;
