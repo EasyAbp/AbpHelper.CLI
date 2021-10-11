@@ -72,7 +72,7 @@ namespace {{ EntityInfo.Namespace }}
         {
             // TODO: AbpHelper generated
             return await AsyncExecuter.FirstOrDefaultAsync(
-                {{ repositoryName }}.Where(e =>
+                (await {{ repositoryName }}.WithDetailsAsync()).Where(e =>
                 {{~ for prop in EntityInfo.CompositeKeys ~}}
                     e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
                 {{~ end ~}}
