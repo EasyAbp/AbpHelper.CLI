@@ -37,7 +37,7 @@
             <abp-column size-md="_6">
                 <abp-card-title>@L["{{ EntityInfo.Name }}"]</abp-card-title>
             </abp-column>
-            <abp-column size-md="_6" class="text-right">
+            <abp-column size-md="_6" class="text-end">
 {{~ if !Option.SkipPermissions ~}}
 			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Create))
                 {
