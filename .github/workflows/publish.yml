@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: NuGet/setup-nuget@v1.0.5
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
 
       - name: read common.props
         id: commonProps
@@ -39,17 +42,25 @@ jobs:
           cd dest
           del * -Exclude EasyAbp.*
           del * -Exclude *.${{ steps.getVersion.outputs.first_match }}.nupkg
-          del *.HttpApi.Client.ConsoleTestApp*
-          del *.Host.Shared*
+          del *.Blazor.Host.*
+          del *.Blazor.Server.Host.*
+          del *.Host.Shared.*
+          del *.HttpApi.Host.*
+          del *.IdentityServer.*
+          del *.Web.Host.*
+          del *.Web.Unified.*
+          del *.HttpApi.Client.ConsoleTestApp.*
+          del *.Tests.*
+          del *.TestBase.*
           dir -name
 
-#      - name: dotnet nuget push to GitHub
-#        uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
-#        with:
-#          nupkg-path:  'dest\*.nupkg'
-#          repo-owner:  'EasyAbp'
-#          gh-user:  'EasyAbp'
-#          token:  ${{ secrets.GITHUB_TOKEN }}
+      - name: dotnet nuget push to GitHub
+        uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
+        with:
+          nupkg-path:  'dest\*.nupkg'
+          repo-owner:  'EasyAbp'
+          gh-user:  'EasyAbp'
+          token:  ${{ secrets.GITHUB_TOKEN }}
 
       - name: dotnet nuget push to NuGet
         run: dotnet nuget push dest\*.nupkg -k ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
