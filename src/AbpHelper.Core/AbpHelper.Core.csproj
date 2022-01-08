@@ -3,11 +3,11 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId>EasyAbp.AbpHelper.Core</PackageId>
     <AssemblyName>EasyAbp.AbpHelper.Core</AssemblyName>
     <RootNamespace>EasyAbp.AbpHelper.Core</RootNamespace>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     <Nullable>enable</Nullable>
   </PropertyGroup>
