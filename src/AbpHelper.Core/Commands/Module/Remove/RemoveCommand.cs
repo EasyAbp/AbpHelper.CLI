@@ -52,7 +52,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                 .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
                 .ToDictionary(x => x, x => x);
             
-            if (!option.Custom.IsNullOrEmpty())
+            if (option.Custom is not null && !option.Custom.IsNullOrEmpty())
             {
                 foreach (var customPart in option.Custom.Split(','))
                 {

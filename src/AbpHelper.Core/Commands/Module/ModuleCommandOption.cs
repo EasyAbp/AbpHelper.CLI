@@ -6,7 +6,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module
 {
     public abstract class ModuleCommandOption : CommandOptionsBase
     {
-        private string _moduleCompanyName;
+        private string? _moduleCompanyName;
 
         [Argument("module-name", Description = "The module name")]
         public string ModuleName { get; set; } = null!;
@@ -61,6 +61,6 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module
         public bool Web { get; set; }
         
         [Option("custom", Description = "Specify which module is added to (or removed from) which app project. e.g. \"Web:Web,Orders.Web:Web:Orders\" means the Web module and the Orders.Web module were added to (or removed from) the Web app project, the last optional \"Orders\" is the submodule name used to make up the using namespace.")]
-        public string Custom { get; set; }
+        public string? Custom { get; set; }
     }
 }
