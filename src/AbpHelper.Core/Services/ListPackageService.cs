@@ -28,15 +28,14 @@ namespace EasyAbp.AbpHelper.Core.Services
 
                 var root = XDocument.Load(csprojFile).Root;
                 
-                if (root != null)
-                    foreach (var element in root.Descendants("PackageReference"))
-                    {
-                        var name = element.Attribute("Include")!.Value;
+                foreach (var element in root.Descendants("PackageReference"))
+                {
+                    var name = element.Attribute("Include")!.Value;
                     
-                        var version = element.Attribute("Version")!.Value;
+                    var version = element.Attribute("Version")!.Value;
                     
-                        result[projectName].Add(new PackageInfo(name, version));
-                    }
+                    result[projectName].Add(new PackageInfo(name, version));
+                }
             }
 
             return Task.FromResult(new GetInstalledPackagesOutput

@@ -97,27 +97,20 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
 
                 var properties = root.Descendants<PropertyDeclarationSyntax>()
                         .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()))
-                        .ToList();
-
-                if (@namespace is not null)
+                        .ToList()
+                    ;
+                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
+                entityInfo.Properties.AddRange(properties);
+                if (keyNames != null)
                 {
-                    var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
-                    entityInfo.Properties.AddRange(properties);
-                    if (keyNames != null)
-                    {
-                        entityInfo.CompositeKeyName = $"{className}Key";
-                        entityInfo.CompositeKeys.AddRange(
+                    entityInfo.CompositeKeyName = $"{className}Key";
+                    entityInfo.CompositeKeys.AddRange(
                         keyNames.Select(k => properties.Single(prop => prop.Name == k)));
-                    }
+                }
 
-                    context.SetLastResult(entityInfo);
-                    context.SetVariable("EntityInfo", entityInfo);
-                    LogOutput(() => entityInfo);
-                }
-                else
-                {
-                    throw new NullReferenceException(nameof(@namespace));
-                }
+                context.SetLastResult(entityInfo);
+                context.SetVariable("EntityInfo", entityInfo);
+                LogOutput(() => entityInfo);
 
                 return Done();
             }

@@ -31,7 +31,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             LogInput(() => Contents, $"Contents length: {Contents.Length}");
 
             var dir = Path.GetDirectoryName(targetFile);
-            if (dir is not null && !Directory.Exists(dir))
+            if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
                 Logger.LogInformation($"Directory {dir} created.");

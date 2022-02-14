@@ -102,8 +102,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
                 }
 
                 var dir = Path.GetDirectoryName(targetFilePathName);
-                if (dir is not null && !Directory.Exists(dir)) 
-                    Directory.CreateDirectory(dir);
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                 await File.WriteAllTextAsync(targetFilePathName, contents);
                 Logger.LogInformation($"File {targetFilePathName} successfully generated.");

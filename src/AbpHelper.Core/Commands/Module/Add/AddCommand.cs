@@ -52,7 +52,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                 .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
                 .ToDictionary(x => x, x => new List<string>(new[] {$"{x}:{x}"}));
             
-            if (option.Custom is not null && !option.Custom.IsNullOrEmpty())
+            if (!option.Custom.IsNullOrEmpty())
             {
                 foreach (var customPart in option.Custom.Split(','))
                 {

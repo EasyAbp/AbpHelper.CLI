@@ -25,9 +25,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
 
             foreach (var variable in variables)
             {
-#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                 ((IDictionary<string, object>) bag)[variable.Key.RemovePreFix("Bag.")] = variable.Value.Value;
-#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
             }
 
             context.SetVariable("Model", new
