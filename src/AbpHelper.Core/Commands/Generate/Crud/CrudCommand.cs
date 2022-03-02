@@ -107,7 +107,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Crud
 
                                     @switch.When(UiFramework.Angular.ToString("D"))
                                         // TODO
-                                        //.AddUiAngularGenerationWorkflow()
+                                        .AddUiAngularGenerationWorkflow()
                                         .Then(TestGeneration);
                                 }
                             )

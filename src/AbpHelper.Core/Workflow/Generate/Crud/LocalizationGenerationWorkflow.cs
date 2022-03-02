@@ -22,7 +22,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                         step =>
                         {
                             step.SearchFileName = new LiteralExpression("*.json");
-                            step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src/${ProjectInfo.FullName}.Domain.Shared/Localization`");
+                            step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src/${ProjectInfo.FullName}.Domain.Shared/Localization/${ProjectInfo.Name}`");
                         }
                     )
                     .Then<ForEach>(

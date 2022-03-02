@@ -11,13 +11,15 @@ else
     repositoryName = "_repository"
 end ~}}
 using System;
+using System.Threading.Tasks;
+using Volo.Abp.Domain.Repositories;
+using System.Collections.Generic;
 {{~ if !EntityInfo.CompositeKeyName
     crudClassName = "CrudAppService"
 else
     crudClassName = "AbstractKeyCrudAppService"
 ~}}
 using System.Linq;
-using System.Threading.Tasks;
 {{~ end -}}
 {{~ if !Option.SkipPermissions 
     permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.Name
@@ -57,7 +59,7 @@ namespace {{ EntityInfo.Namespace }}
         }
         {{~ end ~}}
         {{~ if EntityInfo.CompositeKeyName ~}}
-        
+
         protected override Task DeleteByIdAsync({{ EntityInfo.CompositeKeyName }} id)
         {
             // TODO: AbpHelper generated
@@ -86,5 +88,29 @@ namespace {{ EntityInfo.Namespace }}
             return query.OrderBy(e => e.{{ EntityInfo.CompositeKeys[0].Name }});
         }
         {{~ end ~}} 
+
+        public async Task<PagedResultDto<{{ EntityInfo.Name }}Dto>> GetListByFilterAsync({{ DtoInfo.GetTypeName }} input)
+        {
+            if (input.Sorting.IsNullOrWhiteSpace())
+            {
+                input.Sorting = nameof({{ EntityInfo.Name }}.Name);
+            }
+
+            var {{ EntityInfo.Name }}s = await _repository.GetListAsync(
+                input.SkipCount,
+                input.MaxResultCount,
+                input.Sorting,
+                input.Filter
+            );
+
+            var totalCount = input.Filter == null
+                ? await _repository.CountAsync()
+                : await _repository.CountAsync(e => e.Name.Contains(input.Filter));
+
+            return new PagedResultDto<{{ EntityInfo.Name }}Dto>(
+                totalCount,
+                ObjectMapper.Map<List<{{ EntityInfo.Name }}>, List<{{ EntityInfo.Name }}Dto>>({{ EntityInfo.Name }}s)
+            );
+        }
     }
 }
