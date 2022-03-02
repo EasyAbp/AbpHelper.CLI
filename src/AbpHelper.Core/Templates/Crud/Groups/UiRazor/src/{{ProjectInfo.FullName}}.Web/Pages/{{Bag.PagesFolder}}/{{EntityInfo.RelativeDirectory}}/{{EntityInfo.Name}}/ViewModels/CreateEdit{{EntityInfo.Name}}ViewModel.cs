@@ -1,6 +1,6 @@
 {{- SKIP_GENERATE = Option.SeparateDto || Option.SkipViewModel -}}
 using System;
-using {{ ProjectInfo.FullName }}.{{ EntityInfo.Name }}s;
+using {{ ProjectInfo.FullName }}.{{ EntityInfo.NamespaceLastPart }};
 {{~ if !Option.SkipLocalization }}
 using System.ComponentModel.DataAnnotations;
 {{ end ~}}
