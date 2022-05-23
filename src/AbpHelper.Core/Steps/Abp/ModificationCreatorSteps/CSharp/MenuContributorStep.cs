@@ -21,7 +21,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             string addMenuItemText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
 
             CSharpSyntaxNode MainMenu(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
-                .Single(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
+                .First(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
 
             var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
 
