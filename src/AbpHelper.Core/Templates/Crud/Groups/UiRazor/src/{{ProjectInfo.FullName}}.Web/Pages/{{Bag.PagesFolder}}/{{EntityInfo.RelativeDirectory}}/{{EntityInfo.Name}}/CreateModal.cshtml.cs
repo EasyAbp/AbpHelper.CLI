@@ -19,29 +19,27 @@ using {{ EntityInfo.Namespace }}.Dtos;
 using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;
 {{~ end ~}}
 
-namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}
+namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }};
+public class CreateModalModel : {{ ProjectInfo.Name }}PageModel
 {
-    public class CreateModalModel : {{ ProjectInfo.Name }}PageModel
+    [BindProperty]
+    public {{ viewModelType }} ViewModel { get; set; }
+
+    private readonly I{{ EntityInfo.Name }}AppService _service;
+
+    public CreateModalModel(I{{ EntityInfo.Name }}AppService service)
     {
-        [BindProperty]
-        public {{ viewModelType }} ViewModel { get; set; }
+        _service = service;
+    }
 
-        private readonly I{{ EntityInfo.Name }}AppService _service;
-
-        public CreateModalModel(I{{ EntityInfo.Name }}AppService service)
-        {
-            _service = service;
-        }
-
-        public virtual async Task<IActionResult> OnPostAsync()
-        {
+    public virtual async Task<IActionResult> OnPostAsync()
+    {
 {{~ if Option.SkipViewModel ~}}    
-            await _service.CreateAsync(ViewModel);
+        await _service.CreateAsync(ViewModel);
 {{~ else ~}}
-            var dto = ObjectMapper.Map<{{ viewModelType }}, {{ dtoType }}>(ViewModel);
-            await _service.CreateAsync(dto);
+        var dto = ObjectMapper.Map<{{ viewModelType }}, {{ dtoType }}>(ViewModel);
+        await _service.CreateAsync(dto);
 {{~ end ~}}
-            return NoContent();
-        }
+        return NoContent();
     }
 }

@@ -1,1 +1,1 @@
-            builder.Configure{{ Option.ModuleGroupNameWithoutCompanyName }}{{ Bag.SubmoduleNameText }}();
+        builder.Configure{{ Option.ModuleGroupNameWithoutCompanyName }}{{ Bag.SubmoduleNameText }}();

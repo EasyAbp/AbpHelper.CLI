@@ -3,22 +3,21 @@ using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
-namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.RelativeNamespace}}
+namespace {{ ProjectInfo.FullName }}.Pages.{{ EntityInfo.RelativeNamespace}};
+public class Index_Tests : {{ ProjectInfo.Name }}WebTestBase
 {
-    public class Index_Tests : {{ ProjectInfo.Name }}WebTestBase
+    /*
+    [Fact]
+    public async Task Index_Page_Test()
     {
-        /*
-        [Fact]
-        public async Task Index_Page_Test()
-        {
-            // Arrange
+        // Arrange
 
-            // Act
-            var response = await GetResponseAsStringAsync("/{{ EntityInfo.Name }}");
+        // Act
+        var response = await GetResponseAsStringAsync("/{{ EntityInfo.Name }}");
 
-            // Assert
-            response.ShouldNotBeNull();
-        }
-        */
+        // Assert
+        response.ShouldNotBeNull();
     }
+    */
 }
+

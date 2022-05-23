@@ -1,10 +1,8 @@
 {{- SKIP_GENERATE = Option.NoInput -}}
 using System;
 
-namespace {{ InterfaceInfo.Namespace }}.Dtos
+namespace {{ InterfaceInfo.Namespace }}.Dtos;
+[Serializable]
+public class {{ Bag.Name }}Input
 {
-    [Serializable]
-    public class {{ Bag.Name }}Input
-    {
-    }
 }

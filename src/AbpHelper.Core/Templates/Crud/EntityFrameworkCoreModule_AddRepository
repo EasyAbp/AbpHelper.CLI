@@ -1,1 +1,1 @@
-                options.AddRepository<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Repository>();
+            options.AddRepository<{{ EntityInfo.Name }}, {{ EntityInfo.Name }}Repository>();
