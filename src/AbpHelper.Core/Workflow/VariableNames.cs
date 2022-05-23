@@ -13,5 +13,6 @@
         public const string CurrentModuleName = nameof(CurrentModuleName);
         public const string TargetAppProjectName = nameof(TargetAppProjectName);
         public const string Action = nameof(Action);
+        public const string HasDbMigrations = nameof(HasDbMigrations);
     }
 }

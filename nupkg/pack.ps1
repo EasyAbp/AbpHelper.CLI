@@ -8,9 +8,9 @@ if (-Not $?) {
 	Write-Host ("Building failed.")
 	exit $LASTEXITCODE
 }
-    
+
 # Copy nuget package
-$projectPackPath = Join-Path $rootFolder ("../src/AbpHelper/bin/Release/EasyAbp.AbpHelper.*.nupkg")
+$projectPackPath = Join-Path $rootFolder ("src/AbpHelper/bin/Release/EasyAbp.AbpHelper.*.nupkg")
 Move-Item $projectPackPath $packFolder
 
 # Go back to the pack folder

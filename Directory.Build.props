@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
 
-    <AbpVersion>4.3.0</AbpVersion>
+    <AbpVersion>5.2.1</AbpVersion>
 
   </PropertyGroup>
 </Project>
