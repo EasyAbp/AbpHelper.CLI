@@ -86,4 +86,3 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
     }
     {{~ end ~}}
 }
-

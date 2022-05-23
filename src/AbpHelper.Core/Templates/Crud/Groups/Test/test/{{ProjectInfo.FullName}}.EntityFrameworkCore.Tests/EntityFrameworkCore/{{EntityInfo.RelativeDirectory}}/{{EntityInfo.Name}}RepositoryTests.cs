@@ -39,4 +39,3 @@ public class {{ EntityInfo.Name }}RepositoryTests : {{ ProjectInfo.Name }}Entity
     }
     */
 }
-

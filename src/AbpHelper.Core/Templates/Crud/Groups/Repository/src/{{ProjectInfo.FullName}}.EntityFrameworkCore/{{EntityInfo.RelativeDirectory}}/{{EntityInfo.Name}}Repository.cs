@@ -32,4 +32,3 @@ public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ dbContextName
         return (await GetQueryableAsync()).IncludeDetails();
     }
 }
-

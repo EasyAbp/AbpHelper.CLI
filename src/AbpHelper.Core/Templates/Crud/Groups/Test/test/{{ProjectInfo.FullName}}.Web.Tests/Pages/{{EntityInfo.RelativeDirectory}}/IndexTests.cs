@@ -21,4 +21,3 @@ public class Index_Tests : {{ ProjectInfo.Name }}WebTestBase
     }
     */
 }
-
