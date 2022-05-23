@@ -71,13 +71,11 @@ namespace {{ EntityInfo.Namespace }}
         protected override async Task<{{ EntityInfo.Name }}> GetEntityByIdAsync({{ EntityInfo.CompositeKeyName }} id)
         {
             // TODO: AbpHelper generated
-            return await AsyncExecuter.FirstOrDefaultAsync(
-                (await {{ repositoryName }}.WithDetailsAsync()).Where(e =>
+            return await {{ repositoryName }}.GetAsync(e =>
                 {{~ for prop in EntityInfo.CompositeKeys ~}}
                     e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
                 {{~ end ~}}
-                )
-            ); 
+                ); 
         }
 
         protected override IQueryable<{{ EntityInfo.Name }}> ApplyDefaultSorting(IQueryable<{{ EntityInfo.Name }}> query)
