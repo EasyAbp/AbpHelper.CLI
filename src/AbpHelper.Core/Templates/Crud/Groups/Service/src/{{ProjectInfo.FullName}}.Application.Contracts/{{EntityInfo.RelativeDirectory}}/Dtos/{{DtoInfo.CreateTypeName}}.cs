@@ -2,6 +2,7 @@ using System;
 {{~ if !Option.SkipLocalization }}using System.ComponentModel;{{ end ~}}
 
 namespace {{ EntityInfo.Namespace }}.Dtos;
+
 [Serializable]
 public class {{ DtoInfo.CreateTypeName }}
 {

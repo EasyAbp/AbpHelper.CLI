@@ -4,6 +4,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace {{ EntityInfo.Namespace }};
+
 public interface I{{ EntityInfo.Name }}AppService :
     ICrudAppService< 
         {{ DtoInfo.ReadTypeName }}, 

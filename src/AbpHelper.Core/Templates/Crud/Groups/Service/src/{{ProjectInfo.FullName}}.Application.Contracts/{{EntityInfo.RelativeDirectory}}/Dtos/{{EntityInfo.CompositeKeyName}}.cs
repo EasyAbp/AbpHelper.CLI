@@ -2,6 +2,7 @@
 using System;
 
 namespace {{ EntityInfo.Namespace }}.Dtos;
+
 public class {{ EntityInfo.CompositeKeyName }}
 {
     {{~ for prop in EntityInfo.CompositeKeys ~}}

@@ -12,7 +12,7 @@ using {{ ProjectInfo.FullName }}.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 
-namespace {{ EntityInfo.Namespace }} ;
+namespace {{ EntityInfo.Namespace }};
 
 {{~
     if EntityInfo.CompositeKeyName

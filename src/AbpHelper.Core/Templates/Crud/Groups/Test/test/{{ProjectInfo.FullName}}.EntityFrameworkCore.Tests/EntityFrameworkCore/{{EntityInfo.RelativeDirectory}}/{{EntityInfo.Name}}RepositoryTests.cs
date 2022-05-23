@@ -13,7 +13,8 @@ using {{ EntityInfo.Namespace }};
 using Volo.Abp.Domain.Repositories;
 using Xunit;
 
-namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.RelativeNamespace}} ;
+namespace {{ ProjectInfo.FullName }}.EntityFrameworkCore.{{ EntityInfo.RelativeNamespace}};
+
 public class {{ EntityInfo.Name }}RepositoryTests : {{ ProjectInfo.Name }}EntityFrameworkCoreTestBase
 {
     private readonly {{ repository }} _{{ EntityInfo.Name | abp.camel_case }}Repository;

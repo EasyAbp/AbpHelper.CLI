@@ -36,5 +36,5 @@ public class {{ Option.Name }}Controller : {{ ProjectInfo.Name }}Controller, I{{
     }
 {{~ for method in ClassInfo.Methods | abp.intersect InterfaceInfo.Methods ~}}
 {{~ include "Templates/Controller/ControllerMethod" method ~}}
-    {{~ end ~}}
+{{~ end ~}}
 }

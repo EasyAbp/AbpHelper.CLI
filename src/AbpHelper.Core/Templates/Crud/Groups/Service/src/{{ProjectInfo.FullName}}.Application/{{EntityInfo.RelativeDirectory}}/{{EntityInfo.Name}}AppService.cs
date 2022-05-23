@@ -31,7 +31,8 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 {{~ end ~}}
 
-namespace {{ EntityInfo.Namespace }} ;
+namespace {{ EntityInfo.Namespace }};
+
 public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo.Name }}, {{ DtoInfo.ReadTypeName }}, {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, PagedAndSortedResultRequestDto, {{ DtoInfo.CreateTypeName }}, {{ DtoInfo.UpdateTypeName }}>,
     I{{ EntityInfo.Name }}AppService
 {

@@ -3,6 +3,7 @@ using Shouldly;
 using Xunit;
 
 namespace {{ EntityInfo.Namespace }};
+
 public class {{ EntityInfo.Name }}DomainTests : {{ ProjectInfo.Name }}DomainTestBase
 {
     public {{ EntityInfo.Name }}DomainTests()
@@ -20,5 +21,4 @@ public class {{ EntityInfo.Name }}DomainTests : {{ ProjectInfo.Name }}DomainTest
         // Assert
     }
     */
-}
 }

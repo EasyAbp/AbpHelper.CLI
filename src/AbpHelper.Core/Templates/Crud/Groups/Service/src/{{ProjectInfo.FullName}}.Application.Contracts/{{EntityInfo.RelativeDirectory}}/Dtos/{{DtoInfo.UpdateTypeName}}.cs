@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 
 namespace {{ EntityInfo.Namespace }}.Dtos;
+
 [Serializable]
 public class {{ DtoInfo.UpdateTypeName }}
 {

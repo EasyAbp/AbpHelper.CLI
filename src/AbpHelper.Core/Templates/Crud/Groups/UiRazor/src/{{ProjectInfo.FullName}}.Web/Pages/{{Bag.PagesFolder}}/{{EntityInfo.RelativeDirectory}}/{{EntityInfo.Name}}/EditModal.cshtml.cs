@@ -21,6 +21,7 @@ using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.Rel
 {{~ end ~}}
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }};
+
 public class EditModalModel : {{ ProjectInfo.Name }}PageModel
 {
     [HiddenInput]
