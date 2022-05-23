@@ -13,6 +13,13 @@ namespace EasyAbp.AbpHelper.Core.Generator
 {
     public class AbpFunctions : ScriptObject
     {
+        public static string KebabCase(string text)
+        {
+            var parts = text.Split('.')
+                .Select(part => part.ToKebabCase());
+            return string.Join('.', parts);
+        }
+        
         public static string CamelCase(string text)
         {
             var parts = text.Split('.')
@@ -79,7 +86,7 @@ namespace EasyAbp.AbpHelper.Core.Generator
                 ;
             if (!actionNameInUrl.IsNullOrEmpty())
             {
-                url += $"/{actionNameInUrl.ToCamelCase()}";
+                url += $"/{actionNameInUrl.ToKebabCase()}";
 
                 //Add secondary Id
                 var secondaryIds = method.Parameters.Where(p => p.Name.EndsWith("Id", StringComparison.Ordinal)).ToList();
