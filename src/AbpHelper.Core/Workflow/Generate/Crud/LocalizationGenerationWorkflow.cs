@@ -18,11 +18,18 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                     .Then<TextGenerationStep>(
                         step => { step.TemplateName = "Localization"; }
                     ).WithName(ActivityNames.LocalizationGeneration)
+                    .Then<DirectoryFinderStep>(
+                        step =>
+                        {
+                            step.SearchDirectoryName = "Localization";
+                            step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src/${ProjectInfo.FullName}.Domain.Shared`");
+                        }
+                    )
                     .Then<MultiFileFinderStep>(
                         step =>
                         {
                             step.SearchFileName = new LiteralExpression("*.json");
-                            step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src/${ProjectInfo.FullName}.Domain.Shared/Localization`");
+                            step.BaseDirectory = new JavaScriptExpression<string>(DirectoryFinderStep.DefaultDirectoryParameterName);
                         }
                     )
                     .Then<ForEach>(
