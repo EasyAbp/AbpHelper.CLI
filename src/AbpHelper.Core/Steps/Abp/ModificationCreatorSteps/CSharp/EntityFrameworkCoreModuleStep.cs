@@ -22,7 +22,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 
             CSharpSyntaxNode Func(CSharpSyntaxNode root) => root
                 .Descendants<ExpressionStatementSyntax>()
-                .Single(node => node.ToString().Contains("AddAbpDbContext"))
+                .First(node => node.ToString().Contains("AddAbpDbContext"))
             ;
 
             return new List<ModificationBuilder<CSharpSyntaxNode>>

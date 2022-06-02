@@ -6,6 +6,8 @@ else
 end
 ~}}
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using {{ ProjectInfo.FullName }}.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -31,19 +33,9 @@ namespace {{ EntityInfo.Namespace }}
         {
         }
 
-        public async Task<List<{{ EntityInfo.Name }}>> GetListAsync(
-            int skipCount,
-            int maxResultCount,
-            string sorting,
-            string filter,
-            CancellationToken cancelationToken = default)
+        public override async Task<IQueryable<{{ EntityInfo.Name }}>> WithDetailsAsync()
         {
-            var dbSet = await GetDbSetAsync();
-            return await dbSet
-                //.WhereIf(filter != null, p => p.Name.Contains(filter))
-                .PageBy(skipCount, maxResultCount)
-                .OrderBy(sorting == null ? nameof({{ EntityInfo.Name }}.Id) : sorting)
-                .ToListAsync(cancelationToken);
+            return (await GetQueryableAsync()).IncludeDetails();
         }
     }
 }

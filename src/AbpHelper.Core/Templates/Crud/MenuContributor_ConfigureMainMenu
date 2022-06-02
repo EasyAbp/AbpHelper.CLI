@@ -1,1 +1,1 @@
-        private async Task ConfigureMainMenu(MenuConfigurationContext context)
+        private async Task ConfigureMainMenuAsync(MenuConfigurationContext context)

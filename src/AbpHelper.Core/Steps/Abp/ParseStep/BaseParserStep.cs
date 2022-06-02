@@ -69,8 +69,16 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ParseStep
                     .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
                     .AddSyntaxTrees(tree);
 
+                BaseNamespaceDeclarationSyntax? namespaceSyntax = root
+                    .Descendants<NamespaceDeclarationSyntax>()
+                    .SingleOrDefault();
+
+                namespaceSyntax ??= root
+                    .Descendants<FileScopedNamespaceDeclarationSyntax>()
+                    .SingleOrDefault();
+
                 var usings = root.Descendants<UsingDirectiveSyntax>().Select(@using => @using.Name.ToString());
-                var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
+                var @namespace = namespaceSyntax?.Name.ToString();
                 var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
                 var typeDeclarationSyntax = root.Descendants<TType>().Single();
                 var typeName = typeDeclarationSyntax.Identifier.ToString();

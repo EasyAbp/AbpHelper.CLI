@@ -65,6 +65,7 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                     .Then<MultiFileFinderStep>(
                         step =>
                         {
+                            step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src`");
                             step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MenuContributor.cs`");
                         }
                     )
