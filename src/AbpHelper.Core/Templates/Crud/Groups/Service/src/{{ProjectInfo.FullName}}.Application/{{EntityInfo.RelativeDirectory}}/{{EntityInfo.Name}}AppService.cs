@@ -91,7 +91,7 @@ namespace {{ EntityInfo.Namespace }}
         {
             if (input.Sorting.IsNullOrWhiteSpace())
             {
-                input.Sorting = nameof({{ EntityInfo.Name }}.Name);
+                input.Sorting = nameof({{ EntityInfo.Name }}.Id);
             }
 
             var {{ EntityInfo.Name }}s = await _repository.GetListAsync(
@@ -101,13 +101,9 @@ namespace {{ EntityInfo.Namespace }}
                 input.Filter
             );
 
-            var totalCount = input.Filter == null
-                ? await _repository.CountAsync()
-                : await _repository.CountAsync(e => e.Name.Contains(input.Filter));
-
             return new PagedResultDto<{{ EntityInfo.Name }}Dto>(
-                totalCount,
-                ObjectMapper.Map<List<{{ EntityInfo.Name }}>, List<{{ EntityInfo.Name }}Dto>>({{ EntityInfo.Name }}s)
+                {{ EntityInfo.Name }}s.TotalCount,
+                ObjectMapper.Map<List<{{ EntityInfo.Name }}>, List<{{ EntityInfo.Name }}Dto>>({{ EntityInfo.Name }}s.Items)
             );
         }
     }

@@ -15,11 +15,11 @@ namespace {{ EntityInfo.Namespace }}
 {
     public interface I{{ EntityInfo.Name }}Repository : {{ repository }}
     {
-        Task<List<{{ EntityInfo.Name }}>> GetListAsync(
+        Task<{{ EntityInfo.Name }}Result> GetListAsync(
                 int skipCount,
                 int maxResultCount,
                 string sorting,
                 string filter,
-                CancellationToken cancelationToken = default);
+                CancellationToken cancellationToken = default);
 }
 }
