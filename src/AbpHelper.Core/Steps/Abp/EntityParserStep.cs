@@ -31,12 +31,12 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             LogInput(() => entityFile);
             var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
 
-            var sourceText = await File.ReadAllTextAsync(entityFile);
+            var sourceText = await File.ReadAllTextAsync(entityFile, cancellationToken);
 
             try
             {
-                var tree = CSharpSyntaxTree.ParseText(sourceText);
-                var root = tree.GetCompilationUnitRoot();
+                var tree = CSharpSyntaxTree.ParseText(sourceText, cancellationToken: cancellationToken);
+                var root = tree.GetCompilationUnitRoot(cancellationToken: cancellationToken);
                 if (root.ContainsDiagnostics)
                 {
                     // source contains syntax error
@@ -44,12 +44,29 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                     throw ex;
                 }
 
-                var @namespace = root.Descendants<NamespaceDeclarationSyntax>().Single().Name.ToString();
-                var relativeDirectory = @namespace.RemovePreFix(projectInfo.FullName + ".").Replace('.', '/');
-                var classDeclarationSyntax = root.Descendants<ClassDeclarationSyntax>().Single();
+                BaseNamespaceDeclarationSyntax? namespaceSyntax = root
+                    .Descendants<NamespaceDeclarationSyntax>()
+                    .SingleOrDefault();
+
+                namespaceSyntax ??= root
+                    .Descendants<FileScopedNamespaceDeclarationSyntax>()
+                    .SingleOrDefault();
+
+                var @namespace = namespaceSyntax?.Name.ToString();
+
+                var relativeDirectory = @namespace
+                    .RemovePreFix(projectInfo.FullName + ".")
+                    .Replace('.', '/');
+
+                var classDeclarationSyntax = root
+                    .Descendants<ClassDeclarationSyntax>()
+                    .Single();
+
                 var className = classDeclarationSyntax.Identifier.ToString();
                 var baseList = classDeclarationSyntax.BaseList!;
-                var genericNameSyntax = baseList.Descendants<SimpleBaseTypeSyntax>()
+
+                var genericNameSyntax = baseList
+                    .Descendants<SimpleBaseTypeSyntax>()
                     .First(node => !node.ToFullString().StartsWith("I")) // Not interface
                     .Descendants<GenericNameSyntax>()
                     .FirstOrDefault();
@@ -66,11 +83,10 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                     // Get composite keys
                     var getKeysMethod = root.Descendants<MethodDeclarationSyntax>().Single(m => m.Identifier.ToString() == "GetKeys");
                     keyNames = getKeysMethod
-                            .Descendants<InitializerExpressionSyntax>()
-                            .First()
-                            .Descendants<IdentifierNameSyntax>()
-                            .Select(id => id.Identifier.ToString())
-                        ;
+                        .Descendants<InitializerExpressionSyntax>()
+                        .First()
+                        .Descendants<IdentifierNameSyntax>()
+                        .Select(id => id.Identifier.ToString());
                 }
                 else
                 {
