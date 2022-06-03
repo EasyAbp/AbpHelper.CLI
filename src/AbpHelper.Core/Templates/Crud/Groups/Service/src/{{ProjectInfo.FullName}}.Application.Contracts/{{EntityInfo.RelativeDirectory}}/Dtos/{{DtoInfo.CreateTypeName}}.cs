@@ -1,5 +1,7 @@
 using System;
-{{~ if !Option.SkipLocalization }}using System.ComponentModel;{{ end ~}}
+{{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
+using System.ComponentModel;
+{{~ end ~}}
 
 namespace {{ EntityInfo.Namespace }}.Dtos;
 

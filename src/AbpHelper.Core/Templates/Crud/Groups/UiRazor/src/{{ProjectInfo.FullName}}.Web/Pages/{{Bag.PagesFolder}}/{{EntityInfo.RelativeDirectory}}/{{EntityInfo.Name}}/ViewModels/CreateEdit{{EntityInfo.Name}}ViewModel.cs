@@ -1,8 +1,8 @@
 {{- SKIP_GENERATE = Option.SeparateDto || Option.SkipViewModel -}}
 using System;
-{{~ if !Option.SkipLocalization }}
+{{~ if !Option.SkipLocalization ~}}
 using System.ComponentModel.DataAnnotations;
-{{ end ~}}
+{{~ end ~}}
 {{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;

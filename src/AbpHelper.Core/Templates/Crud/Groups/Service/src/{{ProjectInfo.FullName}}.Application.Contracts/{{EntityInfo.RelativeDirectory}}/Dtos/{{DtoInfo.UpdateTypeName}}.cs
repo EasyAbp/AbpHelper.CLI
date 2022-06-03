@@ -1,6 +1,8 @@
 {{- SKIP_GENERATE = DtoInfo.CreateTypeName == DtoInfo.UpdateTypeName -}}
 using System;
+{{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
 using System.ComponentModel;
+{{~ end ~}}
 
 namespace {{ EntityInfo.Namespace }}.Dtos;
 
