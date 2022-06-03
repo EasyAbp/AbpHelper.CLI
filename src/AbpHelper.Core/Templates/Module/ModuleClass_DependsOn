@@ -1,1 +1,1 @@
-    [DependsOn(typeof({{ Bag.DependsOnModuleClassName }}))]
+[DependsOn(typeof({{ Bag.DependsOnModuleClassName }}))]

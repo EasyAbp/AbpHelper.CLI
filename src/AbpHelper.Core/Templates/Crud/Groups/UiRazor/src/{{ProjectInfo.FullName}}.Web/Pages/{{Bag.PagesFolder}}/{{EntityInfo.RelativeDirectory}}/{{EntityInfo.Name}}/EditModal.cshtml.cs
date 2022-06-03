@@ -20,39 +20,38 @@ using {{ EntityInfo.Namespace }}.Dtos;
 using {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace}}.{{ EntityInfo.Name }}.ViewModels;
 {{~ end ~}}
 
-namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }}
+namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }};
+
+public class EditModalModel : {{ ProjectInfo.Name }}PageModel
 {
-    public class EditModalModel : {{ ProjectInfo.Name }}PageModel
+    [HiddenInput]
+    [BindProperty(SupportsGet = true)]
+    public {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }} Id { get; set; }
+
+    [BindProperty]
+    public {{ viewModelType }} ViewModel { get; set; }
+
+    private readonly I{{ EntityInfo.Name }}AppService _service;
+
+    public EditModalModel(I{{ EntityInfo.Name }}AppService service)
     {
-        [HiddenInput]
-        [BindProperty(SupportsGet = true)]
-        public {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }} Id { get; set; }
+        _service = service;
+    }
 
-        [BindProperty]
-        public {{ viewModelType }} ViewModel { get; set; }
+    public virtual async Task OnGetAsync()
+    {
+        var dto = await _service.GetAsync(Id);
+        ViewModel = ObjectMapper.Map<{{ DtoInfo.ReadTypeName }}, {{ viewModelType }}>(dto);
+    }
 
-        private readonly I{{ EntityInfo.Name }}AppService _service;
-
-        public EditModalModel(I{{ EntityInfo.Name }}AppService service)
-        {
-            _service = service;
-        }
-
-        public virtual async Task OnGetAsync()
-        {
-            var dto = await _service.GetAsync(Id);
-            ViewModel = ObjectMapper.Map<{{ DtoInfo.ReadTypeName }}, {{ viewModelType }}>(dto);
-        }
-
-        public virtual async Task<IActionResult> OnPostAsync()
-        {
+    public virtual async Task<IActionResult> OnPostAsync()
+    {
 {{~ if Option.SkipViewModel ~}}    
-            await _service.UpdateAsync(Id, ViewModel);
+        await _service.UpdateAsync(Id, ViewModel);
 {{~ else ~}}
-            var dto = ObjectMapper.Map<{{ viewModelType }}, {{ dtoType }}>(ViewModel);
-            await _service.UpdateAsync(Id, dto);
+        var dto = ObjectMapper.Map<{{ viewModelType }}, {{ dtoType }}>(ViewModel);
+        await _service.UpdateAsync(Id, dto);
 {{~ end ~}}
-            return NoContent();
-        }
+        return NoContent();
     }
 }
