@@ -1,23 +1,23 @@
 
-        public {{ EntityInfo.Name }}(
+    public {{ EntityInfo.Name }}(
 {{~ if EntityInfo.PrimaryKey ~}}
-            {{ EntityInfo.PrimaryKey }} id
-            {{- for prop in EntityInfo.Properties -}}
-            ,
-            {{ prop.Type }} {{ prop.Name | abp.camel_case }}
-            {{- if for.last; "\r\n"; else; ; end -}}
-            {{- end ~}}
-        ) : base(id)
+        {{ EntityInfo.PrimaryKey }} id
+        {{- for prop in EntityInfo.Properties -}}
+        ,
+        {{ prop.Type }} {{ prop.Name | abp.camel_case }}
+        {{- if for.last; "\r\n"; else; ; end -}}
+        {{- end ~}}
+    ) : base(id)
 {{~ else ~}}
-            {{- for prop in EntityInfo.Properties -}}
-            {{- if for.first; ; else; ",\r\n"; end ~}}
-            {{ prop.Type }} {{ prop.Name | abp.camel_case }}
-            {{- if for.last; "\r\n"; else; ; end -}}
-            {{- end ~}}
-        )
+        {{- for prop in EntityInfo.Properties -}}
+        {{- if for.first; ; else; ",\r\n"; end ~}}
+        {{ prop.Type }} {{ prop.Name | abp.camel_case }}
+        {{- if for.last; "\r\n"; else; ; end -}}
+        {{- end ~}}
+    )
 {{~ end ~}}
-        {
-            {{~ for prop in EntityInfo.Properties ~}}
-            {{ prop.Name }} = {{ prop.Name | abp.camel_case }};
-            {{~ end ~}}
-        }
+    {
+        {{~ for prop in EntityInfo.Properties ~}}
+        {{ prop.Name }} = {{ prop.Name | abp.camel_case }};
+        {{~ end ~}}
+    }

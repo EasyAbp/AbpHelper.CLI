@@ -1,4 +1,4 @@
 
-        protected {{ EntityInfo.Name }}()
-        {
-        }
+    protected {{ EntityInfo.Name }}()
+    {
+    }

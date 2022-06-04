@@ -18,8 +18,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace {{ EntityInfo.Namespace }}
-{
+namespace {{ EntityInfo.Namespace }};
+
 {{~
     if EntityInfo.CompositeKeyName
         primaryKeyText = ""
@@ -27,11 +27,11 @@ namespace {{ EntityInfo.Namespace }}
         primaryKeyText = ", " + EntityInfo.PrimaryKey
     end
 ~}}
-    public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ dbContextName }}, {{ EntityInfo.Name }}{{ primaryKeyText }}>, I{{ EntityInfo.Name }}Repository
+public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ dbContextName }}, {{ EntityInfo.Name }}{{ primaryKeyText }}>, I{{ EntityInfo.Name }}Repository
+{
+    public {{ EntityInfo.Name }}Repository(IDbContextProvider<{{ dbContextName }}> dbContextProvider) : base(dbContextProvider)
     {
-        public {{ EntityInfo.Name }}Repository(IDbContextProvider<{{ dbContextName }}> dbContextProvider) : base(dbContextProvider)
-        {
-        }
+    }
 
         public override async Task<IQueryable<{{ EntityInfo.Name }}>> WithDetailsAsync()
         {
