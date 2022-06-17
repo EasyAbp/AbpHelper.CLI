@@ -11,16 +11,14 @@ else
     repositoryName = "_repository"
 end ~}}
 using System;
-using System.Threading.Tasks;
-using Volo.Abp.Domain.Repositories;
-using System.Collections.Generic;
 {{~ if !EntityInfo.CompositeKeyName
     crudClassName = "CrudAppService"
 else
     crudClassName = "AbstractKeyCrudAppService"
 ~}}
-using System.Linq;
 {{~ end -}}
+using System.Collections.Generic;
+using System.Threading.Tasks;
 {{~ if !Option.SkipPermissions
     permissionNamesPrefix = ProjectInfo.Name + "Permissions." + EntityInfo.Name
 ~}}
@@ -67,44 +65,44 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
         {{~ for prop in EntityInfo.CompositeKeys ~}}
             e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
         {{~ end ~}}
-        {{~ if EntityInfo.CompositeKeyName ~}}
+        );
+    }
 
-        protected override Task DeleteByIdAsync({{ EntityInfo.CompositeKeyName }} id)
-        {
-            // TODO: AbpHelper generated
-            return {{ repositoryName }}.DeleteAsync(e =>
+    protected override async Task<{{ EntityInfo.Name }}> GetEntityByIdAsync({{ EntityInfo.CompositeKeyName }} id)
+    {
+    // TODO: AbpHelper generated
+        return await AsyncExecuter.FirstOrDefaultAsync(
+            (await {{ repositoryName }}.WithDetailsAsync()).Where(e =>
             {{~ for prop in EntityInfo.CompositeKeys ~}}
                 e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
             {{~ end ~}}
             );
     }
 
-        protected override IQueryable<{{ EntityInfo.Name }}> ApplyDefaultSorting(IQueryable<{{ EntityInfo.Name }}> query)
-        {
-            // TODO: AbpHelper generated
-            return query.OrderBy(e => e.{{ EntityInfo.CompositeKeys[0].Name }});
-        }
-        {{~ end ~}} 
-
-        public async Task<PagedResultDto<{{ EntityInfo.Name }}Dto>> GetListByFilterAsync({{ DtoInfo.GetTypeName }} input)
-        {
-            if (input.Sorting.IsNullOrWhiteSpace())
-            {
-                input.Sorting = nameof({{ EntityInfo.Name }}.Id);
-            }
-
-            var {{ EntityInfo.Name }}s = await _repository.GetListAsync(
-                input.SkipCount,
-                input.MaxResultCount,
-                input.Sorting,
-                input.Filter
-            );
-
-            return new PagedResultDto<{{ EntityInfo.Name }}Dto>(
-                {{ EntityInfo.Name }}s.TotalCount,
-                ObjectMapper.Map<List<{{ EntityInfo.Name }}>, List<{{ EntityInfo.Name }}Dto>>({{ EntityInfo.Name }}s.Items)
-            );
-        }
+    protected override IQueryable<{{ EntityInfo.Name }}> ApplyDefaultSorting(IQueryable<{{ EntityInfo.Name }}> query)
+    {
+        // TODO: AbpHelper generated
+        return query.OrderBy(e => e.{{ EntityInfo.CompositeKeys[0].Name }});
     }
     {{~ end ~}}
+
+    public async Task<PagedResultDto<{{ EntityInfo.Name }}Dto>> GetListByFilterAsync(Get{{EntityInfo.Name}}ListDto input)
+    {
+        if (input.Sorting.IsNullOrWhiteSpace())
+        {
+            input.Sorting = nameof({{ EntityInfo.Name }}.Id);
+        }
+
+        var {{ EntityInfo.NamePluralizedCamelized }} = await _repository.GetListAsync(
+            input.SkipCount,
+            input.MaxResultCount,
+            input.Sorting,
+            input.Filter
+        );
+
+        return new PagedResultDto<{{ EntityInfo.Name }}Dto>(
+            {{ EntityInfo.NamePluralizedCamelized }}.TotalCount,
+            ObjectMapper.Map<List<{{ EntityInfo.Name }}>, List<{{ EntityInfo.Name }}Dto>>({{ EntityInfo.NamePluralizedCamelized }}.Items)
+        );
+    }
 }

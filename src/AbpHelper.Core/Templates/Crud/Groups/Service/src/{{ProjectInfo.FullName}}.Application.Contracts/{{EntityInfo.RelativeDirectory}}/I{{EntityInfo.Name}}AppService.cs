@@ -14,4 +14,5 @@ public interface I{{ EntityInfo.Name }}AppService :
         {{ DtoInfo.CreateTypeName }},
         {{ DtoInfo.UpdateTypeName }}>
 {
+    Task<PagedResultDto<{{ EntityInfo.Name }}Dto>> GetListByFilterAsync(Get{{ EntityInfo.Name }}ListDto input);
 }

@@ -33,32 +33,31 @@ public class {{ EntityInfo.Name }}Repository : EfCoreRepository<{{ dbContextName
     {
     }
 
-        public override async Task<IQueryable<{{ EntityInfo.Name }}>> WithDetailsAsync()
-        {
-            return (await GetQueryableAsync()).IncludeDetails();
-        }
+    public override async Task<IQueryable<{{ EntityInfo.Name }}>> WithDetailsAsync()
+    {
+        return (await GetQueryableAsync()).IncludeDetails();
+    }
 
 
-        public async Task<{{ EntityInfo.Name }}Result> GetListAsync(
-            int skipCount,
-            int maxResultCount,
-            string sorting,
-            string filter,
-            CancellationToken cancellationToken = default)
+    public async Task<GetEntityListResult<{{ EntityInfo.Name }}>> GetListAsync(
+        int skipCount,
+        int maxResultCount,
+        string sorting,
+        string filter,
+        CancellationToken cancellationToken = default)
+    {
+        var query = (await GetDbSetAsync())
+            //.WhereIf(filter != null, p => p.Name.Contains(filter))
+            ;
+        
+        return new GetEntityListResult<{{ EntityInfo.Name }}>()
         {
-            var query = await GetDbSetAsync()
-                //.WhereIf(filter != null, p => p.Name.Contains(filter))
-                ;
-            
-            return new {{ EntityInfo.Name }}Result()
-            {
-                Items = await query
-                    .PageBy(skipCount, maxResultCount)
-                    .OrderBy(sorting.IsNullOrWhiteSpace() ? nameof({{ EntityInfo.Name }}.Id) : sorting)
-                    .ToListAsync(cancellationToken),
-                TotalCount = await query.CountAsync(cancellationToken)
-            };
-            
-        }
+            Items = await query
+                .PageBy(skipCount, maxResultCount)
+                .OrderBy(sorting.IsNullOrWhiteSpace() ? nameof({{ EntityInfo.Name }}.Id) : sorting)
+                .ToListAsync(cancellationToken),
+            TotalCount = await query.CountAsync(cancellationToken)
+        };
+        
     }
 }

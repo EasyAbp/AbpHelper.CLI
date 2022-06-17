@@ -16,19 +16,17 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
 
             try
             {
-                string[] actionNames = { string.Empty, string.Empty, string.Empty, string.Empty };                
+                string[] actionNames = { string.Empty, string.Empty, string.Empty};                
 
                 if (option != null && option.SeparateDto)
                 {
                     actionNames[1] = "Create";
                     actionNames[2] = "Update";
-                    actionNames[3] = "Get";
                 }
                 else
                 {
                     actionNames[1] = "CreateUpdate";
                     actionNames[2] = actionNames[1];
-                    actionNames[3] = "Get";
                 }
 
                 string[] typeNames = new string[actionNames.Length];
@@ -38,17 +36,12 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
 
                 for (int i = 0; i < typeNames.Length; i++)
                 {
-                    if(actionNames[i] == "Get")
-                        typeNames[i] = useEntityPrefix
-                        ? $"{entityInfo.Name}{actionNames[i]}List{dtoSubfix}"
-                        : $"{actionNames[i]}{entityInfo.Name}List{dtoSubfix}";
-                    else
-                        typeNames[i] = useEntityPrefix
+                    typeNames[i] = useEntityPrefix
                         ? $"{entityInfo.Name}{actionNames[i]}{dtoSubfix}"
                         : $"{actionNames[i]}{entityInfo.Name}{dtoSubfix}";
                 }
                 
-                DtoInfo dtoInfo = new DtoInfo(typeNames[0], typeNames[1], typeNames[2], typeNames[3]);
+                DtoInfo dtoInfo = new DtoInfo(typeNames[0], typeNames[1], typeNames[2]);
                
                 context.SetLastResult(dtoInfo);
                 context.SetVariable("DtoInfo", dtoInfo);

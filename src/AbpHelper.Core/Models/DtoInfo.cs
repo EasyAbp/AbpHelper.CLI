@@ -2,17 +2,15 @@
 {
     public class DtoInfo
     {
-        public DtoInfo(string readTypeName, string createTypeName, string updateTypeName, string getTypeName)
+        public DtoInfo(string readTypeName, string createTypeName, string updateTypeName)
         {
             ReadTypeName = readTypeName;
             CreateTypeName = createTypeName;
             UpdateTypeName = updateTypeName;
-            GetTypeName = getTypeName;
         }
 
         public string ReadTypeName { get; }
         public string CreateTypeName { get; }
         public string UpdateTypeName { get; }
-        public string GetTypeName { get; }
     }
 }
