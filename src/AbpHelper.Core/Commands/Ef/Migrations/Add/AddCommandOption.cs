@@ -8,6 +8,6 @@ namespace EasyAbp.AbpHelper.Core.Commands.Ef.Migrations.Add
         public string Name { get; set; } = null!;
 
         [Argument("ef-options", Description = "Other options to `dotnet ef migrations add`")]
-        public string[] EfOptions { get; set; } = null!;
+        public string[]? EfOptions { get; set; } = null;
     }
 }

@@ -1,41 +1,59 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
+    [Activity(
+        Category = "DirectoryFinderStep",
+        Description = "DirectoryFinderStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class DirectoryFinderStep : StepWithOption
     {
         public const string DefaultDirectoryParameterName = "DirectoryFinderResult";
 
+        [ActivityInput(
+            Hint = "SearchDirectoryName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
         public string SearchDirectoryName
         {
-            get => GetState<string>();
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> ResultVariableName
+        [ActivityInput(
+            Hint = "ResultVariableName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public string ResultVariableName
         {
-            get => GetState(() => new LiteralExpression(DefaultDirectoryParameterName));
+            get => GetState(() => DefaultDirectoryParameterName);
             set => SetState(value);
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
-            LogInput(() => baseDirectory);
-            var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
-            LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
+            BaseDirectory ??= context.GetVariable<string>(BaseDirectoryVariableName)!;
+
             LogInput(() => SearchDirectoryName);
-            var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
+            LogInput(() => ResultVariableName);
+            LogInput(() => ExcludeDirectories, string.Join("; ", ExcludeDirectories));
+            LogInput(() => BaseDirectory);
+            LogInput(() => Overwrite);
 
-
-            var directoryPathName = SearchDirectoryInDirectory(baseDirectory, SearchDirectoryName, excludeDirectories);
-            context.SetLastResult(directoryPathName);
-            context.SetVariable(resultParameterName, directoryPathName);
-            LogOutput(() => directoryPathName, $"Found directory: {directoryPathName}, stored in parameter: [{ResultVariableName}]");
+            var directoryPathName = SearchDirectoryInDirectory(BaseDirectory, SearchDirectoryName, ExcludeDirectories);
+            context.Output = directoryPathName;
+            context.SetVariable(ResultVariableName, directoryPathName);
+            LogOutput(() => directoryPathName,
+                $"Found directory: {directoryPathName}, stored in parameter: [{ResultVariableName}]");
 
             return Done();
         }

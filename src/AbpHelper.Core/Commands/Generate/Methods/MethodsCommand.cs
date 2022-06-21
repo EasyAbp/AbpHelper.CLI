@@ -8,11 +8,10 @@ using EasyAbp.AbpHelper.Core.Steps.Common;
 using EasyAbp.AbpHelper.Core.Workflow;
 using EasyAbp.AbpHelper.Core.Workflow.Generate;
 using Elsa;
-using Elsa.Activities;
-using Elsa.Activities.ControlFlow.Activities;
-using Elsa.Expressions;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Builders;
+using Elsa.Activities.ControlFlow;
+using Elsa.Activities.Primitives;
+using IActivityBuilder = Elsa.Builders.IActivityBuilder;
 
 namespace EasyAbp.AbpHelper.Core.Commands.Generate.Methods
 {
@@ -38,48 +37,45 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Methods
             IActivityBuilder activityBuilder)
         {
             return base.ConfigureBuild(option, activityBuilder)
-                .AddOverwriteWorkflow()
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = VariableNames.TemplateDirectory;
-                        step.ValueExpression = new LiteralExpression<string>("/Templates/Methods");
-                    })
-                .Then<FileFinderStep>(
-                    step =>
-                    {
-                        step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}AppService.cs`");
-                    })
+                .AddOverwriteWorkflow(option)
+                .Then<SetVariable>(step =>
+                {
+                    step.Set(x => x.VariableName, VariableNames.TemplateDirectory);
+                    step.Set(x => x.Value, "/Templates/Methods");
+                })
+                .Then<FileFinderStep>(step =>
+                {
+                    step.Set(x => x.SearchFileName, x => $"I{option.ServiceName}AppService.cs");
+                })
                 .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
                 .Then<AppServiceInterfaceStep>()
                 .Then<FileModifierStep>()
                 .Then<ForEach>(
-                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>($"{OptionVariableName}.{nameof(MethodsCommandOption.MethodNames)}"); },
+                    step =>
+                    {
+                        step.Set(x => x.Items, option.MethodNames);
+                    },
                     branch =>
                         branch.When(OutcomeNames.Iterate)
-                            .Then<SetVariable>(
-                                step =>
-                                {
-                                    step.VariableName = "Bag.Name";
-                                    step.ValueExpression = new JavaScriptExpression<string>("CurrentValue");
-                                }
-                            )
+                            .Then<SetVariable>(step =>
+                            {
+                                step.Set(x => x.VariableName, "Bag.Name");
+                                step.Set(x => x.Value, x => x.GetInput<string>());
+                            })
                             .Then<SetModelVariableStep>()
                             .Then<GroupGenerationStep>(
                                 step =>
                                 {
-                                    step.GroupName = "Service";
-                                    step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
+                                    step.Set(x => x.GroupName, x => "Service");
+                                    step.Set(x => x.TargetDirectory, x => x.GetVariable<string>(VariableNames.AspNetCoreDir));
                                 }
                             )
-                            .Then(branch)
                 )
-                .Then<FileFinderStep>(
-                    step =>
-                    {
-                        step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}AppService.cs`");
-                    })
+                .Then<FileFinderStep>(step =>
+                {
+                    step.Set(x => x.SearchFileName, x => $"{option.ServiceName}AppService.cs");
+                })
                 .Then<AppServiceClassStep>()
                 .Then<FileModifierStep>();
         }

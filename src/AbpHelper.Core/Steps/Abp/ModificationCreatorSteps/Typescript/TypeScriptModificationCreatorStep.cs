@@ -1,40 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Common;
-using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
+using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa.ActivityResults;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
 {
-    public abstract class TypeScriptModificationCreatorStep : Step
+    public abstract class TypeScriptModificationCreatorStep : CodeModificationStepBase
     {
-        protected TextGenerator TextGenerator;
-
-        protected TypeScriptModificationCreatorStep(TextGenerator textGenerator)
+        protected TypeScriptModificationCreatorStep(TextGenerator textGenerator) : base(textGenerator)
         {
-            TextGenerator = textGenerator;
         }
 
-        public WorkflowExpression<string> SourceFile
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
-            set => SetState(value);
-        }
+            TemplateDirectory ??= context.GetVariable<string>(VariableNames.TemplateDirectory)!;
+            SourceFile ??= context.GetVariable<string>(FileFinderStep.DefaultFileParameterName)!;
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context,
-            CancellationToken cancellationToken)
-        {
-            var file = await context.EvaluateAsync(SourceFile, cancellationToken);
-            LogInput(() => file);
+            LogInput(() => TemplateDirectory);
+            LogInput(() => SourceFile);
 
-            var lines = (await File.ReadAllLinesAsync(file, cancellationToken))
+            var lines = (await File.ReadAllLinesAsync(SourceFile, context.CancellationToken))
                     .Select((l, s) => new LineNode(l, s + 1))
                 ;
 
@@ -46,13 +37,14 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
                     .ToList()
                 ;
 
-            context.SetLastResult(modifications);
+            context.Output = modifications;
             context.SetVariable("Modifications", modifications);
             LogOutput(() => modifications, $"Modifications count: {modifications.Count}");
 
             return Done();
         }
 
-        protected abstract IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(WorkflowExecutionContext context);
+        protected abstract IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
+            ActivityExecutionContext context);
     }
 }

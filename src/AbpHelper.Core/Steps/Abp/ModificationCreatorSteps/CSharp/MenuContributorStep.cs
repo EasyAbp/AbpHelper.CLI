@@ -1,33 +1,64 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
+using Elsa.Expressions;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
+    [Activity(
+        Category = "MenuContributorStep",
+        Description = "MenuContributorStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class MenuContributorStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
+        [ActivityInput(
+            Hint = "ProjectInfo",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public ProjectInfo? ProjectInfo
         {
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-            var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            string addMenuItemText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_AddMenuItem", model);
+            get => GetState<ProjectInfo?>();
+            set => SetState(value);
+        }
+
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
+        {
+            ProjectInfo ??= context.GetVariable<ProjectInfo>("ProjectInfo")!;
+
+            LogInput(() => ProjectInfo);
+
+            return await base.OnExecuteAsync(context);
+        }
+
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit)
+        {
+            var model = context.GetVariable<object>("Model")!;
+            
+            var addMenuItemText =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "MenuContributor_AddMenuItem", model);
 
             CSharpSyntaxNode MainMenu(CSharpSyntaxNode root) => root.Descendants<MethodDeclarationSyntax>()
                 .First(n => n.Identifier.ToString().Contains("ConfigureMainMenu"));
 
             var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
 
-            if (projectInfo.TemplateType == TemplateType.Application)
+            if (ProjectInfo.TemplateType == TemplateType.Application)
             {
-                string usingForAppText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_UsingForApp", model);
+                var usingForAppText =
+                    TextGenerator.GenerateByTemplateName(TemplateDirectory, "MenuContributor_UsingForApp", model);
 
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
@@ -43,11 +74,14 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
                     )
                 );
             }
-            else if (projectInfo.TemplateType == TemplateType.Module)
+            else if (ProjectInfo.TemplateType == TemplateType.Module)
             {
-                string configureMainMenuText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_ConfigureMainMenu", model);
-                string usingForModuleText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_UsingForModule", model);
-                string localizerText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_Localizer", model);
+                var configureMainMenuText =
+                    TextGenerator.GenerateByTemplateName(TemplateDirectory, "MenuContributor_ConfigureMainMenu", model);
+                var usingForModuleText =
+                    TextGenerator.GenerateByTemplateName(TemplateDirectory, "MenuContributor_UsingForModule", model);
+                var localizerText =
+                    TextGenerator.GenerateByTemplateName(TemplateDirectory, "MenuContributor_Localizer", model);
                 builders.Add(
                     new ReplacementBuilder<CSharpSyntaxNode>(
                         root => MainMenu(root).GetStartLine(),
@@ -81,7 +115,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             return builders;
         }
 
-        public MenuContributorStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public MenuContributorStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
     }

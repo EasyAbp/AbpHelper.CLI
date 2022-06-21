@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
 using EasyAbp.AbpHelper.Core.Workflow;
 using EasyAbp.AbpHelper.Core.Workflow.Generate;
 using Elsa;
-using Elsa.Activities;
-using Elsa.Activities.ControlFlow.Activities;
-using Elsa.Expressions;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Builders;
+using Elsa.Activities.ControlFlow;
+using Elsa.Activities.Primitives;
+using Fluid.Ast;
+using IActivityBuilder = Elsa.Builders.IActivityBuilder;
 
 namespace EasyAbp.AbpHelper.Core.Commands.Generate.Localization
 {
@@ -20,47 +21,52 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Localization
         {
         }
 
-        protected override IActivityBuilder ConfigureBuild(LocalizationCommandOption option, IActivityBuilder activityBuilder)
+        protected override IActivityBuilder ConfigureBuild(LocalizationCommandOption option,
+            IActivityBuilder activityBuilder)
         {
             return base.ConfigureBuild(option, activityBuilder)
-                .AddOverwriteWorkflow()
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = VariableNames.TemplateDirectory;
-                        step.ValueExpression = new LiteralExpression<string>("/Templates/Localization");
-                    })
+                .AddOverwriteWorkflow(option)
+                .Then<SetVariable>(step =>
+                {
+                    step.Set(x => x.VariableName, VariableNames.TemplateDirectory);
+                    step.Set(x => x.Value, "/Templates/Localization");
+                })
                 .Then<SetModelVariableStep>()
                 /* Add localization */
-                .Then<TextGenerationStep>(
-                    step => { step.TemplateName = "Localization"; }
-                )
-                .Then<DirectoryFinderStep>(
-                    step =>
+                .Then<TextGenerationStep>(step => { step.Set(x => x.TemplateName, "Localization"); })
+                .Then<DirectoryFinderStep>(step =>
+                {
+                    step.Set(x => x.SearchDirectoryName, "Localization");
+                    step.Set(x => x.BaseDirectory, x =>
                     {
-                        step.SearchDirectoryName = "Localization";
-                        step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src/${ProjectInfo.FullName}.Domain.Shared`");
-                    }
-                )
-                .Then<MultiFileFinderStep>(
-                    step =>
-                    {
-                        step.SearchFileName = new LiteralExpression("*.json");
-                        step.BaseDirectory = new JavaScriptExpression<string>(DirectoryFinderStep.DefaultDirectoryParameterName);
-                    }
-                )
+                        var aspNetCoreDir = x.GetVariable<string>(VariableNames.AspNetCoreDir);
+                        var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                        return $"{aspNetCoreDir}/src/{projectInfo.FullName}.Domain.Shared";
+                    });
+                    step.Set(x => x.ExcludeDirectories, x => x.GetVariable<string[]>(ExcludeDirectoriesVariableName));
+                })
+                .Then<MultiFileFinderStep>(step =>
+                {
+                    step.Set(x => x.SearchFileName, "*.json");
+                    step.Set(x => x.BaseDirectory,
+                        x => x.GetVariable<string>(DirectoryFinderStep.DefaultDirectoryParameterName));
+                    step.Set(x => x.ExcludeDirectories,
+                        x => x.GetVariable<string[]>(CommandConsts.ExcludeDirectoriesVariableName));
+                })
                 .Then<ForEach>(
-                    x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>(MultiFileFinderStep.DefaultFileParameterName); },
+                    step =>
+                    {
+                        step.Set(x => x.Items,
+                            x => x.GetVariable<IList<object>>(MultiFileFinderStep.DefaultFileParameterName));
+                    },
                     branch =>
                         branch.When(OutcomeNames.Iterate)
-                            .Then<LocalizationJsonModificationCreatorStep>(
-                                step =>
-                                {
-                                    step.TargetFile = new JavaScriptExpression<string>("CurrentValue");
-                                    step.LocalizationJson = new JavaScriptExpression<string>(TextGenerationStep.DefaultGeneratedTextParameterName);
-                                }
-                            )
-                            .Then(branch)
+                            .Then<LocalizationJsonModificationCreatorStep>(step =>
+                            {
+                                step.Set(x => x.TargetFile, x => x.GetInput<string>());
+                                step.Set(x => x.LocalizationJson,
+                                    x => x.GetVariable<string>(TextGenerationStep.DefaultGeneratedTextParameterName));
+                            })
                 );
         }
     }

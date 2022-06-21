@@ -1,7 +1,7 @@
-﻿using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
+﻿using EasyAbp.AbpHelper.Core.Models;
+using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Builders;
 
 namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
 {
@@ -14,14 +14,20 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                     .Then<GroupGenerationStep>(
                         step =>
                         {
-                            step.GroupName = "Repository"; 
-                            step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
+                            step.Set(x => x.GroupName, "Repository");
+                            step.Set(x => x.TargetDirectory, x => x.GetVariable<string>(VariableNames.AspNetCoreDir));
                         }
                     )
                     /* Add repository configuration to EntityFrameworkCoreModule */
                     .Then<FileFinderStep>(
-                        step => step.SearchFileName = new JavaScriptExpression<string>("`*${ProjectInfo.Name}EntityFrameworkCoreModule.cs`")
-                    )
+                        step =>
+                        {
+                            step.Set(x => x.SearchFileName, x =>
+                            {
+                                var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                return $"*{projectInfo.Name}EntityFrameworkCoreModule.cs";
+                            });
+                        })
                     .Then<EntityFrameworkCoreModuleStep>()
                     .Then<FileModifierStep>()
                 ;

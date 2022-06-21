@@ -2,24 +2,43 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.Attributes;
+using Elsa.Design;
+using Elsa.Expressions;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
 {
+    [Activity(
+        Category = "AppRoutingModuleStep",
+        Description = "AppRoutingModuleStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class AppRoutingModuleStep : TypeScriptModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
-            WorkflowExecutionContext context)
+        [ActivityInput(
+            Hint = "EntityInfo",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public EntityInfo EntityInfo
         {
-            var model = context.GetVariable<object>("Model");
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            string importContents = TextGenerator.GenerateByTemplateName(templateDir, "AppRoutingModule_ImportApplicationLayoutComponent", model);
-            string routeContents = TextGenerator.GenerateByTemplateName(templateDir, "AppRoutingModule_Routing", model);
+            get => GetState<EntityInfo>()!;
+            set => SetState(value);
+        }
 
-            int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"{entityInfo.NamespaceLastPart.ToLower()}")).LineNumber;
+        protected override IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
+            ActivityExecutionContext context)
+        {
+            var model = context.GetVariable<object>("Model")!;
+            var importContents = TextGenerator.GenerateByTemplateName(TemplateDirectory,
+                "AppRoutingModule_ImportApplicationLayoutComponent", model);
+            var routeContents =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "AppRoutingModule_Routing", model);
+
+            int LineExpression(IEnumerable<LineNode> lines) =>
+                lines.Last(l => l.IsMath($"{EntityInfo.NamespaceLastPart.ToLower()}")).LineNumber;
 
             return new List<ModificationBuilder<IEnumerable<LineNode>>>
             {
@@ -37,7 +56,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
             };
         }
 
-        public AppRoutingModuleStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public AppRoutingModuleStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
     }

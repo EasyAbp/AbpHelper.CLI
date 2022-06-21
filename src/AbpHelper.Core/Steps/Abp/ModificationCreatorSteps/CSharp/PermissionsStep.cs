@@ -3,21 +3,27 @@ using System.Linq;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.Attributes;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
+    [Activity(
+        Category = "PermissionsStep",
+        Description = "PermissionsStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class PermissionsStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit)
         {
-            var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            string permissionNamesText = TextGenerator.GenerateByTemplateName(templateDir, "Permissions_Names", model);
+            var permissionNamesText =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "Permissions_Names",
+                    context.GetVariable<object>("Model")!);
 
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {
@@ -30,7 +36,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             };
         }
 
-        public PermissionsStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public PermissionsStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
     }

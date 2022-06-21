@@ -1,6 +1,5 @@
 ﻿using EasyAbp.AbpHelper.Core.Steps.Common;
-using Elsa.Expressions;
-using Elsa.Services;
+using Elsa.Builders;
 
 namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
 {
@@ -12,15 +11,15 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                     .Then<TextGenerationStep>(
                         step =>
                         {
-                            step.TemplateName = "UsingEntityNamespace";
-                            step.GeneratedTextKey = new LiteralExpression("EntityUsingText");
+                            step.Set(x => x.TemplateName, "UsingEntityNamespace");
+                            step.Set(x => x.GeneratedTextKey, "EntityUsingText");
                         }
                     ).WithName(name)
                     .Then<TextGenerationStep>(
                         step =>
                         {
-                            step.TemplateName = "UsingEntityDtoNamespace";
-                            step.GeneratedTextKey = new LiteralExpression("EntityDtoUsingText");
+                            step.Set(x => x.TemplateName, "UsingEntityDtoNamespace");
+                            step.Set(x => x.GeneratedTextKey, "EntityDtoUsingText");
                         }
                     )
                 ;

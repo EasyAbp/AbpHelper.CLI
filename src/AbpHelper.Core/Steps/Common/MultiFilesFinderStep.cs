@@ -1,45 +1,62 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
+    [Activity(
+        Category = "MultiFileFinderStep",
+        Description = "MultiFileFinderStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class MultiFileFinderStep : StepWithOption
     {
         public const string DefaultFileParameterName = "MultiFilesFinderResult";
 
-        public WorkflowExpression<string> SearchFileName
+        [ActivityInput(
+            Hint = "SearchFileName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string SearchFileName
         {
-            get => GetState<WorkflowExpression<string>>();
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> ResultVariableName
+        [ActivityInput(
+            Hint = "ResultVariableName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string ResultVariableName
         {
-            get => GetState(() => new LiteralExpression(DefaultFileParameterName));
+            get => GetState(() => DefaultFileParameterName);
             set => SetState(value);
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
-            LogInput(() => baseDirectory);
-            var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
-            LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
-            var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
+            BaseDirectory ??= context.GetVariable<string>(BaseDirectoryVariableName)!;
+
             LogInput(() => SearchFileName);
-            var resultParameterName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
+            LogInput(() => ResultVariableName);
+            LogInput(() => ExcludeDirectories, string.Join("; ", ExcludeDirectories));
+            LogInput(() => BaseDirectory);
+            LogInput(() => Overwrite);
 
-            var files = SearchFilesInDirectory(baseDirectory, searchFileName, excludeDirectories).ToArray();
+            var files = SearchFilesInDirectory(BaseDirectory, SearchFileName, ExcludeDirectories).ToArray();
 
             if (files.Length == 0) throw new FileNotFoundException();
 
-            context.SetLastResult(files);
-            context.SetVariable(resultParameterName, files);
+            context.Output = files;
+            context.SetVariable(ResultVariableName, files);
             LogOutput(() => files, $"Found files count: {files.Length}, stored in parameter: '{ResultVariableName}'");
 
             return Done();

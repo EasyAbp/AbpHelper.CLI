@@ -31,9 +31,10 @@ namespace EasyAbp.AbpHelper.Core
         private void ConfigureElsaActivities(ServiceConfigurationContext context)
         {
             context.Services
-                .AddElsa()
-                .AddAllActivities()
-                ;
+                .AddElsa(x =>
+                {
+                    x.AddAbpHelperActivities();
+                });
         }
 
         private void ConfigureTemplateFiles(ServiceConfigurationContext context)

@@ -1,13 +1,9 @@
-﻿using EasyAbp.AbpHelper.Core.Commands;
-using EasyAbp.AbpHelper.Core.Commands.Generate.Crud;
-using EasyAbp.AbpHelper.Core.Models;
+﻿using System;
 using EasyAbp.AbpHelper.Core.Steps.Common;
 using Elsa;
-using Elsa.Activities;
-using Elsa.Activities.ControlFlow.Activities;
-using Elsa.Expressions;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Activities.ControlFlow;
+using Elsa.Activities.Primitives;
+using Elsa.Builders;
 
 namespace EasyAbp.AbpHelper.Core.Workflow.Common
 {
@@ -15,36 +11,37 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Common
     {
         private const string SearchDbMigrationsResultName = nameof(SearchDbMigrationsResultName);
 
-        public static IActivityBuilder AddConfigureHasDbMigrationsWorkflow(this IActivityBuilder builder, string nextActivityName)
+        public static IActivityBuilder AddConfigureHasDbMigrationsWorkflow(this IActivityBuilder builder,
+            string nextActivityName)
         {
             return builder
-                    .Then<FileFinderStep>(
-                    step => {
-                        step.SearchFileName = new LiteralExpression("*.EntityFrameworkCore.DbMigrations.csproj");
-                        step.ErrorIfNotFound = new JavaScriptExpression<bool>("false");
+                    .Then<FileFinderStep>(step =>
+                    {
+                        step.Set(x => x.SearchFileName, "*.EntityFrameworkCore.DbMigrations.csproj");
+                        step.Set(x => x.ErrorIfNotFound, false);
                     })
-                    .Then<IfElse>(
-                        step => step.ConditionExpression = new JavaScriptExpression<bool>("FileFinderResult != null"),
+                    .Then<If>(
+                        step => step.Set(x => x.Condition, x => !x.GetInput<string>().IsNullOrWhiteSpace()),
                         ifElse =>
                         {
                             ifElse.When(OutcomeNames.True)
                                 .Then<SetVariable>(step =>
                                 {
-                                    step.VariableName = VariableNames.HasDbMigrations;
-                                    step.ValueExpression = new JavaScriptExpression<bool>("true");
+                                    step.Set(x => x.VariableName, VariableNames.HasDbMigrations);
+                                    step.Set(x => x.Value, true);
                                 })
-                                .Then(nextActivityName)
+                                .ThenNamed(nextActivityName)
                                 ;
                             ifElse.When(OutcomeNames.False)
                                 .Then<SetVariable>(step =>
                                 {
-                                    step.VariableName = VariableNames.HasDbMigrations;
-                                    step.ValueExpression = new JavaScriptExpression<bool>("false");
+                                    step.Set(x => x.VariableName, VariableNames.HasDbMigrations);
+                                    step.Set(x => x.Value, false);
                                 })
-                                .Then(nextActivityName)
+                                .ThenNamed(nextActivityName)
                                 ;
-                    })
-                    ;
+                        })
+                ;
         }
     }
 }

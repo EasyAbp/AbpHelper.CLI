@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
 using EasyAbp.AbpHelper.Core.Workflow;
 using EasyAbp.AbpHelper.Core.Workflow.Common;
 using Elsa;
-using Elsa.Activities;
-using Elsa.Activities.ControlFlow.Activities;
-using Elsa.Expressions;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Builders;
+using Elsa.Activities.ControlFlow;
+using Elsa.Activities.Primitives;
 using JetBrains.Annotations;
+using IActivityBuilder = Elsa.Builders.IActivityBuilder;
 
 namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
 {
@@ -22,18 +23,19 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
     {
         private readonly IDictionary<string, string> _packageProjectMap = new Dictionary<string, string>
         {
-            {ModuleConsts.Shared, "Domain.Shared"},
-            {ModuleConsts.Domain, "Domain"},
-            {ModuleConsts.EntityFrameworkCore, "EntityFrameworkCore"},
-            {ModuleConsts.MongoDB, "MongoDB"},
-            {ModuleConsts.Contracts, "Application.Contracts"},
-            {ModuleConsts.Application, "Application"},
-            {ModuleConsts.HttpApi, "HttpApi"},
-            {ModuleConsts.Client, "HttpApi.Client"},
-            {ModuleConsts.Web, "Web"},
+            { ModuleConsts.Shared, "Domain.Shared" },
+            { ModuleConsts.Domain, "Domain" },
+            { ModuleConsts.EntityFrameworkCore, "EntityFrameworkCore" },
+            { ModuleConsts.MongoDB, "MongoDB" },
+            { ModuleConsts.Contracts, "Application.Contracts" },
+            { ModuleConsts.Application, "Application" },
+            { ModuleConsts.HttpApi, "HttpApi" },
+            { ModuleConsts.Client, "HttpApi.Client" },
+            { ModuleConsts.Web, "Web" },
         };
 
-        public RemoveCommand([NotNull] IServiceProvider serviceProvider) : base(serviceProvider, "remove", "Remove ABP module according to the specified packages")
+        public RemoveCommand([NotNull] IServiceProvider serviceProvider) : base(serviceProvider, "remove",
+            "Remove ABP module according to the specified packages")
         {
             AddValidator(result =>
             {
@@ -49,10 +51,10 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
         protected override IActivityBuilder ConfigureBuild(RemoveCommandOption option, IActivityBuilder activityBuilder)
         {
             var moduleNameToAppProjectNameMapping = typeof(ModuleCommandOption).GetProperties()
-                .Where(prop => prop.PropertyType == typeof(bool) && (bool) prop.GetValue(option)!)
+                .Where(prop => prop.PropertyType == typeof(bool) && (bool)prop.GetValue(option)!)
                 .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
                 .ToDictionary(x => x, x => x);
-            
+
             if (!option.Custom.IsNullOrEmpty())
             {
                 foreach (var customPart in option.Custom.Split(','))
@@ -61,86 +63,114 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                     moduleNameToAppProjectNameMapping.Add(s[0], s[1]);
                 }
             }
-            
-            string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
+
+            var cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
 
             return base.ConfigureBuild(option, activityBuilder)
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = VariableNames.TemplateDirectory;
-                            step.ValueExpression = new LiteralExpression<string>("/Templates/Module");
-                        })
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = VariableNames.ProjectNames;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"[{string.Join(",", moduleNameToAppProjectNameMapping.Select(n => $"\"{n.Key}:{n.Value}\""))}]");
-                        }
-                    )
+                    .Then<SetVariable>(step =>
+                    {
+                        step.Set(x => x.VariableName, VariableNames.TemplateDirectory);
+                        step.Set(x => x.Value, "/Templates/Module");
+                    })
+                    .Then<SetVariable>(step =>
+                    {
+                        step.Set(x => x.VariableName, VariableNames.ProjectNames);
+                        step.Set(x => x.Value, moduleNameToAppProjectNameMapping);
+                    })
                     .Then<SetModelVariableStep>()
                     .Then<ForEach>(
-                        x => { x.CollectionExpression = new JavaScriptExpression<IList<object>>(VariableNames.ProjectNames); },
+                        step =>
+                        {
+                            step.Set(x => x.Items, x => x.GetVariable<IList<object>>(VariableNames.ProjectNames));
+                        },
                         branch =>
                             branch.When(OutcomeNames.Iterate)
-                                .Then<SetVariable>(
-                                    step =>
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, VariableNames.CurrentModuleName);
+                                    step.Set(x => x.Value, x => x.GetInput<string>()!.Split(':')[0]);
+                                })
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, VariableNames.TargetAppProjectName);
+                                    step.Set(x => x.Value, x => x.GetInput<string>()!.Split(':')[1]);
+                                })
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, VariableNames.SubmoduleUsingTextPostfix);
+                                    step.Set(x => x.Value, x =>
                                     {
-                                        step.VariableName = VariableNames.CurrentModuleName;
-                                        step.ValueExpression = new JavaScriptExpression<string>("CurrentValue.split(':')[0]");
-                                    }
-                                )
-                                .Then<SetVariable>(
-                                    step =>
+                                        var s = x.GetInput<string>()!.Split(':');
+                                        return s.Length > 2 ? $".{s[2]}" : "";
+                                    });
+                                })
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, VariableNames.PackageName);
+                                    step.Set(x => x.Value, x =>
                                     {
-                                        step.VariableName = VariableNames.TargetAppProjectName;
-                                        step.ValueExpression = new JavaScriptExpression<string>("CurrentValue.split(':')[1]");
-                                    }
-                                )
-                                .Then<SetVariable>(
-                                    step =>
+                                        var currentModuleName = x.GetVariable<string>(VariableNames.CurrentModuleName)!;
+                                        return currentModuleName.IsNullOrWhiteSpace()
+                                            ? option.ModuleName
+                                            : $"{option.ModuleName}.{currentModuleName}";
+                                    });
+                                })
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, VariableNames.ModuleClassNamePostfix);
+                                    step.Set(x => x.Value, x =>
                                     {
-                                        step.VariableName = VariableNames.SubmoduleUsingTextPostfix;
-                                        step.ValueExpression = new JavaScriptExpression<string>("CurrentValue.split(':').length > 2 ? '.' + CurrentValue.split(':')[2] : ''");
-                                    }
-                                )
-                                .Then<SetVariable>(
-                                    step =>
+                                        var currentModuleName = x.GetVariable<string>(VariableNames.CurrentModuleName)!;
+                                        return Regex.Replace(currentModuleName, "/\\./g", "");
+                                    });
+                                })
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, VariableNames.AppProjectClassNamePostfix);
+                                    step.Set(x => x.Value, x =>
                                     {
-                                        step.VariableName = VariableNames.PackageName;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName} != '' ? {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)} + '.' + {VariableNames.CurrentModuleName} : {CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleName)}");
-                                    }
-                                )
-                                .Then<SetVariable>(
-                                    step =>
+                                        var currentModuleName = x.GetVariable<string>(VariableNames.CurrentModuleName)!;
+                                        return Regex.Replace(currentModuleName, "/\\./g", "");
+                                    });
+                                })
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, VariableNames.DependsOnModuleClassName);
+                                    step.Set(x => x.Value, x =>
                                     {
-                                        step.VariableName = VariableNames.ModuleClassNamePostfix;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.CurrentModuleName}.replace(/\\./g, '')");
-                                    }
-                                )
-                                .Then<SetVariable>(
-                                    step =>
+                                        var moduleClassNamePostfix =
+                                            x.GetVariable<string>(VariableNames.ModuleClassNamePostfix);
+                                        return
+                                            $"{option.ModuleGroupNameWithoutCompanyName}{moduleClassNamePostfix}Module";
+                                    });
+                                })
+                                .Then<FileFinderStep>(step =>
+                                {
+                                    step.Set(x => x.SearchFileName, x =>
                                     {
-                                        step.VariableName = VariableNames.AppProjectClassNamePostfix;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{VariableNames.TargetAppProjectName}.replace(/\\./g, '')");
-                                    }
-                                )
-                                .Then<SetVariable>(
-                                    step =>
-                                    {
-                                        step.VariableName = VariableNames.DependsOnModuleClassName;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(ModuleCommandOption.ModuleGroupNameWithoutCompanyName)} + {VariableNames.ModuleClassNamePostfix} + 'Module'");
-                                    }
-                                )
-                                .Then<FileFinderStep>(
-                                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`${{ProjectInfo.Name}}${{{VariableNames.AppProjectClassNamePostfix}}}Module.cs`"); })
+                                        var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                        var postfix = x.GetVariable<string>(VariableNames.AppProjectClassNamePostfix);
+                                        return $"{projectInfo.Name}{postfix}Module.cs";
+                                    });
+                                })
                                 .Then<DependsOnStep>(step =>
                                 {
-                                    step.Action = new LiteralExpression<DependsOnStep.ActionType>(((int)DependsOnStep.ActionType.Remove).ToString());
-                                })                                
+                                    step.Set(x => x.Action, DependsOnStep.ActionType.Remove);
+                                    step.Set(x => x.ModuleClassNamePostfix,
+                                        x => x.GetVariable<string>(VariableNames.ModuleClassNamePostfix));
+                                    step.Set(x => x.DependsOnModuleClassName,
+                                        x => x.GetVariable<string>(VariableNames.DependsOnModuleClassName));
+                                    step.Set(x => x.SubmoduleUsingTextPostfix,
+                                        x => x.GetVariable<string>(VariableNames.SubmoduleUsingTextPostfix));
+                                })
                                 .Then<FileModifierStep>()
-                                .Then<IfElse>(
-                                    step => step.ConditionExpression = new JavaScriptExpression<bool>("TargetAppProjectName == 'EntityFrameworkCore'"),
+                                .Then<If>(
+                                    step => step.Set(x => x.Condition,
+                                        x =>
+                                        {
+                                            return x.GetVariable<string>(VariableNames.TargetAppProjectName) ==
+                                                   "EntityFrameworkCore";
+                                        }),
                                     ifElse =>
                                     {
                                         // For "EntityFrameCore" package, we generate a "builder.ConfigureXXX();" in the migrations context class */
@@ -150,23 +180,31 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                                             .AddConfigureFindDbContextWorkflow("RemoveAction")
                                             .Then<MigrationsContextStep>(step =>
                                             {
-                                                step.Action = new LiteralExpression<MigrationsContextStep.ActionType>(((int)MigrationsContextStep.ActionType.Remove).ToString());
+                                                step.Set(x => x.Action, MigrationsContextStep.ActionType.Remove);
                                             }).WithName("RemoveAction")
                                             .Then<FileModifierStep>()
-                                            .Then(ActivityNames.RemoveDependsOn)
+                                            .ThenNamed(ActivityNames.RemoveDependsOn)
                                             ;
                                         ifElse
                                             .When(OutcomeNames.False)
-                                            .Then(ActivityNames.RemoveDependsOn)
+                                            .ThenNamed(ActivityNames.RemoveDependsOn)
                                             ;
                                     }
                                 )
                                 .Then<EmptyStep>().WithName(ActivityNames.RemoveDependsOn)
-                                .Then<RunCommandStep>(
-                                    step => step.Command = new JavaScriptExpression<string>(
-                                        $@"`cd{cdOption} ${{AspNetCoreDir}}/src/${{ProjectInfo.FullName}}.${{TargetAppProjectName}} && dotnet remove package ${{PackageName}}`"
-                                    ))
-                                .Then(branch)
+                                .Then<RunCommandStep>(step =>
+                                {
+                                    step.Set(x => x.Command, x =>
+                                    {
+                                        var aspNetCoreDir = x.GetVariable<string>(VariableNames.AspNetCoreDir);
+                                        var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                        var targetAppProjectName =
+                                            x.GetVariable<string>(VariableNames.TargetAppProjectName)!;
+                                        var packageName = x.GetVariable<string>(VariableNames.PackageName)!;
+                                        return
+                                            $"cd{cdOption} {aspNetCoreDir}/src/{projectInfo.FullName}.{targetAppProjectName} && dotnet remove package {packageName}";
+                                    });
+                                })
                     )
                 ;
         }

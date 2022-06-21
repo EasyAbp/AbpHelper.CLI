@@ -6,14 +6,13 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Attributes;
-using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Services;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
-using Elsa.Activities;
-using Elsa.Expressions;
+using Elsa.Activities.Primitives;
+using Elsa.Builders;
 using Elsa.Models;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services;
+using Elsa.Services.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -22,7 +21,8 @@ namespace EasyAbp.AbpHelper.Core.Commands
 {
     public abstract class CommandWithOption<TOption> : CommandBase where TOption : CommandOptionsBase
     {
-        public CommandWithOption(IServiceProvider serviceProvider, string name, string? description = null) : base(serviceProvider, name, description)
+        public CommandWithOption(IServiceProvider serviceProvider, string name, string? description = null) : base(
+            serviceProvider, name, description)
         {
             Logger = NullLogger<CommandWithOption<TOption>>.Instance;
 
@@ -34,6 +34,7 @@ namespace EasyAbp.AbpHelper.Core.Commands
         protected virtual string OptionVariableName => CommandConsts.OptionVariableName;
         protected virtual string BaseDirectoryVariableName => CommandConsts.BaseDirectoryVariableName;
         protected virtual string ExcludeDirectoriesVariableName => CommandConsts.ExcludeDirectoriesVariableName;
+        protected virtual string OverwriteVariableName => CommandConsts.OverwriteVariableName;
 
         public ILogger<CommandWithOption<TOption>> Logger { get; set; }
 
@@ -46,25 +47,25 @@ namespace EasyAbp.AbpHelper.Core.Commands
             await RunWorkflow(builder =>
             {
                 var activityBuilder = builder
-                    .StartWith<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = OptionVariableName;
-                            step.ValueExpression = new JavaScriptExpression<TOption>($"({option.ToJson()})");
-                        })
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = BaseDirectoryVariableName;
-                            step.ValueExpression = new LiteralExpression(option.Directory);
-                        })
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = ExcludeDirectoriesVariableName;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"{OptionVariableName}.{nameof(CommandOptionsBase.Exclude)}");
-                        })
-                    .Then<ProjectInfoProviderStep>()
+                        .StartWith<SetVariable>(
+                            step =>
+                            {
+                                step.Set(x => x.VariableName, OptionVariableName);
+                                step.Set(x => x.Value, option);
+                            })
+                        .Then<SetVariable>(
+                            step =>
+                            {
+                                step.Set(x => x.VariableName, BaseDirectoryVariableName);
+                                step.Set(x => x.Value, option.Directory);
+                            })
+                        .Then<SetVariable>(
+                            step =>
+                            {
+                                step.Set(x => x.VariableName, ExcludeDirectoriesVariableName);
+                                step.Set(x => x.Value, option.Exclude);
+                            })
+                        .Then<ProjectInfoProviderStep>()
                     ;
 
                 return ConfigureBuild(option, activityBuilder).Build();
@@ -93,7 +94,7 @@ namespace EasyAbp.AbpHelper.Core.Commands
             return directory;
         }
 
-        protected async Task RunWorkflow(Func<IWorkflowBuilder, WorkflowDefinitionVersion> builder)
+        protected async Task RunWorkflow(Func<IWorkflowBuilder, IWorkflowBlueprint> builder)
         {
             var workflowBuilderFactory = ServiceProvider.GetRequiredService<Func<IWorkflowBuilder>>();
             var workflowBuilder = workflowBuilderFactory();
@@ -101,15 +102,15 @@ namespace EasyAbp.AbpHelper.Core.Commands
             var workflowDefinition = builder(workflowBuilder);
             // Start the workflow.
             Logger.LogInformation($"Command '{Name}' started.");
-            var invoker = ServiceProvider.GetRequiredService<IWorkflowInvoker>();
-            var ctx = await invoker.StartAsync(workflowDefinition);
-            if (ctx.Workflow.Status == WorkflowStatus.Finished)
+            var invoker = ServiceProvider.GetRequiredService<IStartsWorkflow>();
+            var ctx = await invoker.StartWorkflowAsync(workflowDefinition);
+            if (ctx.WorkflowInstance?.WorkflowStatus == WorkflowStatus.Finished)
             {
                 Logger.LogInformation($"Command '{Name}' finished successfully.");
             }
             else
             {
-                Logger.LogError("Error activity: " + ctx.CurrentActivity.State);
+                Logger.LogError("Error activity: " + ctx.ActivityId);
             }
         }
 

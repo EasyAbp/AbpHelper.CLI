@@ -7,11 +7,10 @@ using EasyAbp.AbpHelper.Core.Workflow;
 using EasyAbp.AbpHelper.Core.Workflow.Generate;
 using EasyAbp.AbpHelper.Core.Workflow.Generate.Crud;
 using Elsa;
-using Elsa.Activities;
-using Elsa.Activities.ControlFlow.Activities;
-using Elsa.Expressions;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Activities.ControlFlow;
+using Elsa.Builders;
+using Elsa.Activities.Primitives;
+using IActivityBuilder = Elsa.Builders.IActivityBuilder;
 
 namespace EasyAbp.AbpHelper.Core.Commands.Generate.Crud
 {
@@ -30,111 +29,120 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Crud
             var entityFileName = option.Entity + ".cs";
 
             return base.ConfigureBuild(option, activityBuilder)
-                .AddOverwriteWorkflow()
-                .Then<SetVariable>(
-                    step =>
-                    {
-                        step.VariableName = VariableNames.TemplateDirectory;
-                        step.ValueExpression = new LiteralExpression<string>("/Templates/Crud");
-                    })
+                .AddOverwriteWorkflow(option)
+                .Then<SetVariable>(step =>
+                {
+                    step.Set(x => x.VariableName, VariableNames.TemplateDirectory);
+                    step.Set(x => x.Value, "/Templates/Crud");
+                })
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new LiteralExpression(entityFileName); })
+                    step => { step.Set(x => x.SearchFileName, entityFileName); })
                 .Then<EntityParserStep>()
-                .Then<BuildDtoInfoStep>()
+                .Then<BuildDtoInfoStep>(step =>
+                {
+                    step.Set(x => x.EntityInfo, x => x.GetVariable<EntityInfo>("EntityInfo"));
+                    step.Set(x => x.DtoSuffix, option.DtoSuffix);
+                    step.Set(x => x.SeparateDto, option.SeparateDto);
+                    step.Set(x => x.EntityPrefixDto, option.EntityPrefixDto);
+                })
                 .Then<SetModelVariableStep>()
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipEntityConstructors)}"),
+                .Then<If>(
+                    step => { step.Set(x => x.Condition, option.SkipEntityConstructors); },
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
                             .AddEntityConstructorsGenerationWorkflow()
-                            .Then("EntityUsing")
+                            .ThenNamed("EntityUsing")
                             ;
                         ifElse.When(OutcomeNames.True)
-                            .Then("EntityUsing")
+                            .ThenNamed("EntityUsing")
                             ;
                     })
                 .AddEntityUsingGenerationWorkflow("EntityUsing")
                 .AddEfCoreConfigurationWorkflow()
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipCustomRepository)}"),
+                .Then<If>(
+                    step => { step.Set(x => x.Condition, option.SkipCustomRepository); },
                     ifElse =>
                     {
                         ifElse
                             .When(OutcomeNames.False)
                             .AddCustomRepositoryGeneration()
-                            .Then("ServiceGeneration")
+                            .ThenNamed("ServiceGeneration")
                             ;
                         ifElse
                             .When(OutcomeNames.True)
-                            .Then("ServiceGeneration")
+                            .ThenNamed("ServiceGeneration")
                             ;
                     }
                 )
-                .AddServiceGenerationWorkflow("ServiceGeneration")
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipLocalization)}"),
+                .AddServiceGenerationWorkflow("ServiceGeneration", option)
+                .Then<If>(
+                    step => { step.Set(x => x.Condition, option.SkipLocalization); },
                     ifElse =>
                     {
                         ifElse.When(OutcomeNames.False)
                             .AddLocalizationGenerationWorkflow()
-                            .Then(ActivityNames.Ui)
+                            .ThenNamed(ActivityNames.Ui)
                             ;
                         ifElse.When(OutcomeNames.True)
-                            .Then(ActivityNames.Ui)
+                            .ThenNamed(ActivityNames.Ui)
                             ;
                     })
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipUi)}"),
+                .Then<If>(
+                    step => { step.Set(x => x.Condition, option.SkipUi); },
                     ifElse =>
                     {
                         ifElse
                             .When(OutcomeNames.False)
                             .Then<Switch>(
-                                @switch =>
+                                step =>
                                 {
-                                    @switch.Expression = new JavaScriptExpression<string>("(ProjectInfo.UiFramework)");
-                                    @switch.Cases = Enum.GetValues(typeof(UiFramework)).Cast<int>().Select(u => u.ToString()).ToArray();
+                                    step.WithCases(context =>
+                                    {
+                                        var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                        return Enum.GetValues<UiFramework>().Select(u =>
+                                            new SwitchCase(u.ToString(), projectInfo.UiFramework == u)).ToList();
+                                    });
                                 },
                                 @switch =>
                                 {
                                     @switch.When(UiFramework.None.ToString("D"))
-                                        .Then(TestGeneration);
+                                        .ThenNamed(TestGeneration);
 
                                     @switch.When(UiFramework.RazorPages.ToString("D"))
                                         .AddUiRazorPagesGenerationWorkflow()
-                                        .Then(TestGeneration);
+                                        .ThenNamed(TestGeneration);
 
                                     @switch.When(UiFramework.Angular.ToString("D"))
                                         // TODO
                                         //.AddUiAngularGenerationWorkflow()
-                                        .Then(TestGeneration);
+                                        .ThenNamed(TestGeneration);
                                 }
                             )
                             ;
                         ifElse
                             .When(OutcomeNames.True)
-                            .Then(TestGeneration)
+                            .ThenNamed(TestGeneration)
                             ;
                     }
                 ).WithName(ActivityNames.Ui)
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipTest)}"),
+                .Then<If>(
+                    step => { step.Set(x => x.Condition, option.SkipTest); },
                     ifElse =>
                     {
                         ifElse
                             .When(OutcomeNames.False)
                             .AddTestGenerationWorkflow()
-                            .Then(DbMigrations)
+                            .ThenNamed(DbMigrations)
                             ;
                         ifElse
                             .When(OutcomeNames.True)
-                            .Then(DbMigrations)
+                            .ThenNamed(DbMigrations)
                             ;
                     }
                 ).WithName(TestGeneration)
-                .Then<IfElse>(
-                    step => step.ConditionExpression = new JavaScriptExpression<bool>($"{OptionVariableName}.{nameof(CrudCommandOption.SkipDbMigrations)}"),
+                .Then<If>(
+                    step => { step.Set(x => x.Condition, option.SkipDbMigrations); },
                     ifElse =>
                     {
                         ifElse

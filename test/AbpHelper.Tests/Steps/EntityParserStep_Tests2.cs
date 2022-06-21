@@ -67,7 +67,7 @@ public class Book : AuditedAggregateRoot<Guid>
                     ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Application, UiFramework.RazorPages, false));
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
@@ -126,7 +126,7 @@ public class UserRole : Entity
                     ctx.SetVariable("ProjectInfo", new ProjectInfo(@"c:\abp", "Acme.BookStore", TemplateType.Module, UiFramework.RazorPages, false));
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var info = ctx.GetVariable<EntityInfo>("EntityInfo");
@@ -163,7 +163,7 @@ public class UserRole : Entity
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<ParseException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    var ex = await Assert.ThrowsAsync<ParseException>(async () => await _step.ExecuteAsync(ctx));
 
                     // Arrange
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));

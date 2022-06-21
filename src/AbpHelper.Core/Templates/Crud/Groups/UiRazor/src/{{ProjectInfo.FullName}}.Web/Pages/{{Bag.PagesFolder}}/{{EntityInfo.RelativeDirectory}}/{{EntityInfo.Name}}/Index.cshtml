@@ -3,6 +3,9 @@
 @using {{ ProjectInfo.FullName }}.Permissions
 {{~ end ~}}
 {{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+@using System.CommandLine
+@using System.Net
+@using EasyAbp.AbpHelper.Core.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout

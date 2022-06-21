@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
 using Elsa.Services.Models;
 using JetBrains.Annotations;
@@ -14,37 +15,80 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
+    [Activity(
+        Category = "DependsOnStep",
+        Description = "DependsOnStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class DependsOnStep : CSharpModificationCreatorStep
     {
         public enum ActionType
         {
-            Add, Remove
+            Add,
+            Remove
         }
-        public WorkflowExpression<ActionType> Action
+
+        [ActivityInput(
+            Hint = "Action",
+            UIHint = ActivityInputUIHints.Dropdown,
+            Options = new[] { ActionType.Add, ActionType.Remove },
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public ActionType Action
         {
-            get => GetState<WorkflowExpression<ActionType>>();
+            get => GetState<ActionType>();
             set => SetState(value);
         }
-        
+
+        [ActivityInput(
+            Hint = "ModuleClassNamePostfix",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string ModuleClassNamePostfix
+        {
+            get => GetState<string>()!;
+            set => SetState(value);
+        }
+
+        [ActivityInput(
+            Hint = "SubmoduleUsingTextPostfix",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string SubmoduleUsingTextPostfix
+        {
+            get => GetState<string>()!;
+            set => SetState(value);
+        }
+
+        [ActivityInput(
+            Hint = "DependsOnModuleClassName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string DependsOnModuleClassName
+        {
+            get => GetState<string>()!;
+            set => SetState(value);
+        }
+
         public DependsOnStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
         {
         }
 
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit)
         {
-            var action = context.EvaluateAsync(Action, CancellationToken.None).GetAwaiter().GetResult();
-            var moduleClassNamePostfix = context.GetVariable<string>(VariableNames.ModuleClassNamePostfix);
-            var submoduleUsingTextPostfix = context.GetVariable<string>(VariableNames.SubmoduleUsingTextPostfix);
-            var dependsOnClassName = context.GetVariable<string>(VariableNames.DependsOnModuleClassName);
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            var model = context.GetVariable<dynamic>("Model");
-            model.Bag.ModuleClassNamePostfix = moduleClassNamePostfix;
-            model.Bag.DependsOnModuleClassName = dependsOnClassName;
-            model.Bag.SubmoduleUsingTextPostfix = submoduleUsingTextPostfix;
-            string usingText = TextGenerator.GenerateByTemplateName(templateDir, "ModuleClass_Using", model);
-            string dependsOnText = TextGenerator.GenerateByTemplateName(templateDir, "ModuleClass_DependsOn", model);
+            var model = context.GetVariable<object>("Model")! as dynamic;
+            model.Bag.ModuleClassNamePostfix = ModuleClassNamePostfix;
+            model.Bag.DependsOnModuleClassName = DependsOnModuleClassName;
+            model.Bag.SubmoduleUsingTextPostfix = SubmoduleUsingTextPostfix;
+            string usingText = TextGenerator.GenerateByTemplateName(TemplateDirectory, "ModuleClass_Using", model);
+            string dependsOnText =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "ModuleClass_DependsOn", model);
 
-            if (action == ActionType.Add)
+            if (Action == ActionType.Add)
             {
                 // Add "[DependsOn(...)]"
                 return new List<ModificationBuilder<CSharpSyntaxNode>>
@@ -65,8 +109,10 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             else
             {
                 // Delete "[DependsOn(...)]"
-                Func<CSharpSyntaxNode, int> usingLine = node => node.Descendants<UsingDirectiveSyntax>().Single(n => n.Contains(usingText)).GetStartLine();
-                Func<CSharpSyntaxNode, int> dependsLine = node => node.Descendants<AttributeListSyntax>().Single(n => n.Contains(dependsOnText)).GetStartLine();
+                Func<CSharpSyntaxNode, int> usingLine = node =>
+                    node.Descendants<UsingDirectiveSyntax>().Single(n => n.Contains(usingText)).GetStartLine();
+                Func<CSharpSyntaxNode, int> dependsLine = node =>
+                    node.Descendants<AttributeListSyntax>().Single(n => n.Contains(dependsOnText)).GetStartLine();
                 return new List<ModificationBuilder<CSharpSyntaxNode>>
                 {
                     new DeletionBuilder<CSharpSyntaxNode>(

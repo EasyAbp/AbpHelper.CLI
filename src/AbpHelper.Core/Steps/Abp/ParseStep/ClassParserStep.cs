@@ -2,17 +2,30 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Models;
+using Elsa;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ParseStep
 {
+    [Activity(
+        Category = "ClassParserStep",
+        Description = "ClassParserStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class ClassParserStep : BaseParserStep<ClassDeclarationSyntax>
     {
-        public override WorkflowExpression<string> OutputVariableName
+        [ActivityInput(
+            Hint = "OutputVariableName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public override string? OutputVariableName
         {
-            get => GetState(() => new LiteralExpression<string>("ClassInfo"));
+            get => GetState<string>(() => "ClassInfo")!;
             set => SetState(value);
         }
 
