@@ -25,7 +25,6 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             
             LogInput(() => ExcludeDirectories, string.Join("; ", ExcludeDirectories));
             LogInput(() => BaseDirectory);
-            LogInput(() => Overwrite);
 
             TemplateType templateType;
             if (FileExistsInDirectory(BaseDirectory, "*.Host.Shared.csproj", ExcludeDirectories))
