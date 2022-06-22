@@ -65,7 +65,12 @@ namespace EasyAbp.AbpHelper.Core.Commands
                                 step.Set(x => x.VariableName, ExcludeDirectoriesVariableName);
                                 step.Set(x => x.Value, option.Exclude);
                             })
-                        .Then<ProjectInfoProviderStep>()
+                        .Then<ProjectInfoProviderStep>(step =>
+                        {
+                            step.Set(x => x.ExcludeDirectories,
+                                x => x.GetVariable<string[]>(CommandConsts.ExcludeDirectoriesVariableName));
+                            step.Set(x => x.Overwrite, x => x.GetVariable<bool>(CommandConsts.OverwriteVariableName));
+                        })
                     ;
 
                 return ConfigureBuild(option, activityBuilder).Build();
