@@ -93,7 +93,7 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
             input.Sorting = nameof({{ EntityInfo.Name }}.Id);
         }
 
-        var {{ EntityInfo.NamePluralizedCamelized }} = await _repository.GetListAsync(
+        var {{ EntityInfo.NamePluralizedCamelizedLower }} = await _repository.GetListAsync(
             input.SkipCount,
             input.MaxResultCount,
             input.Sorting,
@@ -101,8 +101,8 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
         );
 
         return new PagedResultDto<{{ EntityInfo.Name }}Dto>(
-            {{ EntityInfo.NamePluralizedCamelized }}.TotalCount,
-            ObjectMapper.Map<List<{{ EntityInfo.Name }}>, List<{{ EntityInfo.Name }}Dto>>({{ EntityInfo.NamePluralizedCamelized }}.Items)
+            {{ EntityInfo.NamePluralizedCamelizedLower }}.TotalCount,
+            ObjectMapper.Map<List<{{ EntityInfo.Name }}>, List<{{ EntityInfo.Name }}Dto>>({{ EntityInfo.NamePluralizedCamelizedLower }}.Items)
         );
     }
 }

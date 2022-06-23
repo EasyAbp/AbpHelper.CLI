@@ -23,6 +23,7 @@ namespace EasyAbp.AbpHelper.Core.Models
         public string Name { get; }
         public string NamePluralized => Name.Pluralize();
         public string NamePluralizedCamelized => NamePluralized.Camelize();
+        public string NamePluralizedCamelizedLower => NamePluralizedCamelized.ToLower();
         public string? BaseType { get; }
         public string? PrimaryKey { get; }
         public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();

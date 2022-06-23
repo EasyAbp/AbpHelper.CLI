@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace {{ EntityInfo.Namespace }}
+namespace {{ ProjectInfo.FullName }}
 {
     public class GetEntityListResult<T>
     {
