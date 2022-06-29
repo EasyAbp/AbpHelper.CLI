@@ -6,8 +6,6 @@ using EasyAbp.AbpHelper.Core.Workflow;
 using Elsa;
 using Elsa.ActivityResults;
 using Elsa.Attributes;
-using Elsa.Design;
-using Elsa.Expressions;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp
@@ -19,6 +17,9 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
     )]
     public class ProjectInfoProviderStep : StepWithOption
     {
+        [ActivityOutput(Hint = "Output.")]
+        public ProjectInfo? Output { get; set; }
+        
         protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
             BaseDirectory ??= context.GetVariable<string>(BaseDirectoryVariableName)!;
@@ -81,9 +82,10 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 tiered = FileExistsInDirectory(BaseDirectory, "*.IdentityServer.csproj", ExcludeDirectories);
             }
 
-            var projectInfo = new ProjectInfo(BaseDirectory, fullName, templateType, uiFramework, tiered);
+            var projectInfo = new ProjectInfo(BaseDirectory, aspNetCoreDir, fullName, templateType, uiFramework, tiered);
 
             context.Output = projectInfo;
+            Output = projectInfo;
             context.SetVariable("ProjectInfo", projectInfo);
             LogOutput(() => projectInfo);
 
