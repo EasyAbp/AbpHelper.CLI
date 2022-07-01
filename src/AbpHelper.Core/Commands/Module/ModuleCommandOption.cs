@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Castle.Core.Internal;
+﻿using System;
 using EasyAbp.AbpHelper.Core.Attributes;
 
 namespace EasyAbp.AbpHelper.Core.Commands.Module
