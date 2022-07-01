@@ -70,7 +70,7 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
 
     protected override async Task<{{ EntityInfo.Name }}> GetEntityByIdAsync({{ EntityInfo.CompositeKeyName }} id)
     {
-    // TODO: AbpHelper generated
+        // TODO: AbpHelper generated
         return await AsyncExecuter.FirstOrDefaultAsync(
             (await {{ repositoryName }}.WithDetailsAsync()).Where(e =>
             {{~ for prop in EntityInfo.CompositeKeys ~}}
