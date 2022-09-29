@@ -1,6 +1,6 @@
 using System;
 using {{ EntityInfo.Namespace }}.Dtos;
-{{~ if !Option.ExtensionPagedAndSortedResultRequestDto ~}}
+{{~ if Option.SkipGetListInputDto ~}}
 using Volo.Abp.Application.Dtos;
 {{~ end ~}}
 using Volo.Abp.Application.Services;
@@ -8,7 +8,7 @@ using Volo.Abp.Application.Services;
 namespace {{ EntityInfo.Namespace }};
 
 {{
-    if Option.ExtensionPagedAndSortedResultRequestDto
+    if !Option.SkipGetListInputDto
         TGetListInput = EntityInfo.Name + "GetListInput"
     else
         TGetListInput = "PagedAndSortedResultRequestDto"

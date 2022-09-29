@@ -1,4 +1,4 @@
-{{- SKIP_GENERATE = !Option.ExtensionPagedAndSortedResultRequestDto -}}
+{{- SKIP_GENERATE = Option.SkipGetListInputDto -}}
 using System;
 using System.ComponentModel;
 using Volo.Abp.Application.Dtos;

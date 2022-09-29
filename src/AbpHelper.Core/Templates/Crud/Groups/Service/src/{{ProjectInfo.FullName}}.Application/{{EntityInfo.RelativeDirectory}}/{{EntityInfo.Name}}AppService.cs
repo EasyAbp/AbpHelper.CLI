@@ -16,7 +16,7 @@ using System;
 else
     crudClassName = "AbstractKeyCrudAppService"
 end ~}}
-{{~ if EntityInfo.CompositeKeyName || Option.ExtensionPagedAndSortedResultRequestDto~}}
+{{~ if EntityInfo.CompositeKeyName || !Option.SkipGetListInputDto~}}
 using System.Linq;
 using System.Threading.Tasks;
 {{~ end -}}
@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 using {{ ProjectInfo.FullName }}.Permissions;
 {{~ end ~}}
 using {{ EntityInfo.Namespace }}.Dtos;
-{{~ if !Option.ExtensionPagedAndSortedResultRequestDto ~}}
+{{~ if Option.SkipGetListInputDto ~}}
 using Volo.Abp.Application.Dtos;
 {{~ end ~}}
 using Volo.Abp.Application.Services;
@@ -37,7 +37,7 @@ using Volo.Abp.Domain.Repositories;
 namespace {{ EntityInfo.Namespace }};
 
 {{~
-    if Option.ExtensionPagedAndSortedResultRequestDto
+    if !Option.SkipGetListInputDto
         TGetListInput = EntityInfo.Name + "GetListInput"
     else
         TGetListInput = "PagedAndSortedResultRequestDto"
@@ -96,7 +96,7 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
     }
     {{~ end ~}}
 
-    {{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+    {{~ if !Option.SkipGetListInputDto ~}}
     protected override async Task<IQueryable<{{ EntityInfo.Name }}>> CreateFilteredQueryAsync({{ EntityInfo.Name }}GetListInput input)
     {
         // TODO: AbpHelper generated

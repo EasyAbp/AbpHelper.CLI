@@ -1,7 +1,7 @@
 {{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
 using System;
 using System.Threading.Tasks;
-{{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+{{~ if !Option.SkipGetListInputDto ~}}
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
 {{~ end ~}}
@@ -10,7 +10,7 @@ namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo
 
 public class IndexModel : {{ ProjectInfo.Name }}PageModel
 {
-    {{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+    {{~ if !Option.SkipGetListInputDto ~}}
     public {{ EntityInfo.Name }}FilterInput {{ EntityInfo.Name }}Filter { get; set; }
     {{~ end ~}}
     
@@ -20,7 +20,7 @@ public class IndexModel : {{ ProjectInfo.Name }}PageModel
     }
 }
 
-{{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+{{~ if !Option.SkipGetListInputDto ~}}
 public class {{ EntityInfo.Name }}FilterInput
 {
     {{~ for prop in EntityInfo.Properties ~}}
