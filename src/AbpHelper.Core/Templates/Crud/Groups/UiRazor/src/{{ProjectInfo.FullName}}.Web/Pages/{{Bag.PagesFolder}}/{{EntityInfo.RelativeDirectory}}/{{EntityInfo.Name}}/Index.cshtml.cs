@@ -1,12 +1,38 @@
 {{~ if Bag.PagesFolder; pagesNamespace = Bag.PagesFolder + "."; end ~}}
+using System;
 using System.Threading.Tasks;
+{{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+using System.ComponentModel.DataAnnotations;
+using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
+{{~ end ~}}
 
 namespace {{ ProjectInfo.FullName }}.Web.Pages.{{ pagesNamespace }}{{ EntityInfo.RelativeNamespace }}.{{ EntityInfo.Name }};
 
 public class IndexModel : {{ ProjectInfo.Name }}PageModel
 {
+    {{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+    public {{ EntityInfo.Name }}FilterInput {{ EntityInfo.Name }}Filter { get; set; }
+    {{~ end ~}}
+    
     public virtual async Task OnGetAsync()
     {
         await Task.CompletedTask;
     }
 }
+
+{{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+public class {{ EntityInfo.Name }}FilterInput
+{
+    {{~ for prop in EntityInfo.Properties ~}}
+    {{~ if prop | abp.is_ignore_property; continue; end ~}} 
+    [FormControlSize(AbpFormControlSize.Small)]
+    {{~ if !Option.SkipLocalization ~}}
+    [Display(Name = "{{ EntityInfo.Name + prop.Name}}")]
+    {{~ end ~}}
+    public {{ prop.Type}}{{~ if prop.Type!="string"; "?"; end}} {{ prop.Name }} { get; set; }
+    {{~ if !for.last ~}}
+
+    {{~ end ~}}
+    {{~ end ~}}
+}
+{{~ end ~}}

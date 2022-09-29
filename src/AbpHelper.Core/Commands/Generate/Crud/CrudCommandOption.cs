@@ -20,6 +20,9 @@ This argument takes effect only if '--skip-db-migrations' is NOT specified.";
         [Option("skip-permissions", Description = "Skip generating crud permissions")]
         public bool SkipPermissions { get; set; }
 
+        [Option("exten-request-dto", Description = "Generate extension PagedAndSortedResultRequestDto DTO files")]
+        public bool ExtensionPagedAndSortedResultRequestDto { get; set; }
+
         [Option("separate-dto", Description = "Generate separate Create and Update DTO files")]
         public bool SeparateDto { get; set; }
 

@@ -53,6 +53,9 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
+        {{~ if Option.ExtensionPagedAndSortedResultRequestDto ~}}
+        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false"/>
+        {{~ end ~}}
         <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap"/>
     </abp-card-body>
 </abp-card>
