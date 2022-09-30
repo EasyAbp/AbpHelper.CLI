@@ -1,12 +1,12 @@
 {{~ if Bag.PagesFolder; pagesFolder = Bag.PagesFolder + "/"; end ~}}
 $(function () {
+{{~ if !Option.SkipGetListInputDto ~}}
 
-{{~ if Option.SkipGetListInputDto ~}}
     $("#{{ EntityInfo.Name }}Filter :input").on('input', function () {
         dataTable.ajax.reload();
     });
 
-    $('#{{ EntityInfo.Name }}Filter div').addClass('col-sm-3').parent().addClass('container row');
+    $('#{{ EntityInfo.Name }}Filter div').addClass('col-sm-3').parent().addClass('row justify-content-end');
 
     var getFilter = function () {
         var input = {};
@@ -31,11 +31,11 @@ $(function () {
         processing: true,
         serverSide: true,
         paging: true,
-        searching: false,{{ if Option.SkipGetListInputDto;"//disable default searchbox"; end}}
+        searching: false,{{ if !Option.SkipGetListInputDto;"//disable default searchbox"; end}}
         autoWidth: false,
         scrollCollapse: true,
         order: [[0, "asc"]],
-        ajax: abp.libs.datatables.createAjax(service.getList{{- if Option.SkipGetListInputDto;",getFilter"; end-}}),
+        ajax: abp.libs.datatables.createAjax(service.getList{{- if !Option.SkipGetListInputDto;",getFilter"; end-}}),
         columnDefs: [
             {
                 rowAction: {
