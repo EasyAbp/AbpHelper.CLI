@@ -5,6 +5,7 @@
         public const string OptionVariableName = "Option";
         public const string BaseDirectoryVariableName = "BaseDirectory";
         public const string ExcludeDirectoriesVariableName = "ExcludeDirectories";
+        public const string ProjectNameVariableName = "ProjectName";
         public const string OverwriteVariableName = "Overwrite";
     }
 }

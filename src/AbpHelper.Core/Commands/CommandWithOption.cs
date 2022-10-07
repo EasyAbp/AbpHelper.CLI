@@ -22,7 +22,8 @@ namespace EasyAbp.AbpHelper.Core.Commands
 {
     public abstract class CommandWithOption<TOption> : CommandBase where TOption : CommandOptionsBase
     {
-        public CommandWithOption(IServiceProvider serviceProvider, string name, string? description = null) : base(serviceProvider, name, description)
+        public CommandWithOption(IServiceProvider serviceProvider, string name, string? description = null) : base(
+            serviceProvider, name, description)
         {
             Logger = NullLogger<CommandWithOption<TOption>>.Instance;
 
@@ -34,6 +35,7 @@ namespace EasyAbp.AbpHelper.Core.Commands
         protected virtual string OptionVariableName => CommandConsts.OptionVariableName;
         protected virtual string BaseDirectoryVariableName => CommandConsts.BaseDirectoryVariableName;
         protected virtual string ExcludeDirectoriesVariableName => CommandConsts.ExcludeDirectoriesVariableName;
+        protected virtual string ProjectNameVariableName => CommandConsts.ProjectNameVariableName;
 
         public ILogger<CommandWithOption<TOption>> Logger { get; set; }
 
@@ -46,25 +48,33 @@ namespace EasyAbp.AbpHelper.Core.Commands
             await RunWorkflow(builder =>
             {
                 var activityBuilder = builder
-                    .StartWith<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = OptionVariableName;
-                            step.ValueExpression = new JavaScriptExpression<TOption>($"({option.ToJson()})");
-                        })
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = BaseDirectoryVariableName;
-                            step.ValueExpression = new LiteralExpression(option.Directory);
-                        })
-                    .Then<SetVariable>(
-                        step =>
-                        {
-                            step.VariableName = ExcludeDirectoriesVariableName;
-                            step.ValueExpression = new JavaScriptExpression<string[]>($"{OptionVariableName}.{nameof(CommandOptionsBase.Exclude)}");
-                        })
-                    .Then<ProjectInfoProviderStep>()
+                        .StartWith<SetVariable>(
+                            step =>
+                            {
+                                step.VariableName = OptionVariableName;
+                                step.ValueExpression = new JavaScriptExpression<TOption>($"({option.ToJson()})");
+                            })
+                        .Then<SetVariable>(
+                            step =>
+                            {
+                                step.VariableName = BaseDirectoryVariableName;
+                                step.ValueExpression = new LiteralExpression(option.Directory);
+                            })
+                        .Then<SetVariable>(
+                            step =>
+                            {
+                                step.VariableName = ExcludeDirectoriesVariableName;
+                                step.ValueExpression =
+                                    new JavaScriptExpression<string[]>(
+                                        $"{OptionVariableName}.{nameof(CommandOptionsBase.Exclude)}");
+                            })
+                        .Then<SetVariable>(
+                            step =>
+                            {
+                                step.VariableName = ProjectNameVariableName;
+                                step.ValueExpression = new LiteralExpression(option.ProjectName);
+                            })
+                        .Then<ProjectInfoProviderStep>()
                     ;
 
                 return ConfigureBuild(option, activityBuilder).Build();

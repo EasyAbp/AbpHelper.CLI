@@ -11,10 +11,13 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
 {
     public class ProjectInfoProviderStep : StepWithOption
     {
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context,
+            CancellationToken cancellationToken)
         {
             var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
             LogInput(() => baseDirectory);
+            var projectName = await context.EvaluateAsync(ProjectName, cancellationToken);
+            LogInput(() => projectName);
             var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
             LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
 
@@ -22,7 +25,8 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories))
             {
                 templateType = TemplateType.Module;
-            } else if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludeDirectories))
+            }
+            else if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludeDirectories))
             {
                 templateType = TemplateType.Application;
             }
@@ -33,7 +37,9 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
 
             // Assume the domain project must be existed for an ABP project
             var domainCsprojFile = SearchFileInDirectory(baseDirectory, "*.Domain.csproj", excludeDirectories);
-            if (domainCsprojFile == null) throw new NotSupportedException($"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {baseDirectory}");
+            if (domainCsprojFile == null)
+                throw new NotSupportedException(
+                    $"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {baseDirectory}");
 
             var fileName = Path.GetFileName(domainCsprojFile);
             var fullName = fileName.RemovePostFix(".Domain.csproj");
@@ -50,7 +56,6 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             else
             {
                 uiFramework = UiFramework.None;
-
             }
 
             string aspNetCoreDir = Path.Combine(baseDirectory, "aspnet-core");
@@ -62,6 +67,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             {
                 context.SetVariable(VariableNames.AspNetCoreDir, baseDirectory);
             }
+
             EnsureSlnFileExists(context, fullName);
 
             var tiered = false;
@@ -70,7 +76,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 tiered = FileExistsInDirectory(baseDirectory, "*.IdentityServer.csproj", excludeDirectories);
             }
 
-            var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
+            var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered, projectName);
 
             context.SetLastResult(projectInfo);
             context.SetVariable("ProjectInfo", projectInfo);
@@ -85,7 +91,8 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             string slnFile = Path.Combine(aspNetCoreDir, $"{projectName}.sln");
             if (!File.Exists(slnFile))
             {
-                throw new FileNotFoundException($"The solution file '{projectName}.sln' is not found in '{aspNetCoreDir}'. Make sure you specific the right folder.");
+                throw new FileNotFoundException(
+                    $"The solution file '{projectName}.sln' is not found in '{aspNetCoreDir}'. Make sure you specific the right folder.");
             }
         }
     }
