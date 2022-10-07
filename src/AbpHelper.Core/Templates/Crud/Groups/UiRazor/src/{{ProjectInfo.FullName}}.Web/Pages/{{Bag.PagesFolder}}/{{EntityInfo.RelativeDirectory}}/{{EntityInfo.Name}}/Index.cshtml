@@ -51,10 +51,16 @@
  {{~ end ~}}
             </abp-column>
         </abp-row>
+        {{~ if !Option.SkipGetListInputDto ~}}
+        <a abp-collapse-id="{{ EntityInfo.Name }}collapse" class="text-secondary">@L["TableFilter"] </a>
+        {{~ end ~}}
     </abp-card-header>
     <abp-card-body>
         {{~ if !Option.SkipGetListInputDto ~}}
-        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false"/>
+        <abp-collapse-body id="{{ EntityInfo.Name }}collapse">
+            <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false"/>
+            <hr />
+        </abp-collapse-body>
         {{~ end ~}}
         <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap"/>
     </abp-card-body>
