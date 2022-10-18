@@ -76,7 +76,7 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
             {{~ for prop in EntityInfo.CompositeKeys ~}}
                 e.{{ prop.Name }} == id.{{ prop.Name}}{{ if !for.last}} &&{{end}}
             {{~ end ~}}
-            );
+            ));
     }
 
     protected override IQueryable<{{ EntityInfo.Name }}> ApplyDefaultSorting(IQueryable<{{ EntityInfo.Name }}> query)
