@@ -1,28 +1,39 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
+    [Activity(
+        Category = "RunCommandStep",
+        Description = "RunCommandStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class RunCommandStep : Step
     {
-        public WorkflowExpression<string> Command
+        [ActivityInput(
+            Hint = "Command",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string Command
         {
-            get => GetState<WorkflowExpression<string>>();
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var command = await context.EvaluateAsync(Command, cancellationToken);
-            LogInput(() => command);
-            var exitCode = RunCommand(command);
+            LogInput(() => Command);
+            var exitCode = RunCommand(Command);
             if (exitCode != 0) throw new RunningCommandFailedException(exitCode);
 
             return Done();
@@ -30,31 +41,30 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
 
         private int RunCommand(string command)
         {
-            using (var process = new Process())
-            {
-                process.StartInfo = new ProcessStartInfo(GetFileName())
-                {
-                    Arguments = GetArguments(command),
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                };
-                process.OutputDataReceived += (sender, args) =>
-                {
-                    if (!args.Data.IsNullOrEmpty()) Logger.LogDebug(args.Data);
-                };
-                process.ErrorDataReceived += (sender, args) =>
-                {
-                    if (!args.Data.IsNullOrEmpty()) Logger.LogError(args.Data);
-                };
+            using var process = new Process();
 
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                process.WaitForExit();
-                return process.ExitCode;
-            }
+            process.StartInfo = new ProcessStartInfo(GetFileName())
+            {
+                Arguments = GetArguments(command),
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            process.OutputDataReceived += (sender, args) =>
+            {
+                if (!args.Data.IsNullOrEmpty()) Logger.LogDebug(args.Data);
+            };
+            process.ErrorDataReceived += (sender, args) =>
+            {
+                if (!args.Data.IsNullOrEmpty()) Logger.LogError(args.Data);
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.WaitForExit();
+            return process.ExitCode;
         }
 
         /// <summary>
@@ -64,7 +74,8 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
         /// <returns></returns>
         public static string GetArguments(string command)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return "-c \"" + command + "\"";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return "-c \"" + command + "\"";
 
             //Windows default.
             return "/C \"" + command + "\"";

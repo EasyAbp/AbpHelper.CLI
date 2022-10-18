@@ -1,51 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
+    [Activity(
+        Category = "MigrationsContextStep",
+        Description = "MigrationsContextStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class MigrationsContextStep : CSharpModificationCreatorStep
-    {        
+    {
         public enum ActionType
         {
-            Add, Remove
+            Add,
+            Remove
         }
-        public WorkflowExpression<ActionType> Action
+
+        [ActivityInput(
+            Hint = "Action",
+            UIHint = ActivityInputUIHints.Dropdown,
+            Options = new[] { ActionType.Add, ActionType.Remove },
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public ActionType Action
         {
-            get => GetState<WorkflowExpression<ActionType>>();
+            get => GetState<ActionType>();
             set => SetState(value);
         }
-        public MigrationsContextStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+
+        [ActivityInput(
+            Hint = "SubmoduleUsingTextPostfix",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string? SubmoduleUsingTextPostfix
+        {
+            get => GetState<string?>();
+            set => SetState(value);
+        }
+
+        public MigrationsContextStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
 
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var action = context.EvaluateAsync(Action, CancellationToken.None).GetAwaiter().GetResult();
-            var submoduleUsingTextPostfix = context.GetVariable<string>(VariableNames.SubmoduleUsingTextPostfix);
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            var model = context.GetVariable<dynamic>("Model");
-            model.Bag.SubmoduleUsingTextPostfix = submoduleUsingTextPostfix;
-            model.Bag.SubmoduleNameText = submoduleUsingTextPostfix.Replace(".", "");
-            string usingText = TextGenerator.GenerateByTemplateName(templateDir, "MigrationsContext_Using", model);
-            string configText = TextGenerator.GenerateByTemplateName(templateDir, "MigrationsContext_ConfigureModule", model);
+            SubmoduleUsingTextPostfix ??= context.GetVariable<string>(VariableNames.SubmoduleUsingTextPostfix)!;
+
+            LogInput(() => SubmoduleUsingTextPostfix);
+            
+            return await base.OnExecuteAsync(context);
+        }
+
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit)
+        {
+            var model = context.GetVariable<object>("Model")! as dynamic;
+            model.Bag.SubmoduleUsingTextPostfix = SubmoduleUsingTextPostfix;
+            model.Bag.SubmoduleNameText = SubmoduleUsingTextPostfix.Replace(".", "");
+            string usingText =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "MigrationsContext_Using", model);
+            string configText =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "MigrationsContext_ConfigureModule", model);
 
             MethodDeclarationSyntax GetModelCreatingMethod(CSharpSyntaxNode root)
             {
-                return root.Descendants<MethodDeclarationSyntax>().Single(m => m.Identifier.ToString() == "OnModelCreating");
+                return root.Descendants<MethodDeclarationSyntax>()
+                    .Single(m => m.Identifier.ToString() == "OnModelCreating");
             }
 
-            if (action == ActionType.Add)
+            if (Action == ActionType.Add)
             {
                 // Add "builder.ConfigureXXX();"
                 return new List<ModificationBuilder<CSharpSyntaxNode>>
@@ -65,8 +103,10 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             else
             {
                 // Remove "builder.ConfigureXXX();"
-                Func<CSharpSyntaxNode, int> usingLine = node => node.Descendants<UsingDirectiveSyntax>().Single(n => n.Contains(usingText)).GetStartLine();
-                Func<CSharpSyntaxNode, int> configLine = node => node.Descendants<ExpressionStatementSyntax>().Last(n => n.Contains(configText)).GetStartLine();
+                Func<CSharpSyntaxNode, int> usingLine = node =>
+                    node.Descendants<UsingDirectiveSyntax>().Single(n => n.Contains(usingText)).GetStartLine();
+                Func<CSharpSyntaxNode, int> configLine = node =>
+                    node.Descendants<ExpressionStatementSyntax>().Last(n => n.Contains(configText)).GetStartLine();
                 return new List<ModificationBuilder<CSharpSyntaxNode>>
                 {
                     new DeletionBuilder<CSharpSyntaxNode>(
@@ -80,7 +120,6 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
                         modifyCondition: root => root.DescendantsContain<ExpressionStatementSyntax>(configText)
                     ),
                 };
-
             }
         }
     }

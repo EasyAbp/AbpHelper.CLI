@@ -1,29 +1,58 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
+using Elsa.Expressions;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
+    [Activity(
+        Category = "PermissionDefinitionProviderStep",
+        Description = "PermissionDefinitionProviderStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class PermissionDefinitionProviderStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
+        [ActivityInput(
+            Hint = "ProjectInfo",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public ProjectInfo? ProjectInfo
         {
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            string groupName = rootUnit.Descendants<LocalDeclarationStatementSyntax>()
+            get => GetState<ProjectInfo?>();
+            set => SetState(value);
+        }
+
+        protected override ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
+        {
+            ProjectInfo ??= context.GetVariable<ProjectInfo>("ProjectInfo")!;
+
+            LogInput(() => ProjectInfo);
+
+            return base.OnExecuteAsync(context);
+        }
+
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit)
+        {
+            var groupName = rootUnit.Descendants<LocalDeclarationStatementSyntax>()
                 .Single(stat => stat.ToFullString().Contains("context.AddGroup"))
                 .Descendants<VariableDeclarationSyntax>().Single()
                 .Variables[0].Identifier.Text;
-            var model = context.GetVariable<dynamic>("Model");
+            var model = context.GetVariable<object>("Model")! as dynamic;
             model.Bag.GroupName = groupName;
-            string permissionDefinitionsText = TextGenerator.GenerateByTemplateName(templateDir, "Permissions_Definitions", model);
+            string permissionDefinitionsText =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "Permissions_Definitions", model);
 
             var builders = new List<ModificationBuilder<CSharpSyntaxNode>>();
 
@@ -34,13 +63,14 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
                 root => root.DescendantsNotContain<ClassDeclarationSyntax>(permissionDefinitionsText)
             ));
 
-            if (projectInfo.TemplateType == TemplateType.Application)
+            if (ProjectInfo.TemplateType == TemplateType.Application)
             {
                 // Noting special to do
             }
-            else if (projectInfo.TemplateType == TemplateType.Module)
+            else if (ProjectInfo.TemplateType == TemplateType.Module)
             {
-                string addGroupText = TextGenerator.GenerateByTemplateName(templateDir, "Permissions_AddGroup", model);
+                string addGroupText =
+                    TextGenerator.GenerateByTemplateName(TemplateDirectory, "Permissions_AddGroup", model);
 
                 // Uncomment the add group statement
                 builders.Add(new ReplacementBuilder<CSharpSyntaxNode>(
@@ -54,7 +84,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             return builders;
         }
 
-        public PermissionDefinitionProviderStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public PermissionDefinitionProviderStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
     }

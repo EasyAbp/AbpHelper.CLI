@@ -1,24 +1,74 @@
 ﻿using System;
-using EasyAbp.AbpHelper.Core.Commands.Generate.Crud;
+using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Models;
-using Elsa.Results;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
+using Elsa.Expressions;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp
 {
+    [Activity(
+        Category = "BuildDtoInfoStep",
+        Description = "BuildDtoInfoStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class BuildDtoInfoStep : Step
     {
-        protected override ActivityExecutionResult OnExecute(WorkflowExecutionContext context)
+        [ActivityInput(
+            Hint = "EntityInfo",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public EntityInfo EntityInfo
         {
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            var option = context.GetVariable<object>("Option") as CrudCommandOption;
+            get => GetState<EntityInfo>()!;
+            set => SetState(value);
+        }
 
+        [ActivityInput(
+            Hint = "SeparateDto",
+            UIHint = ActivityInputUIHints.Checkbox,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public bool SeparateDto
+        {
+            get => GetState<bool>();
+            set => SetState(value);
+        }
+
+        [ActivityInput(
+            Hint = "EntityPrefixDto",
+            UIHint = ActivityInputUIHints.Checkbox,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public bool EntityPrefixDto
+        {
+            get => GetState<bool>();
+            set => SetState(value);
+        }
+
+        [ActivityInput(
+            Hint = "DtoSuffix",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public string? DtoSuffix
+        {
+            get => GetState<string?>();
+            set => SetState(value);
+        }
+
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
+        {
             try
             {
-                string[] actionNames = { string.Empty, string.Empty, string.Empty};                
+                string[] actionNames = { string.Empty, string.Empty, string.Empty };
 
-                if (option != null && option.SeparateDto)
+                if (SeparateDto)
                 {
                     actionNames[1] = "Create";
                     actionNames[2] = "Update";
@@ -29,21 +79,20 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                     actionNames[2] = actionNames[1];
                 }
 
-                string[] typeNames = new string[actionNames.Length];
+                var typeNames = new string[actionNames.Length];
 
-                var useEntityPrefix = option != null && option.EntityPrefixDto;
-                var dtoSubfix = option?.DtoSuffix ?? "Dto";
+                var dtoSubfix = DtoSuffix ?? "Dto";
 
-                for (int i = 0; i < typeNames.Length; i++)
+                for (var i = 0; i < typeNames.Length; i++)
                 {
-                    typeNames[i] = useEntityPrefix
-                        ? $"{entityInfo.Name}{actionNames[i]}{dtoSubfix}"
-                        : $"{actionNames[i]}{entityInfo.Name}{dtoSubfix}";
+                    typeNames[i] = EntityPrefixDto
+                        ? $"{EntityInfo.Name}{actionNames[i]}{dtoSubfix}"
+                        : $"{actionNames[i]}{EntityInfo.Name}{dtoSubfix}";
                 }
-                
-                DtoInfo dtoInfo = new DtoInfo(typeNames[0], typeNames[1], typeNames[2]);
-               
-                context.SetLastResult(dtoInfo);
+
+                var dtoInfo = new DtoInfo(typeNames[0], typeNames[1], typeNames[2]);
+
+                context.Output = dtoInfo;
                 context.SetVariable("DtoInfo", dtoInfo);
                 LogOutput(() => dtoInfo);
 

@@ -2,21 +2,26 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.Attributes;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
 {
+    [Activity(
+        Category = "RoutingModuleStep",
+        Description = "RoutingModuleStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class RoutingModuleStep : TypeScriptModificationCreatorStep
     {
         protected override IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
-            WorkflowExecutionContext context)
+            ActivityExecutionContext context)
         {
-            var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            string importContents = TextGenerator.GenerateByTemplateName(templateDir, "RoutingModule_ImportList", model);
-            string moduleContents = TextGenerator.GenerateByTemplateName(templateDir, "RoutingModule_Routes", model);
+            var model = context.GetVariable<object>("Model")!;
+            var importContents =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "RoutingModule_ImportList", model);
+            var moduleContents = TextGenerator.GenerateByTemplateName(TemplateDirectory, "RoutingModule_Routes", model);
 
             int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"const routes")).LineNumber;
 
@@ -36,7 +41,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
             };
         }
 
-        public RoutingModuleStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public RoutingModuleStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
     }

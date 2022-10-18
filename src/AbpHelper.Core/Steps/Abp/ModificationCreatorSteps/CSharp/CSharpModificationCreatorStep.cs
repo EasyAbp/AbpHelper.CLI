@@ -1,41 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Common;
-using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
+using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa.ActivityResults;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
-    public abstract class CSharpModificationCreatorStep : Step
+    public abstract class CSharpModificationCreatorStep : CodeModificationStepBase
     {
-        protected TextGenerator TextGenerator;
-
-        protected CSharpModificationCreatorStep(TextGenerator textGenerator)
+        protected CSharpModificationCreatorStep(TextGenerator textGenerator) : base(textGenerator)
         {
-            TextGenerator = textGenerator;
         }
 
-        public WorkflowExpression<string> SourceFile
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
-            set => SetState(value);
-        }
+            TemplateDirectory ??= context.GetVariable<string>(VariableNames.TemplateDirectory)!;
+            SourceFile ??= context.GetVariable<string>(FileFinderStep.DefaultFileParameterName)!;
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
-        {
-            var file = await context.EvaluateAsync(SourceFile, cancellationToken);
-            LogInput(() => file);
+            LogInput(() => TemplateDirectory);
+            LogInput(() => SourceFile);
 
-            var sourceText = await File.ReadAllTextAsync(file, cancellationToken);
+            var sourceText = await File.ReadAllTextAsync(SourceFile!, context.CancellationToken);
             var tree = CSharpSyntaxTree.ParseText(sourceText);
             var root = tree.GetCompilationUnitRoot();
 
@@ -46,13 +38,14 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
                     .ToList()
                 ;
 
-            context.SetLastResult(modifications);
+            context.Output = modifications;
             context.SetVariable("Modifications", modifications);
             LogOutput(() => modifications, $"Modifications count: {modifications.Count}");
 
             return Done();
         }
 
-        protected abstract IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit);
+        protected abstract IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit);
     }
 }

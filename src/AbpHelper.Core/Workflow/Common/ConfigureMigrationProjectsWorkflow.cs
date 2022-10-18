@@ -1,13 +1,12 @@
-﻿using EasyAbp.AbpHelper.Core.Commands;
+﻿using System;
+using EasyAbp.AbpHelper.Core.Commands;
 using EasyAbp.AbpHelper.Core.Commands.Generate.Crud;
 using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Common;
 using Elsa;
-using Elsa.Activities;
-using Elsa.Activities.ControlFlow.Activities;
-using Elsa.Expressions;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Activities.ControlFlow;
+using Elsa.Activities.Primitives;
+using Elsa.Builders;
 
 namespace EasyAbp.AbpHelper.Core.Workflow.Common
 {
@@ -18,132 +17,162 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Common
         private const string ModuleMigrationProjectName = nameof(ModuleMigrationProjectName);
         private const string AppMigrationProjectName = nameof(AppMigrationProjectName);
 
-        public static IActivityBuilder AddConfigureMigrationProjectsWorkflow(this IActivityBuilder builder, string nextActivityName)
+        public static IActivityBuilder AddConfigureMigrationProjectsWorkflow(this IActivityBuilder builder,
+            string nextActivityName)
         {
             return builder
                     .AddConfigureHasDbMigrationsWorkflow("SearchMigrationProject")
-                    .Then<IfElse>(
-                        ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOption.MigrationProjectName)} == null"),
+                    .Then<If>(
+                        ifElse =>
+                        {
+                            ifElse.Set(x => x.Condition, x =>
+                            {
+                                var option = x.GetVariable<CrudCommandOption>(CommandConsts.OptionVariableName);
+                                return option?.MigrationProjectName.IsNullOrWhiteSpace();
+                            });
+                        },
                         ifElse =>
                         {
                             ifElse
-                                .When(OutcomeNames.True)    // No migration project name provided
-                                .Then<IfElse>(
-                                    ifElse1 => ifElse1.ConditionExpression = new JavaScriptExpression<bool>(VariableNames.HasDbMigrations),
-                                    ifElse1 => 
+                                .When(OutcomeNames.True) // No migration project name provided
+                                .Then<If>(
+                                    ifElse1 =>
+                                    {
+                                        ifElse1.Set(x => x.Condition,
+                                            x => x.GetVariable<bool>(VariableNames.HasDbMigrations));
+                                    },
+                                    ifElse1 =>
                                     {
                                         ifElse1
                                             .When(OutcomeNames.True)
-                                            .Then<SetVariable>(
-                                                step =>
-                                                {
-                                                    step.VariableName = AppMigrationProjectName;
-                                                    step.ValueExpression = new LiteralExpression("*.EntityFrameworkCore.DbMigrations.csproj");
-                                                })
-                                            .Then("SearchHttpApiHostProject")
+                                            .Then<SetVariable>(step =>
+                                            {
+                                                step.Set(x => x.VariableName, AppMigrationProjectName);
+                                                step.Set(x => x.Value, "*.EntityFrameworkCore.DbMigrations.csproj");
+                                            })
+                                            .ThenNamed("SearchHttpApiHostProject")
                                             ;
                                         ifElse1
                                             .When(OutcomeNames.False)
-                                            .Then<SetVariable>(
-                                                step =>
-                                                {
-                                                    step.VariableName = AppMigrationProjectName;
-                                                    step.ValueExpression = new LiteralExpression("*.EntityFrameworkCore.csproj");
-                                                })
-                                            .Then("SearchHttpApiHostProject")
+                                            .Then<SetVariable>(step =>
+                                            {
+                                                step.Set(x => x.VariableName, AppMigrationProjectName);
+                                                step.Set(x => x.Value, "*.EntityFrameworkCore.csproj");
+                                            })
+                                            .ThenNamed("SearchHttpApiHostProject")
                                             ;
                                     }
                                 )
-                                .Then<SetVariable>(
-                                    step =>
-                                    {
-                                        step.VariableName = ModuleMigrationProjectName;
-                                        step.ValueExpression = new LiteralExpression("*.HttpApi.Host.csproj");
-                                    }).WithName("SearchHttpApiHostProject")
-                                .Then(ActivityNames.SearchFiles)
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, ModuleMigrationProjectName);
+                                    step.Set(x => x.Value, "*.HttpApi.Host.csproj");
+                                }).WithName("SearchHttpApiHostProject")
+                                .ThenNamed(ActivityNames.SearchFiles)
                                 ;
                             ifElse
                                 .When(OutcomeNames.False)
-                                .Then<SetVariable>(
-                                    step =>
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, AppMigrationProjectName);
+                                    step.Set(x => x.Value, x =>
                                     {
-                                        step.VariableName = AppMigrationProjectName;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOption.MigrationProjectName)}");
-                                    })
-                                .Then<SetVariable>(
-                                    step =>
+                                        var option =
+                                            x.GetVariable<CrudCommandOption>(CommandConsts.OptionVariableName)!;
+                                        return option.MigrationProjectName;
+                                    });
+                                })
+                                .Then<SetVariable>(step =>
+                                {
+                                    step.Set(x => x.VariableName, ModuleMigrationProjectName);
+                                    step.Set(x => x.Value, x =>
                                     {
-                                        step.VariableName = ModuleMigrationProjectName;
-                                        step.ValueExpression = new JavaScriptExpression<string>($"{CommandConsts.OptionVariableName}.{nameof(CrudCommandOption.MigrationProjectName)}");
-                                    })
-                                .Then(ActivityNames.SearchFiles)
+                                        var option =
+                                            x.GetVariable<CrudCommandOption>(CommandConsts.OptionVariableName)!;
+                                        return option.MigrationProjectName;
+                                    });
+                                })
+                                .ThenNamed(ActivityNames.SearchFiles)
                                 ;
                         }
                     )
                     .WithName("SearchMigrationProject")
-                    .Then<IfElse>(
-                        ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>
-                            ($"ProjectInfo.TemplateType == {TemplateType.Application:D}"),
+                    .Then<If>(
+                        ifElse =>
+                        {
+                            ifElse.Set(x => x.Condition, x =>
+                            {
+                                var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                return projectInfo.TemplateType is TemplateType.Application;
+                            });
+                        },
                         ifElse =>
                         {
                             // Application
                             ifElse
                                 .When(OutcomeNames.True)
-                                .Then<FileFinderStep>(
-                                    step =>
+                                .Then<FileFinderStep>(step =>
+                                {
+                                    step.Set(x => x.SearchFileName,
+                                        x => x.GetVariable<string>(AppMigrationProjectName));
+                                    step.Set(x => x.ResultVariableName, MigrationProjectFile);
+                                })
+                                .Then<If>(
+                                    ie =>
                                     {
-                                        step.SearchFileName = new JavaScriptExpression<string>(AppMigrationProjectName);
-                                        step.ResultVariableName = new LiteralExpression(MigrationProjectFile);
-                                    }
-                                )
-                                .Then<IfElse>(
-                                    ie => ie.ConditionExpression = new JavaScriptExpression<bool>
-                                        ($"ProjectInfo.UiFramework == {UiFramework.RazorPages:D}"),
+                                        ie.Set(x => x.Condition, x =>
+                                        {
+                                            var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                            return projectInfo.UiFramework is UiFramework.RazorPages;
+                                        });
+                                    },
                                     ie =>
                                     {
                                         ie.When(OutcomeNames.True)
-                                            .Then<FileFinderStep>(
-                                                step =>
-                                                {
-                                                    step.SearchFileName = new LiteralExpression("*.Web.csproj");
-                                                    step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
-                                                })
-                                            .Then(nextActivityName)
+                                            .Then<FileFinderStep>(step =>
+                                            {
+                                                step.Set(x => x.SearchFileName, "*.Web.csproj");
+                                                step.Set(x => x.ResultVariableName, StartupProjectFile);
+                                            })
+                                            .ThenNamed(nextActivityName)
                                             ;
                                     })
-                                .Then<IfElse>(
-                                    ie => ie.ConditionExpression = new JavaScriptExpression<bool>
-                                        ($"ProjectInfo.UiFramework == {UiFramework.None:D}"),
+                                .Then<If>(
+                                    ie =>
+                                    {
+                                        ie.Set(x => x.Condition, x =>
+                                        {
+                                            var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                            return projectInfo.UiFramework is UiFramework.None;
+                                        });
+                                    },
                                     ie =>
                                     {
                                         ie.When(OutcomeNames.True)
-                                            .Then<FileFinderStep>(
-                                                step =>
-                                                {
-                                                    step.SearchFileName = new LiteralExpression("*.DbMigrator.csproj");
-                                                    step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
-                                                })
-                                            .Then(nextActivityName)
+                                            .Then<FileFinderStep>(step =>
+                                            {
+                                                step.Set(x => x.SearchFileName, "*.DbMigrator.csproj");
+                                                step.Set(x => x.ResultVariableName, StartupProjectFile);
+                                            })
+                                            .ThenNamed(nextActivityName)
                                             ;
                                     });
                             // Module
                             ifElse
                                 .When(OutcomeNames.False)
-                                .Then<FileFinderStep>(
-                                    step =>
-                                    {
-                                        step.SearchFileName = new JavaScriptExpression<string>(ModuleMigrationProjectName);
-                                        step.ResultVariableName = new LiteralExpression(MigrationProjectFile);
-                                    }
-                                )
-                                .Then<FileFinderStep>(
-                                    step =>
-                                    {
-                                        step.SearchFileName = new JavaScriptExpression<string>(ModuleMigrationProjectName); // For module, the startup project is same with the migration project
-                                        step.ResultVariableName = new LiteralExpression<string>(StartupProjectFile);
-                                    }
-                                )
-                                .Then(nextActivityName)
+                                .Then<FileFinderStep>(step =>
+                                {
+                                    step.Set(x => x.SearchFileName,
+                                        x => x.GetVariable<string>(ModuleMigrationProjectName));
+                                    step.Set(x => x.ResultVariableName, MigrationProjectFile);
+                                })
+                                .Then<FileFinderStep>(step =>
+                                {
+                                    step.Set(x => x.SearchFileName,
+                                        x => x.GetVariable<string>(
+                                            ModuleMigrationProjectName)); // For module, the startup project is same with the migration project
+                                })
+                                .ThenNamed(nextActivityName)
                                 ;
                         }
                     ).WithName(ActivityNames.SearchFiles)

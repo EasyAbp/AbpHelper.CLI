@@ -2,24 +2,43 @@
 using System.Linq;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.Attributes;
+using Elsa.Design;
+using Elsa.Expressions;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
 {
+    [Activity(
+        Category = "ModuleStep",
+        Description = "ModuleStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class ModuleStep : TypeScriptModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
-            WorkflowExecutionContext context)
+        [ActivityInput(
+            Hint = "EntityInfo",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public EntityInfo EntityInfo
         {
-            var model = context.GetVariable<object>("Model");
-            var entityInfo = context.GetVariable<EntityInfo>("EntityInfo");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            string importContents = TextGenerator.GenerateByTemplateName(templateDir, "Module_ImportSharedModule", model);
-            string sharedModuleContents = TextGenerator.GenerateByTemplateName(templateDir, "Module_SharedModule", model);
+            get => GetState<EntityInfo>()!;
+            set => SetState(value);
+        }
 
-            int LineExpression(IEnumerable<LineNode> lines) => lines.Last(l => l.IsMath($"{entityInfo.NamespaceLastPart}RoutingModule")).LineNumber;
+        protected override IList<ModificationBuilder<IEnumerable<LineNode>>> CreateModifications(
+            ActivityExecutionContext context)
+        {
+            var model = context.GetVariable<object>("Model")!;
+            var importContents =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "Module_ImportSharedModule", model);
+            var sharedModuleContents =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "Module_SharedModule", model);
+
+            int LineExpression(IEnumerable<LineNode> lines) =>
+                lines.Last(l => l.IsMath($"{EntityInfo.NamespaceLastPart}RoutingModule")).LineNumber;
 
             return new List<ModificationBuilder<IEnumerable<LineNode>>>
             {
@@ -38,7 +57,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.Typescript
             };
         }
 
-        public ModuleStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public ModuleStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
     }

@@ -1,12 +1,13 @@
 ﻿using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -16,39 +17,58 @@ using Volo.Abp.VirtualFileSystem;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
+    [Activity(
+        Category = "GroupGenerationStep",
+        Description = "GroupGenerationStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class GroupGenerationStep : Step
     {
         private readonly TextGenerator _textGenerator;
         private readonly IVirtualFileProvider _virtualFileProvider;
         private const string SkipGenerate = "SKIP_GENERATE";
 
-        public WorkflowExpression<string> TemplateDirectory
+        [ActivityInput(
+            Hint = "TemplateDirectory",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string? TemplateDirectory
         {
-            get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>(VariableNames.TemplateDirectory));
+            get => GetState<string?>();
             set => SetState(value);
         }
         
+        [ActivityInput(
+            Hint = "GroupName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
         public string GroupName
         {
-            get => GetState<string>();
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> TargetDirectory
+        [ActivityInput(
+            Hint = "TargetDirectory",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string? TargetDirectory
         {
-            get => GetState(() => new JavaScriptExpression<string>("BaseDirectory"));
+            get => GetState<string?>();
             set => SetState(value);
         }
 
-        public WorkflowExpression<bool> Overwrite
+        [ActivityInput(
+            Hint = "Overwrite",
+            UIHint = ActivityInputUIHints.Checkbox,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public bool? Overwrite
         {
-            get => GetState(() => new JavaScriptExpression<bool>("Overwrite"));
-            set => SetState(value);
-        }
-
-        public WorkflowExpression<object> Model
-        {
-            get => GetState<WorkflowExpression<object>>(() => new JavaScriptExpression<object>("Model"));
+            get => GetState<bool?>();
             set => SetState(value);
         }
 
@@ -60,20 +80,20 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             _virtualFileProvider = virtualFileProvider;
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            string templateDir = await context.EvaluateAsync(TemplateDirectory, cancellationToken);
-            LogInput(() => templateDir);
-            LogInput(() => GroupName);
-            var targetDirectory = await context.EvaluateAsync(TargetDirectory, cancellationToken);
-            LogInput(() => targetDirectory);
-            var overwrite = await context.EvaluateAsync(Overwrite, cancellationToken);
-            LogInput(() => Overwrite);
-            var model = await context.EvaluateAsync(Model, cancellationToken);
-            LogInput(() => model);
+            TemplateDirectory ??= context.GetVariable<string>(VariableNames.TemplateDirectory)!;
+            TargetDirectory ??= context.GetVariable<string>("BaseDirectory")!;
+            Overwrite ??= context.GetVariable<bool>("Overwrite")!;
 
-            var groupDir = Path.Combine(templateDir, "Groups", GroupName).NormalizePath();
-            await GenerateFile(groupDir, targetDirectory, model, overwrite);
+            LogInput(() => GroupName);
+            LogInput(() => TemplateDirectory);
+            LogInput(() => TargetDirectory);
+            LogInput(() => Overwrite);
+
+            var groupDir = Path.Combine(TemplateDirectory, "Groups", GroupName).NormalizePath();
+            
+            await GenerateFile(groupDir, TargetDirectory, context.GetVariable<object>("Model")!, Overwrite.Value);
 
             return Done();
         }
@@ -94,8 +114,8 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
                 var templateText = await file.ReadAsStringAsync();
                 var contents = _textGenerator.GenerateByTemplateText(templateText, model, out TemplateContext context);
 
-                context.CurrentGlobal.TryGetValue(SkipGenerate, out object value);
-                if (value is bool skipGenerate && skipGenerate)
+                context.CurrentGlobal.TryGetValue(SkipGenerate, out var value);
+                if (value is true)
                 {
                     Logger.LogInformation($"Evaluated value of `{SkipGenerate}` is true, skip generating.");
                     continue;

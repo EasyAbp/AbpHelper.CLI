@@ -3,24 +3,30 @@ using System.Linq;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.Attributes;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
+    [Activity(
+        Category = "WebAutoMapperProfileStep",
+        Description = "WebAutoMapperProfileStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class WebAutoMapperProfileStep : CSharpModificationCreatorStep
     {
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit)
         {
-            var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
+            var model = context.GetVariable<object>("Model")!;
+            var usingText =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "WebAutoMapperProfile_Using", model);
+            var contents =
+                TextGenerator.GenerateByTemplateName(TemplateDirectory, "WebAutoMapperProfile_CreateMap", model);
 
-            string usingText = TextGenerator.GenerateByTemplateName(templateDir, "WebAutoMapperProfile_Using", model);
-
-            string contents = TextGenerator.GenerateByTemplateName(templateDir, "WebAutoMapperProfile_CreateMap", model);
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {
                 new InsertionBuilder<CSharpSyntaxNode>(
@@ -31,12 +37,13 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
                 new InsertionBuilder<CSharpSyntaxNode>(
                     root => root.Descendants<ConstructorDeclarationSyntax>().Single().GetEndLine(),
                     contents,
-                    modifyCondition: root => root.Descendants<ConstructorDeclarationSyntax>().Single().NotContains(contents)
+                    modifyCondition: root =>
+                        root.Descendants<ConstructorDeclarationSyntax>().Single().NotContains(contents)
                 )
             };
         }
 
-        public WebAutoMapperProfileStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public WebAutoMapperProfileStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
     }

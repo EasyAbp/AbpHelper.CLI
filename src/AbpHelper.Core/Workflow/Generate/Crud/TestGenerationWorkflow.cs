@@ -1,6 +1,5 @@
 ﻿using EasyAbp.AbpHelper.Core.Steps.Common;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Builders;
 
 namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
 {
@@ -13,8 +12,8 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                     .Then<GroupGenerationStep>(
                         step =>
                         {
-                            step.GroupName = "Test";
-                            step.TargetDirectory = new JavaScriptExpression<string>(VariableNames.AspNetCoreDir);
+                            step.Set(x => x.GroupName, "Test");
+                            step.Set(x => x.TargetDirectory, x => x.GetVariable<string>(VariableNames.AspNetCoreDir));
                         }
                     )
                 ;

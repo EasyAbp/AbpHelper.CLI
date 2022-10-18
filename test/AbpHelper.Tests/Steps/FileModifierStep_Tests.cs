@@ -58,7 +58,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
@@ -82,7 +82,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
@@ -110,7 +110,7 @@ abc
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
@@ -142,7 +142,7 @@ abc
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
@@ -177,7 +177,7 @@ def
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
@@ -208,7 +208,7 @@ c");
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
@@ -242,7 +242,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(async () => await _step.ExecuteAsync(ctx));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -268,7 +268,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(async () => await _step.ExecuteAsync(ctx));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -294,7 +294,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(async () => await _step.ExecuteAsync(ctx));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -320,7 +320,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, CancellationToken.None));
+                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(async () => await _step.ExecuteAsync(ctx));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));
@@ -342,7 +342,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    await _step.ExecuteAsync(ctx, CancellationToken.None);
+                    await _step.ExecuteAsync(ctx);
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
@@ -373,7 +373,7 @@ b
                     ctx.SetVariable(FileFinderStep.DefaultFileParameterName, file);
 
                     // Act
-                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(() => _step.ExecuteAsync(ctx, new CancellationToken()));
+                    var ex = await Assert.ThrowsAsync<InvalidModificationException>(async () => await _step.ExecuteAsync(ctx));
 
                     // Assert
                     _output.WriteLine(string.Join(Environment.NewLine, ex.Errors));

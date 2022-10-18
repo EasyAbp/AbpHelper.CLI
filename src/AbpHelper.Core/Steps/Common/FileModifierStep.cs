@@ -3,50 +3,69 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Models;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.Extensions.Logging;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
+    [Activity(
+        Category = "FileModifierStep",
+        Description = "FileModifierStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class FileModifierStep : Step
     {
-        public WorkflowExpression<string> TargetFile
+        [ActivityInput(
+            Hint = "TargetFile",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public string? TargetFile
         {
-            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
+            get => GetState<string?>();
             set => SetState(value);
         }
 
-        public WorkflowExpression<IList<Modification>> Modifications
+        [ActivityInput(
+            Hint = "Modifications",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public IList<Modification>? Modifications
         {
-            get => GetState(() => new JavaScriptExpression<IList<Modification>>("Modifications"));
+            get => GetState<IList<Modification>?>();
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> NewLine
+        [ActivityInput(
+            Hint = "NewLine",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public string NewLine
         {
-            get => GetState(() => new LiteralExpression<string>("\r\n"));
+            get => GetState(() => "\r\n");
             set => SetState(value);
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
-            LogInput(() => targetFile);
+            TargetFile ??= context.GetVariable<string>(FileFinderStep.DefaultFileParameterName)!;
+            Modifications ??= context.GetVariable<IList<Modification>>("Modifications")!;
+            
+            LogInput(() => TargetFile);
+            LogInput(() => Modifications, $"Modifications count: {Modifications.Count}");
 
-            var modifications = await context.EvaluateAsync(Modifications, cancellationToken);
-            LogInput(() => modifications, $"Modifications count: {modifications.Count}");
-
-            var newLine = await context.EvaluateAsync(NewLine, cancellationToken);
-
-            var lines = await File.ReadAllLinesAsync(targetFile);
-            var errors = CheckModifications(modifications, lines).ToArray();
+            var lines = await File.ReadAllLinesAsync(TargetFile);
+            var errors = CheckModifications(Modifications, lines).ToArray();
             if (errors.Length > 0)
             {
                 foreach (var error in errors) Logger.LogError(error);
@@ -60,7 +79,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             for (var line = 1; line <= lines.Length; line++)
             {
                 var lineText = lines[line - 1];
-                var lineModifications = modifications
+                var lineModifications = Modifications
                     .Where(mod => mod.StartLine == line || // Positive line number
                                   mod.StartLine == line - lines.Length - 1 // Negative  line number
                     )
@@ -87,15 +106,15 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
                     }
 
                 // We don't need these modifications anymore
-                foreach (var modification in lineModifications) modifications.Remove(modification);
+                foreach (var modification in lineModifications) Modifications.Remove(modification);
 
                 newFile.AppendWithControlChar(beforeContents)
-                    .AppendLineWithControlChar(lineText, newLine)
+                    .AppendLineWithControlChar(lineText, NewLine)
                     .AppendWithControlChar(afterContents);
                 NEXT_LINE: ;
             }
 
-            await File.WriteAllTextAsync(targetFile, newFile.ToString());
+            await File.WriteAllTextAsync(TargetFile, newFile.ToString());
 
             return Done();
         }
@@ -121,16 +140,23 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             // Check StartLine and EndLine are in range
             foreach (var modification in modifications)
             {
-                var actualStartLine = modification.StartLine >= 0 ? modification.StartLine : lines.Length + modification.StartLine;
+                var actualStartLine = modification.StartLine >= 0
+                    ? modification.StartLine
+                    : lines.Length + modification.StartLine;
 
-                if (actualStartLine <= 0 || actualStartLine > lines.Length) yield return $"StartLine out of range: {modification}. {nameof(actualStartLine)}: {actualStartLine}";
+                if (actualStartLine <= 0 || actualStartLine > lines.Length)
+                    yield return
+                        $"StartLine out of range: {modification}. {nameof(actualStartLine)}: {actualStartLine}";
 
                 if (modification is IRange range)
                 {
                     var actualEndLine = range.EndLine >= 0 ? range.EndLine : lines.Length + range.EndLine;
-                    if (actualEndLine <= 0 || actualEndLine > lines.Length) yield return $"EndLine out of range: {modification}. {nameof(actualEndLine)}: {actualEndLine}";
+                    if (actualEndLine <= 0 || actualEndLine > lines.Length)
+                        yield return $"EndLine out of range: {modification}. {nameof(actualEndLine)}: {actualEndLine}";
 
-                    if (actualStartLine > actualEndLine) yield return $"StartLine grater than EndLine: {modification}. {nameof(actualStartLine)}: {actualStartLine} {nameof(actualEndLine)}: {actualEndLine}";
+                    if (actualStartLine > actualEndLine)
+                        yield return
+                            $"StartLine grater than EndLine: {modification}. {nameof(actualStartLine)}: {actualStartLine} {nameof(actualEndLine)}: {actualEndLine}";
                 }
             }
         }
@@ -167,6 +193,6 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             Errors.AddRange(errors);
         }
 
-        public List<string> Errors { get; } = new List<string>();
+        public List<string> Errors { get; } = new();
     }
 }

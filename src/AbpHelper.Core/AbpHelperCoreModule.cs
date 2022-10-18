@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using EasyAbp.AbpHelper.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Volo.Abp.Autofac;
@@ -15,7 +14,6 @@ namespace EasyAbp.AbpHelper.Core
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            ConfigureElsaActivities(context);
             ConfigureTemplateFiles(context);
             ConfigureVirtualFileSystem();
         }
@@ -26,14 +24,6 @@ namespace EasyAbp.AbpHelper.Core
             {
                 options.FileSets.AddEmbedded<AbpHelperCoreModule>();
             });
-        }
-
-        private void ConfigureElsaActivities(ServiceConfigurationContext context)
-        {
-            context.Services
-                .AddElsa()
-                .AddAllActivities()
-                ;
         }
 
         private void ConfigureTemplateFiles(ServiceConfigurationContext context)

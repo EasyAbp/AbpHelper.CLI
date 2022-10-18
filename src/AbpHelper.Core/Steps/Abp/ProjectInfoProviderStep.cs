@@ -1,91 +1,105 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Workflow;
-using Elsa.Results;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp
 {
+    [Activity(
+        Category = "ProjectInfoProviderStep",
+        Description = "ProjectInfoProviderStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class ProjectInfoProviderStep : StepWithOption
     {
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        [ActivityOutput(Hint = "Output.")]
+        public ProjectInfo? Output { get; set; }
+        
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
-            LogInput(() => baseDirectory);
-            var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
-            LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
+            BaseDirectory ??= context.GetVariable<string>(BaseDirectoryVariableName)!;
+            
+            LogInput(() => ExcludeDirectories, string.Join("; ", ExcludeDirectories));
+            LogInput(() => BaseDirectory);
 
             TemplateType templateType;
-            if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories))
+            if (FileExistsInDirectory(BaseDirectory, "*.Host.Shared.csproj", ExcludeDirectories))
             {
                 templateType = TemplateType.Module;
-            } else if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludeDirectories))
+            }
+            else if (FileExistsInDirectory(BaseDirectory, "*.DbMigrator.csproj", ExcludeDirectories))
             {
                 templateType = TemplateType.Application;
             }
             else
             {
-                throw new NotSupportedException($"Unknown ABP project structure. Directory: {baseDirectory}");
+                throw new NotSupportedException($"Unknown ABP project structure. Directory: {BaseDirectory}");
             }
 
             // Assume the domain project must be existed for an ABP project
-            var domainCsprojFile = SearchFileInDirectory(baseDirectory, "*.Domain.csproj", excludeDirectories);
-            if (domainCsprojFile == null) throw new NotSupportedException($"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {baseDirectory}");
+            var domainCsprojFile = SearchFileInDirectory(BaseDirectory, "*.Domain.csproj", ExcludeDirectories);
+            if (domainCsprojFile == null)
+                throw new NotSupportedException(
+                    $"Cannot find the domain project file. Make sure it is a valid ABP project. Directory: {BaseDirectory}");
 
             var fileName = Path.GetFileName(domainCsprojFile);
             var fullName = fileName.RemovePostFix(".Domain.csproj");
 
             UiFramework uiFramework;
-            if (FileExistsInDirectory(baseDirectory, "*.cshtml", excludeDirectories))
+            if (FileExistsInDirectory(BaseDirectory, "*.cshtml", ExcludeDirectories))
             {
                 uiFramework = UiFramework.RazorPages;
             }
-            else if (FileExistsInDirectory(baseDirectory, "app.module.ts", excludeDirectories))
+            else if (FileExistsInDirectory(BaseDirectory, "app.module.ts", ExcludeDirectories))
             {
                 uiFramework = UiFramework.Angular;
             }
             else
             {
                 uiFramework = UiFramework.None;
-
             }
 
-            string aspNetCoreDir = Path.Combine(baseDirectory, "aspnet-core");
+            var aspNetCoreDir = Path.Combine(BaseDirectory, "aspnet-core");
             if (Directory.Exists(aspNetCoreDir))
             {
                 context.SetVariable(VariableNames.AspNetCoreDir, aspNetCoreDir);
             }
             else
             {
-                context.SetVariable(VariableNames.AspNetCoreDir, baseDirectory);
+                context.SetVariable(VariableNames.AspNetCoreDir, BaseDirectory);
             }
+
             EnsureSlnFileExists(context, fullName);
 
             var tiered = false;
             if (templateType == TemplateType.Application)
             {
-                tiered = FileExistsInDirectory(baseDirectory, "*.IdentityServer.csproj", excludeDirectories);
+                tiered = FileExistsInDirectory(BaseDirectory, "*.IdentityServer.csproj", ExcludeDirectories);
             }
 
-            var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered);
+            var projectInfo = new ProjectInfo(BaseDirectory, aspNetCoreDir, fullName, templateType, uiFramework, tiered);
 
-            context.SetLastResult(projectInfo);
+            context.Output = projectInfo;
+            Output = projectInfo;
             context.SetVariable("ProjectInfo", projectInfo);
             LogOutput(() => projectInfo);
 
             return Done();
         }
 
-        private void EnsureSlnFileExists(WorkflowExecutionContext context, string projectName)
+        private void EnsureSlnFileExists(ActivityExecutionContext context, string projectName)
         {
-            string aspNetCoreDir = context.GetVariable<string>(VariableNames.AspNetCoreDir);
-            string slnFile = Path.Combine(aspNetCoreDir, $"{projectName}.sln");
+            var aspNetCoreDir = context.GetVariable<string>(VariableNames.AspNetCoreDir)!;
+            var slnFile = Path.Combine(aspNetCoreDir, $"{projectName}.sln");
             if (!File.Exists(slnFile))
             {
-                throw new FileNotFoundException($"The solution file '{projectName}.sln' is not found in '{aspNetCoreDir}'. Make sure you specific the right folder.");
+                throw new FileNotFoundException(
+                    $"The solution file '{projectName}.sln' is not found in '{aspNetCoreDir}'. Make sure you specific the right folder.");
             }
         }
     }

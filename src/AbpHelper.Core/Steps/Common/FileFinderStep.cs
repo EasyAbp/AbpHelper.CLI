@@ -1,65 +1,88 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
+    [Activity(
+        Category = "FileFinderStep",
+        Description = "FileFinderStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class FileFinderStep : StepWithOption
     {
         public const string DefaultFileParameterName = "FileFinderResult";
 
-        public WorkflowExpression<string> SearchFileName
+        [ActivityInput(
+            Hint = "SearchFileName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public string SearchFileName
         {
-            get => GetState<WorkflowExpression<string>>();
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> ResultVariableName
+        [ActivityInput(
+            Hint = "ResultVariableName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public string ResultVariableName
         {
-            get => GetState(() => new LiteralExpression(DefaultFileParameterName));
+            get => GetState<string>(() => DefaultFileParameterName);
             set => SetState(value);
         }
 
-        public WorkflowExpression<bool> ErrorIfNotFound
+        [ActivityInput(
+            Hint = "ErrorIfNotFound",
+            UIHint = ActivityInputUIHints.Checkbox,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public bool ErrorIfNotFound
         {
-            get => GetState(() => new JavaScriptExpression<bool>("true"));
+            get => GetState(() => true);
             set => SetState(value);
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var resultVariableName = await context.EvaluateAsync(ResultVariableName, cancellationToken);
-            var baseDirectory = await context.EvaluateAsync(BaseDirectory, cancellationToken);
-            LogInput(() => baseDirectory);
-            var excludeDirectories = await context.EvaluateAsync(ExcludeDirectories, cancellationToken);
-            LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
-            var searchFileName = await context.EvaluateAsync(SearchFileName, cancellationToken);
-            LogInput(() => searchFileName);
-            var errorIfNotFound = await context.EvaluateAsync(ErrorIfNotFound, cancellationToken);
-            LogInput(() => errorIfNotFound);
+            BaseDirectory ??= context.GetVariable<string>(BaseDirectoryVariableName)!;
 
-            var files = SearchFilesInDirectory(baseDirectory, searchFileName, excludeDirectories);
+            LogInput(() => SearchFileName);
+            LogInput(() => ResultVariableName);
+            LogInput(() => ErrorIfNotFound);
+            LogInput(() => ExcludeDirectories, string.Join("; ", ExcludeDirectories));
+            LogInput(() => BaseDirectory);
+            LogInput(() => Overwrite);
+
+            var files = SearchFilesInDirectory(BaseDirectory, SearchFileName, ExcludeDirectories);
 
             var filePathName = files.SingleOrDefault();
 
-            context.SetLastResult(filePathName);
-            context.SetVariable(resultVariableName, filePathName);
+            context.Output = filePathName ?? string.Empty;
+            context.SetVariable(ResultVariableName, filePathName);
             if (filePathName == null)
             {
-                if (errorIfNotFound) throw new FileNotFoundException(searchFileName);
-                LogOutput(() => filePathName, $"File: '{filePathName}' not found, stored 'null' in parameter: '{ResultVariableName}'");
+                if (ErrorIfNotFound) throw new FileNotFoundException(SearchFileName);
+                LogOutput(() => filePathName,
+                    $"File: '{filePathName}' not found, stored 'null' in parameter: '{ResultVariableName}'");
             }
             else
             {
-                LogOutput(() => filePathName, $"Found file: '{filePathName}', stored in parameter: '{ResultVariableName}'");
+                LogOutput(() => filePathName,
+                    $"Found file: '{filePathName}', stored in parameter: '{ResultVariableName}'");
             }
 
-            return Done();
+            return Done(filePathName);
         }
     }
 }

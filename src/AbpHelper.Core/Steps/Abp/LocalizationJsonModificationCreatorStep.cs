@@ -1,37 +1,50 @@
 ﻿using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Core.Steps.Common;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Newtonsoft.Json.Linq;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp
 {
+    [Activity(
+        Category = "LocalizationJsonModificationCreatorStep",
+        Description = "LocalizationJsonModificationCreatorStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class LocalizationJsonModificationCreatorStep : Step
     {
-        public WorkflowExpression<string> TargetFile
+        [ActivityInput(
+            Hint = "TargetFile",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string TargetFile
         {
-            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        public WorkflowExpression<string> LocalizationJson
+        [ActivityInput(
+            Hint = "LocalizationJson",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string LocalizationJson
         {
-            get => GetState<WorkflowExpression<string>>();
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            var targetFile = await context.EvaluateAsync(TargetFile, cancellationToken);
-            LogInput(() => targetFile);
-            var localizations = await context.EvaluateAsync(LocalizationJson, cancellationToken);
-            var jNew = JObject.Parse(localizations);
+            LogInput(() => TargetFile);
+            var jNew = JObject.Parse(LocalizationJson);
 
-            var jsonText = await File.ReadAllTextAsync(targetFile);
+            var jsonText = await File.ReadAllTextAsync(TargetFile);
             var jDoc = JObject.Parse(jsonText);
             var jTexts = jDoc["texts"] ?? jDoc["Texts"]!;
 
@@ -39,7 +52,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 if (jTexts[kv.Key] == null) // Prevent inserting duplicate localization
                     jTexts[kv.Key] = kv.Value;
 
-            await File.WriteAllTextAsync(targetFile, jDoc.ToString());
+            await File.WriteAllTextAsync(TargetFile, jDoc.ToString());
 
             return Done();
         }

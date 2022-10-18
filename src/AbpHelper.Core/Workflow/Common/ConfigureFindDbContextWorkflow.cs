@@ -1,37 +1,48 @@
-﻿using EasyAbp.AbpHelper.Core.Steps.Common;
+﻿using EasyAbp.AbpHelper.Core.Models;
+using EasyAbp.AbpHelper.Core.Steps.Common;
 using Elsa;
-using Elsa.Activities.ControlFlow.Activities;
-using Elsa.Scripting.JavaScript;
-using Elsa.Services;
+using Elsa.Activities.ControlFlow;
+using Elsa.Builders;
 
 namespace EasyAbp.AbpHelper.Core.Workflow.Common
 {
     public static class ConfigureFindDbContextWorkflow
     {
-        public static IActivityBuilder AddConfigureFindDbContextWorkflow(this IActivityBuilder builder, string nextActivityName)
+        public static IActivityBuilder AddConfigureFindDbContextWorkflow(this IActivityBuilder builder,
+            string nextActivityName)
         {
             return builder
-                    .AddConfigureHasDbMigrationsWorkflow("FindDbContext")
-                    .Then<IfElse>(
-                        ifElse => ifElse.ConditionExpression = new JavaScriptExpression<bool>(VariableNames.HasDbMigrations),
-                        ifElse =>
-                        {
-                            ifElse
-                                .When(OutcomeNames.True)
-                                .Then<FileFinderStep>(
-                                    step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}MigrationsDbContext.cs`"); }
-                                )
-                                .Then(nextActivityName)
+                .AddConfigureHasDbMigrationsWorkflow("FindDbContext")
+                .Then<If>(
+                    ifElse => ifElse.Set(x => x.Condition, x => x.GetVariable<bool>(VariableNames.HasDbMigrations)),
+                    ifElse =>
+                    {
+                        ifElse
+                            .When(OutcomeNames.True)
+                            .Then<FileFinderStep>(step =>
+                            {
+                                step.Set(x => x.SearchFileName, x =>
+                                {
+                                    var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                    return $"{projectInfo.Name}MigrationsDbContext.cs";
+                                });
+                            })
+                            .ThenNamed(nextActivityName)
                             ;
-                            ifElse
-                                .When(OutcomeNames.False)
-                                .Then<FileFinderStep>(
-                                    step => { step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}DbContext.cs`"); }
-                                )
-                                .Then(nextActivityName)
+                        ifElse
+                            .When(OutcomeNames.False)
+                            .Then<FileFinderStep>(step =>
+                            {
+                                step.Set(x => x.SearchFileName, x =>
+                                {
+                                    var projectInfo = x.GetVariable<ProjectInfo>("ProjectInfo")!;
+                                    return $"{projectInfo.Name}DbContext.cs";
+                                });
+                            })
+                            .ThenNamed(nextActivityName)
                             ;
-                        }
-                    ).WithName("FindDbContext");
+                    }
+                ).WithName("FindDbContext");
             ;
         }
     }

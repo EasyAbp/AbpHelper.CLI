@@ -3,26 +3,31 @@ using System.Linq;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Models;
-using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.Attributes;
 using Elsa.Services.Models;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 {
+    [Activity(
+        Category = "MenuNameStep",
+        Description = "MenuNameStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class MenuNameStep : CSharpModificationCreatorStep
     {
-        public MenuNameStep([NotNull] TextGenerator textGenerator) : base(textGenerator)
+        public MenuNameStep(TextGenerator textGenerator) : base(textGenerator)
         {
         }
 
-        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(WorkflowExecutionContext context, CompilationUnitSyntax rootUnit)
+        protected override IList<ModificationBuilder<CSharpSyntaxNode>> CreateModifications(
+            ActivityExecutionContext context, CompilationUnitSyntax rootUnit)
         {
-            var model = context.GetVariable<object>("Model");
-            string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
-            string addMenuNameText = TextGenerator.GenerateByTemplateName(templateDir, "Menus_AddMenuName", model);
-            
+            var addMenuNameText = TextGenerator.GenerateByTemplateName(TemplateDirectory!, "Menus_AddMenuName",
+                context.GetVariable<object>("Model")!);
+
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {
                 new InsertionBuilder<CSharpSyntaxNode>(

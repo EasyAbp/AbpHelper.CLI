@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Extensions;
 using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Common;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,26 +18,49 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp
 {
+    [Activity(
+        Category = "EntityParserStep",
+        Description = "EntityParserStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class EntityParserStep : Step
     {
-        public WorkflowExpression<string> EntityFile
+        [ActivityInput(
+            Hint = "EntityFile",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string? EntityFile
         {
-            get => GetState(() => new JavaScriptExpression<string>(FileFinderStep.DefaultFileParameterName));
+            get => GetState<string?>();
             set => SetState(value);
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        [ActivityInput(
+            Hint = "ProjectInfo",
+            UIHint = ActivityInputUIHints.MultiLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public ProjectInfo? ProjectInfo
         {
-            var entityFile = await context.EvaluateAsync(EntityFile, cancellationToken);
-            LogInput(() => entityFile);
-            var projectInfo = context.GetVariable<ProjectInfo>("ProjectInfo");
+            get => GetState<ProjectInfo?>();
+            set => SetState(value);
+        }
 
-            var sourceText = await File.ReadAllTextAsync(entityFile, cancellationToken);
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
+        {
+            EntityFile ??= context.GetVariable<string>(FileFinderStep.DefaultFileParameterName)!;
+            ProjectInfo ??= context.GetVariable<ProjectInfo>("ProjectInfo")!;
+
+            LogInput(() => EntityFile);
+            LogInput(() => ProjectInfo);
+
+            var sourceText = await File.ReadAllTextAsync(EntityFile, context.CancellationToken);
 
             try
             {
-                var tree = CSharpSyntaxTree.ParseText(sourceText, cancellationToken: cancellationToken);
-                var root = tree.GetCompilationUnitRoot(cancellationToken: cancellationToken);
+                var tree = CSharpSyntaxTree.ParseText(sourceText, cancellationToken: context.CancellationToken);
+                var root = tree.GetCompilationUnitRoot(cancellationToken: context.CancellationToken);
                 if (root.ContainsDiagnostics)
                 {
                     // source contains syntax error
@@ -55,7 +79,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 var @namespace = namespaceSyntax?.Name.ToString();
 
                 var relativeDirectory = @namespace
-                    .RemovePreFix(projectInfo.FullName + ".")
+                    .RemovePreFix(ProjectInfo.FullName + ".")
                     .Replace('.', '/');
 
                 var classDeclarationSyntax = root
@@ -77,11 +101,13 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 if (genericNameSyntax == null)
                 {
                     // No generic parameter -> Entity with Composite Keys
-                    baseType = baseList.Descendants<SimpleBaseTypeSyntax>().Single(node => !node.ToFullString().StartsWith("I")).Type.ToString();
+                    baseType = baseList.Descendants<SimpleBaseTypeSyntax>()
+                        .Single(node => !node.ToFullString().StartsWith("I")).Type.ToString();
                     primaryKey = null;
 
                     // Get composite keys
-                    var getKeysMethod = root.Descendants<MethodDeclarationSyntax>().Single(m => m.Identifier.ToString() == "GetKeys");
+                    var getKeysMethod = root.Descendants<MethodDeclarationSyntax>()
+                        .Single(m => m.Identifier.ToString() == "GetKeys");
                     keyNames = getKeysMethod
                         .Descendants<InitializerExpressionSyntax>()
                         .First()
@@ -92,14 +118,15 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 {
                     // Normal entity
                     baseType = genericNameSyntax.Identifier.ToString();
-                    primaryKey = genericNameSyntax.Descendants<TypeArgumentListSyntax>().Single().Arguments[0].ToString();
+                    primaryKey = genericNameSyntax.Descendants<TypeArgumentListSyntax>().Single().Arguments[0]
+                        .ToString();
                 }
 
                 var properties = root.Descendants<PropertyDeclarationSyntax>()
                         .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()))
                         .ToList()
                     ;
-                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
+                var entityInfo = new EntityInfo(@namespace!, className, baseType, primaryKey, relativeDirectory);
                 entityInfo.Properties.AddRange(properties);
                 if (keyNames != null)
                 {
@@ -108,7 +135,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                         keyNames.Select(k => properties.Single(prop => prop.Name == k)));
                 }
 
-                context.SetLastResult(entityInfo);
+                context.Output = entityInfo;
                 context.SetVariable("EntityInfo", entityInfo);
                 LogOutput(() => entityInfo);
 

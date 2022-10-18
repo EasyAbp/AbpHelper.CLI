@@ -4,9 +4,10 @@ namespace EasyAbp.AbpHelper.Core.Models
 {
     public class ProjectInfo
     {
-        public ProjectInfo(string baseDirectory, string fullName, TemplateType templateType, UiFramework uiFramework, bool tiered)
+        public ProjectInfo(string baseDirectory, string aspNetCoreDir, string fullName, TemplateType templateType, UiFramework uiFramework, bool tiered)
         {
             BaseDirectory = baseDirectory;
+            AspNetCoreDir = aspNetCoreDir;
             TemplateType = templateType;
             UiFramework = uiFramework;
             Tiered = tiered;
@@ -14,6 +15,7 @@ namespace EasyAbp.AbpHelper.Core.Models
         }
 
         public string BaseDirectory { get; }
+        public string AspNetCoreDir { get; }
         public string FullName { get; }
         public string Name => FullName.Split('.').Last();
         public TemplateType TemplateType { get; }

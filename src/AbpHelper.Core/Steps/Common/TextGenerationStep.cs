@@ -1,40 +1,55 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Generator;
 using EasyAbp.AbpHelper.Core.Workflow;
+using Elsa;
+using Elsa.ActivityResults;
+using Elsa.Attributes;
+using Elsa.Design;
 using Elsa.Expressions;
-using Elsa.Results;
-using Elsa.Scripting.JavaScript;
 using Elsa.Services.Models;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Common
 {
+    [Activity(
+        Category = "TextGenerationStep",
+        Description = "TextGenerationStep",
+        Outcomes = new[] { OutcomeNames.Done }
+    )]
     public class TextGenerationStep : Step
     {
         private readonly TextGenerator _textGenerator;
         public const string DefaultGeneratedTextParameterName = "GeneratedText";
 
-        public WorkflowExpression<string> TemplateDirectory
+        [ActivityInput(
+            Hint = "TemplateDirectory",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
+        public string? TemplateDirectory
         {
-            get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>(VariableNames.TemplateDirectory));
+            get => GetState<string?>();
             set => SetState(value);
         }
-        
+
+        [ActivityInput(
+            Hint = "TemplateName",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.JavaScript, SyntaxNames.Liquid }
+        )]
         public string TemplateName
         {
-            get => GetState<string>();
+            get => GetState<string>()!;
             set => SetState(value);
         }
 
-        public WorkflowExpression<object> Model
+        [ActivityInput(
+            Hint = "GeneratedTextKey",
+            UIHint = ActivityInputUIHints.SingleLine,
+            SupportedSyntaxes = new[] { SyntaxNames.Json, SyntaxNames.JavaScript }
+        )]
+        public string GeneratedTextKey
         {
-            get => GetState<WorkflowExpression<object>>(() => new JavaScriptExpression<object>("Model"));
-            set => SetState(value);
-        }
-
-        public WorkflowExpression<string> GeneratedTextKey
-        {
-            get => GetState(() => new LiteralExpression(DefaultGeneratedTextParameterName));
+            get => GetState(() => DefaultGeneratedTextParameterName);
             set => SetState(value);
         }
 
@@ -43,20 +58,19 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             _textGenerator = textGenerator;
         }
 
-        protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context, CancellationToken cancellationToken)
+        protected override async ValueTask<IActivityExecutionResult> OnExecuteAsync(ActivityExecutionContext context)
         {
-            string templateDir = await context.EvaluateAsync(TemplateDirectory, cancellationToken);
-            LogInput(() => templateDir);
+            TemplateDirectory ??= context.GetVariable<string>(VariableNames.TemplateDirectory)!;
+
+            LogInput(() => TemplateDirectory);
             LogInput(() => TemplateName);
-            var model = await context.EvaluateAsync(Model, cancellationToken);
-            LogInput(() => model);
-            var generatedTextKey = await context.EvaluateAsync(GeneratedTextKey, cancellationToken);
             LogInput(() => GeneratedTextKey);
 
-            var text = _textGenerator.GenerateByTemplateName(templateDir, TemplateName, model);
+            var text = _textGenerator.GenerateByTemplateName(TemplateDirectory, TemplateName,
+                context.GetVariable<object>("Model")!);
 
-            context.SetLastResult(text);
-            context.SetVariable(generatedTextKey, text);
+            context.Output = text;
+            context.SetVariable(GeneratedTextKey, text);
             LogOutput(() => text, $"Length: {text.Length}");
 
             return Done();
