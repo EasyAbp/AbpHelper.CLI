@@ -10,16 +10,24 @@ namespace EasyAbp.AbpHelper.Core.Steps
 {
     public abstract class StepWithOption : Step
     {
-        private static readonly Dictionary<string, IReadOnlyList<string>> ExcludeDirectorySearchCache = new Dictionary<string, IReadOnlyList<string>>();
+        private static readonly Dictionary<string, IReadOnlyList<string>> ExcludeDirectorySearchCache =
+            new Dictionary<string, IReadOnlyList<string>>();
 
         protected virtual string OptionVariableName => CommandConsts.OptionVariableName;
         protected virtual string BaseDirectoryVariableName => CommandConsts.BaseDirectoryVariableName;
+        protected virtual string ProjectNameVariableName => CommandConsts.ProjectNameVariableName;
         protected virtual string ExcludeDirectoriesVariableName => CommandConsts.ExcludeDirectoriesVariableName;
         protected virtual string OverwriteVariableName => CommandConsts.OverwriteVariableName;
 
         public WorkflowExpression<string[]> ExcludeDirectories
         {
             get => GetState(() => new JavaScriptExpression<string[]>(ExcludeDirectoriesVariableName));
+            set => SetState(value);
+        }
+
+        public WorkflowExpression<string> ProjectName
+        {
+            get => GetState(() => new JavaScriptExpression<string>(ProjectNameVariableName));
             set => SetState(value);
         }
 
@@ -35,7 +43,8 @@ namespace EasyAbp.AbpHelper.Core.Steps
             set => SetState(value);
         }
 
-        protected virtual bool FileExistsInDirectory(string directory, string pattern, params string[] excludedDirectories)
+        protected virtual bool FileExistsInDirectory(string directory, string pattern,
+            params string[] excludedDirectories)
         {
             return !SearchFileInDirectory(directory, pattern, excludedDirectories).IsNullOrWhiteSpace();
         }
@@ -69,10 +78,12 @@ namespace EasyAbp.AbpHelper.Core.Steps
                 GetExcludedDirectorySearchCacheKey(directory, excludedDirectories),
                 () => GetDirectoryFullPath(directory, excludedDirectories));
 
-            return SearchInDirectoryRecursive(directory, pattern, new HashSet<string>(excludedDirectories), Directory.EnumerateFiles);
+            return SearchInDirectoryRecursive(directory, pattern, new HashSet<string>(excludedDirectories),
+                Directory.EnumerateFiles);
         }
 
-        private IEnumerable<string> SearchInDirectoryRecursive(string directory, string pattern, HashSet<string> actualExcluded, Func<string, string, SearchOption, IEnumerable<string>> searchFunc)
+        private IEnumerable<string> SearchInDirectoryRecursive(string directory, string pattern,
+            HashSet<string> actualExcluded, Func<string, string, SearchOption, IEnumerable<string>> searchFunc)
         {
             foreach (var result in searchFunc(directory, pattern, SearchOption.TopDirectoryOnly))
             {
@@ -94,7 +105,8 @@ namespace EasyAbp.AbpHelper.Core.Steps
             }
         }
 
-        private string? FindInDirectoryRecursive(string directory, string pattern, HashSet<string> actualExcluded, Func<string, string, SearchOption, IEnumerable<string>> searchFunc)
+        private string? FindInDirectoryRecursive(string directory, string pattern, HashSet<string> actualExcluded,
+            Func<string, string, SearchOption, IEnumerable<string>> searchFunc)
         {
             var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
             if (!result.IsNullOrWhiteSpace())
@@ -139,8 +151,8 @@ namespace EasyAbp.AbpHelper.Core.Steps
                 }
 
                 foreach (var d in Directory
-                    .GetDirectories(directory, p,
-                        all ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+                             .GetDirectories(directory, p,
+                                 all ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                 {
                     list.Add(d);
                 }
