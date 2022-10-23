@@ -102,7 +102,7 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
         // TODO: AbpHelper generated
         return (await base.CreateFilteredQueryAsync(input))
             {{~ for prop in EntityInfo.Properties ~}}
-            {{~ if prop | abp.is_ignore_property; continue; end ~}}
+            {{~ if (prop | abp.is_ignore_property) || string.starts_with prop.Type "List<"; continue; end ~}}
             {{~ if prop.Type == "string" ~}}
             .WhereIf(!input.{{ prop.Name }}.IsNullOrWhiteSpace(), x => x.{{ prop.Name }}.Contains(input.{{ prop.Name }}))
             {{~ else ~}}
