@@ -15,7 +15,8 @@ using System;
     crudClassName = "CrudAppService"
 else
     crudClassName = "AbstractKeyCrudAppService"
-~}}
+end ~}}
+{{~ if EntityInfo.CompositeKeyName || !Option.SkipGetListInputDto~}}
 using System.Linq;
 using System.Threading.Tasks;
 {{~ end -}}
@@ -25,7 +26,9 @@ using System.Threading.Tasks;
 using {{ ProjectInfo.FullName }}.Permissions;
 {{~ end ~}}
 using {{ EntityInfo.Namespace }}.Dtos;
+{{~ if Option.SkipGetListInputDto ~}}
 using Volo.Abp.Application.Dtos;
+{{~ end ~}}
 using Volo.Abp.Application.Services;
 {{~ if Option.SkipCustomRepository ~}}
 using Volo.Abp.Domain.Repositories;
@@ -33,7 +36,14 @@ using Volo.Abp.Domain.Repositories;
 
 namespace {{ EntityInfo.Namespace }};
 
-public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo.Name }}, {{ DtoInfo.ReadTypeName }}, {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, PagedAndSortedResultRequestDto, {{ DtoInfo.CreateTypeName }}, {{ DtoInfo.UpdateTypeName }}>,
+{{~
+    if !Option.SkipGetListInputDto
+        TGetListInput = EntityInfo.Name + "GetListInput"
+    else
+        TGetListInput = "PagedAndSortedResultRequestDto"
+end ~}}
+
+public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo.Name }}, {{ DtoInfo.ReadTypeName }}, {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, {{TGetListInput}}, {{ DtoInfo.CreateTypeName }}, {{ DtoInfo.UpdateTypeName }}>,
     I{{ EntityInfo.Name }}AppService
 {
     {{~ if !Option.SkipPermissions ~}}
@@ -83,6 +93,23 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
     {
         // TODO: AbpHelper generated
         return query.OrderBy(e => e.{{ EntityInfo.CompositeKeys[0].Name }});
+    }
+    {{~ end ~}}
+
+    {{~ if !Option.SkipGetListInputDto ~}}
+    protected override async Task<IQueryable<{{ EntityInfo.Name }}>> CreateFilteredQueryAsync({{ EntityInfo.Name }}GetListInput input)
+    {
+        // TODO: AbpHelper generated
+        return (await base.CreateFilteredQueryAsync(input))
+            {{~ for prop in EntityInfo.Properties ~}}
+            {{~ if (prop | abp.is_ignore_property) || string.starts_with prop.Type "List<"; continue; end ~}}
+            {{~ if prop.Type == "string" ~}}
+            .WhereIf(!input.{{ prop.Name }}.IsNullOrWhiteSpace(), x => x.{{ prop.Name }}.Contains(input.{{ prop.Name }}))
+            {{~ else ~}}
+            .WhereIf(input.{{ prop.Name }} != null, x => x.{{ prop.Name }} == input.{{ prop.Name }})
+            {{~ end ~}}
+            {{~ end ~}}
+            ;
     }
     {{~ end ~}}
 }

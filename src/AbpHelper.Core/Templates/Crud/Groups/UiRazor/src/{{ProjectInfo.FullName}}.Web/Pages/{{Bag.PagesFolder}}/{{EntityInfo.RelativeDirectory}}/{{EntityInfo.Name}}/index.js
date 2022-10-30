@@ -1,5 +1,25 @@
 {{~ if Bag.PagesFolder; pagesFolder = Bag.PagesFolder + "/"; end ~}}
 $(function () {
+{{~ if !Option.SkipGetListInputDto ~}}
+
+    $("#{{ EntityInfo.Name }}Filter :input").on('input', function () {
+        dataTable.ajax.reload();
+    });
+
+    $('#{{ EntityInfo.Name }}Filter div').addClass('col-sm-3').parent().addClass('row');
+
+    var getFilter = function () {
+        var input = {};
+        $("#{{ EntityInfo.Name }}Filter")
+            .serializeArray()
+            .forEach(function (data) {
+                if (data.value != '') {
+                    input[abp.utils.toCamelCase(data.name.replace(/{{ EntityInfo.Name }}Filter./g, ''))] = data.value;
+                }
+            })
+        return input;
+    };
+{{~ end ~}}
 
     var l = abp.localization.getResource('{{ ProjectInfo.Name }}');
 
@@ -11,11 +31,11 @@ $(function () {
         processing: true,
         serverSide: true,
         paging: true,
-        searching: false,
+        searching: false,{{ if !Option.SkipGetListInputDto;"//disable default searchbox"; end}}
         autoWidth: false,
         scrollCollapse: true,
         order: [[0, "asc"]],
-        ajax: abp.libs.datatables.createAjax(service.getList),
+        ajax: abp.libs.datatables.createAjax(service.getList{{- if !Option.SkipGetListInputDto;",getFilter"; end-}}),
         columnDefs: [
             {
                 rowAction: {
@@ -66,7 +86,7 @@ $(function () {
                 }
             },
             {{~ for prop in EntityInfo.Properties ~}}
-            {{~ if prop | abp.is_ignore_property; continue; end ~}}
+            {{~ if prop | abp.is_ignore_property || string.starts_with prop.Type "List<"; continue; end ~}}
             {
                 title: l('{{ EntityInfo.Name + prop.Name }}'),
                 data: "{{ prop.Name | abp.camel_case }}"
