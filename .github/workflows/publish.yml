@@ -54,13 +54,13 @@ jobs:
           del *.TestBase.*
           dir -name
 
-      - name: dotnet nuget push to GitHub
-        uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
-        with:
-          nupkg-path:  'dest\*.nupkg'
-          repo-owner:  'EasyAbp'
-          gh-user:  'EasyAbp'
-          token:  ${{ secrets.GITHUB_TOKEN }}
+#      - name: dotnet nuget push to GitHub
+#        uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
+#        with:
+#          nupkg-path:  'dest\*.nupkg'
+#          repo-owner:  'EasyAbp'
+#          gh-user:  'EasyAbp'
+#          token:  ${{ secrets.GITHUB_TOKEN }}
 
       - name: dotnet nuget push to NuGet
         run: dotnet nuget push dest\*.nupkg -k ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
