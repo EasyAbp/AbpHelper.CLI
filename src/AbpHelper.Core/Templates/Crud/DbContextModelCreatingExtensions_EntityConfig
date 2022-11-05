@@ -21,7 +21,7 @@
 
         builder.Entity<{{ EntityInfo.Name }}>(b =>
         {
-            b.ToTable(options.TablePrefix + "{{ EntityInfo.NamePluralized }}", options.Schema);
+            b.ToTable({{ ProjectInfo.Name }}DbProperties.DbTablePrefix + "{{ EntityInfo.NamePluralized }}", {{ ProjectInfo.Name }}DbProperties.DbSchema);
             b.ConfigureByConvention(); 
             {{ configCompositeKey }}
             /* Configure more properties here */
