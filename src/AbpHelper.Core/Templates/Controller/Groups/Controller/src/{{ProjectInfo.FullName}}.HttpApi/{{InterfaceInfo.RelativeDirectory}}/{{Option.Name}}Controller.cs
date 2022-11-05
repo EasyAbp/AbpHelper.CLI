@@ -13,13 +13,10 @@ using Volo.Abp.Application.Dtos;
 
 namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }};
 
-{{~ for attribute in ClassInfo.Attributes ~}}
-{{~ if attribute | string.starts_with "[RemoteService"; defined_remote_service = attribute; end ~}}
-{{~ end ~}}
-{{~ if defined_remote_service ~}}
-{{ defined_remote_service }}
-{{~ else ~}}
-[RemoteService(Name = "{{ ProjectInfo.Name }}{{ Option.Name }}")]
+{{~ if ProjectInfo.TemplateType == 'Application' ~}}
+[RemoteService(Name = "Default")]
+{{~ else if ProjectInfo.TemplateType == 'Module' ~}}
+[RemoteService(Name = {{ ProjectInfo.Name }}RemoteServiceConsts.RemoteServiceName)]
 {{~ end ~}}
 {{~ if ProjectInfo.TemplateType == 'Application' ~}}
 [Route("/api/app/{{ Option.Name | abp.kebab_case }}")]
