@@ -55,11 +55,11 @@
     <abp-card-body>
         {{~ if !Option.SkipGetListInputDto ~}}
         <abp-row class="mb-3">
-            <a abp-collapse-id="{{ EntityInfo.Name }}collapse" class="text-secondary">@L["TableFilter"] </a>
+            <a abp-collapse-id="{{ EntityInfo.Name }}Collapse" class="text-secondary">@L["TableFilter"] </a>
         </abp-row>
         {{~ end ~}}
         {{~ if !Option.SkipGetListInputDto ~}}
-        <abp-collapse-body id="{{ EntityInfo.Name }}collapse">
+        <abp-collapse-body id="{{ EntityInfo.Name }}Collapse">
             <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false"/>
             <hr />
         </abp-collapse-body>
