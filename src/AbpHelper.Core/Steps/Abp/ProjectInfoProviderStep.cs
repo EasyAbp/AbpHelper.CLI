@@ -22,7 +22,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
 
             TemplateType templateType;
-            if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories))
+            if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories) || FileExistsInDirectory(baseDirectory, "*.Installer.csproj", excludeDirectories))
             {
                 templateType = TemplateType.Module;
             }
