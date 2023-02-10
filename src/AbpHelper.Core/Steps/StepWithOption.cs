@@ -44,100 +44,136 @@ namespace EasyAbp.AbpHelper.Core.Steps
         }
 
         protected virtual bool FileExistsInDirectory(string directory, string pattern,
-            params string[] excludedDirectories)
+            ICollection<string> excludedDirectories, bool includeSubModules = false)
         {
-            return !SearchFileInDirectory(directory, pattern, excludedDirectories).IsNullOrWhiteSpace();
+            return !SearchFileInDirectory(directory, pattern, excludedDirectories, includeSubModules).IsNullOrWhiteSpace();
         }
 
         protected virtual string? SearchFileInDirectory(string directory, string pattern,
-            params string[] excludedDirectories)
+            ICollection<string> excludedDirectories, bool includeSubModules = false)
         {
             var actualExcluded = ExcludeDirectorySearchCache.GetOrAdd(
                 GetExcludedDirectorySearchCacheKey(directory, excludedDirectories),
                 () => GetDirectoryFullPath(directory, excludedDirectories));
 
-            return FindInDirectoryRecursive(directory, pattern, new HashSet<string>(actualExcluded),
-                Directory.EnumerateFiles);
+            var targetDirectories = new Queue<string>();
+            targetDirectories.Enqueue(directory);
+
+            return FindInDirectoryInQueue(targetDirectories, pattern, new HashSet<string>(actualExcluded),
+                Directory.EnumerateFiles, includeSubModules);
         }
 
         protected virtual string? SearchDirectoryInDirectory(string directory, string pattern,
-            params string[] excludedDirectories)
+            ICollection<string> excludedDirectories, bool includeSubModules = false)
         {
             var actualExcluded = ExcludeDirectorySearchCache.GetOrAdd(
                 GetExcludedDirectorySearchCacheKey(directory, excludedDirectories),
                 () => GetDirectoryFullPath(directory, excludedDirectories));
 
-            return FindInDirectoryRecursive(directory, pattern, new HashSet<string>(actualExcluded),
-                Directory.EnumerateDirectories);
+            var targetDirectories = new Queue<string>();
+            targetDirectories.Enqueue(directory);
+
+            return FindInDirectoryInQueue(targetDirectories, pattern, new HashSet<string>(actualExcluded),
+                Directory.EnumerateDirectories, includeSubModules);
         }
 
         protected virtual IEnumerable<string> SearchFilesInDirectory(string directory, string pattern,
-            params string[] excludedDirectories)
+            ICollection<string> excludedDirectories, bool includeSubModules = false)
         {
             var actualExcluded = ExcludeDirectorySearchCache.GetOrAdd(
                 GetExcludedDirectorySearchCacheKey(directory, excludedDirectories),
                 () => GetDirectoryFullPath(directory, excludedDirectories));
 
-            return SearchInDirectoryRecursive(directory, pattern, new HashSet<string>(excludedDirectories),
-                Directory.EnumerateFiles);
+            var targetDirectories = new Queue<string>();
+            targetDirectories.Enqueue(directory);
+
+            return SearchInDirectoryRecursive(targetDirectories, pattern, new HashSet<string>(actualExcluded),
+                Directory.EnumerateFiles, includeSubModules);
         }
 
-        private IEnumerable<string> SearchInDirectoryRecursive(string directory, string pattern,
-            HashSet<string> actualExcluded, Func<string, string, SearchOption, IEnumerable<string>> searchFunc)
+        private static IEnumerable<string> SearchInDirectoryRecursive(Queue<string> queue, string pattern,
+            IReadOnlySet<string> actualExcluded, Func<string, string, SearchOption, IEnumerable<string>> searchFunc,
+            bool includeSubModules = false)
         {
-            foreach (var result in searchFunc(directory, pattern, SearchOption.TopDirectoryOnly))
+            var matchedSln = false;
+            while (queue.TryDequeue(out var directory))
             {
-                yield return result;
-            }
-
-            foreach (var d in Directory.EnumerateDirectories(directory))
-            {
-                if (actualExcluded.Contains(d))
+                if (!includeSubModules &&
+                    null != searchFunc(directory, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault())
                 {
-                    actualExcluded.Remove(d);
-                    continue;
+                    if (matchedSln)
+                    {
+                        continue;
+                    }
+
+                    matchedSln = true;
                 }
 
-                foreach (var result in SearchInDirectoryRecursive(d, pattern, actualExcluded, searchFunc))
+                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
+                if (!result.IsNullOrWhiteSpace())
                 {
-                    yield return result;
+                    if (result != null)
+                    {
+                        yield return result;
+                    }
+                }
+
+                foreach (var d in Directory.EnumerateDirectories(directory))
+                {
+                    if (actualExcluded.Contains(d))
+                    {
+                        continue;
+                    }
+
+                    queue.Enqueue(d);
                 }
             }
         }
 
-        private string? FindInDirectoryRecursive(string directory, string pattern, HashSet<string> actualExcluded,
-            Func<string, string, SearchOption, IEnumerable<string>> searchFunc)
+        private static string? FindInDirectoryInQueue(Queue<string> queue, string pattern,
+            IReadOnlySet<string> actualExcluded, Func<string, string, SearchOption, IEnumerable<string>> searchFunc,
+            bool includeSubModules = false)
         {
-            var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
-            if (!result.IsNullOrWhiteSpace())
+            var matchedSln = false;
+            while (queue.TryDequeue(out var directory))
             {
-                return result;
-            }
-
-            foreach (var d in Directory.EnumerateDirectories(directory))
-            {
-                if (actualExcluded.Contains(d))
+                if (!includeSubModules &&
+                    null != searchFunc(directory, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault())
                 {
-                    actualExcluded.Remove(d);
-                    continue;
+                    if (matchedSln)
+                    {
+                        continue;
+                    }
+
+                    matchedSln = true;
                 }
 
-                result = FindInDirectoryRecursive(d, pattern, actualExcluded, searchFunc);
+                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
                 if (!result.IsNullOrWhiteSpace())
                 {
                     return result;
+                }
+
+                foreach (var d in Directory.EnumerateDirectories(directory))
+                {
+                    if (actualExcluded.Contains(d))
+                    {
+                        continue;
+                    }
+
+                    queue.Enqueue(d);
                 }
             }
 
             return null;
         }
 
-        private string GetExcludedDirectorySearchCacheKey(string directory, string[] excludedDirectories)
+        private string GetExcludedDirectorySearchCacheKey(string directory, IEnumerable<string> excludedDirectories)
         {
             return $"{directory}{string.Join("", excludedDirectories)}";
         }
 
-        private IReadOnlyList<string> GetDirectoryFullPath(string directory, string[] patterns)
+        private IReadOnlyList<string> GetDirectoryFullPath(string directory, IEnumerable<string> patterns)
         {
             var list = new List<string>();
             foreach (var pattern in patterns)
