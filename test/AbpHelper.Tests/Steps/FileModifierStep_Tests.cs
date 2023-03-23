@@ -22,12 +22,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
         private readonly ITestOutputHelper _output;
         private readonly FileModifierStep _step;
 
-        private const string DefaultFileContents = @"1
-2
-3
-4
-5
-";
+        private const string DefaultFileContents = "1\r\n2\r\n3\r\n4\r\n5";
 
         private async Task<string> UsingTempFile(string contents, Func<string, Task> action)
         {
@@ -62,9 +57,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
-                    contents.ShouldBe(@"4
-5
-");
+                    contents.ShouldBe("4\r\n5\r\n");
                 });
             });
         }
@@ -86,13 +79,7 @@ namespace EasyApp.AbpHelper.Tests.Steps
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
-                    contents.ShouldBe(@"1
-2
-3
-4
-5
-abc
-");
+                    contents.ShouldBe("1\r\n2\r\n3\r\n4\r\n5\r\nabc\r\n");
                 });
             });
         }
@@ -114,13 +101,7 @@ abc
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
-                    contents.ShouldBe(@"abc
-1
-2
-3
-4
-5
-");
+                    contents.ShouldBe("abc\r\n1\r\n2\r\n3\r\n4\r\n5\r\n");
                 });
             });
         }
@@ -146,14 +127,7 @@ abc
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
-                    contents.ShouldBe(@"abc
-def
-1
-2
-3
-4
-5
-");
+                    contents.ShouldBe("abc\r\ndef\r\n1\r\n2\r\n3\r\n4\r\n5\r\n");
                 });
             });
         }
@@ -181,11 +155,7 @@ def
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
-                    contents.ShouldBe(@"a
-1
-b
-5
-c");
+                    contents.ShouldBe("a\r\n1\r\nb\r\n5\r\nc");
                 });
             });
         }
@@ -212,11 +182,7 @@ c");
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
-                    contents.ShouldBe(@"1
-a
-2
-b
-");
+                    contents.ShouldBe("1\r\na\r\n2\r\nb\r\n");
                 });
             });
         }
@@ -346,10 +312,7 @@ b
 
                     // Assert
                     var contents = await File.ReadAllTextAsync(file);
-                    contents.ShouldBe(@"abc
-4
-5
-");
+                    contents.ShouldBe("abc\r\n4\r\n5\r\n");
                 });
             });
         }
