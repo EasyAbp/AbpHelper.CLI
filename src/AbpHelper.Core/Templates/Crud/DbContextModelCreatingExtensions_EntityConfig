@@ -12,7 +12,7 @@
 
         builder.Entity<{{ EntityInfo.Name }}>(b =>
         {
-            b.ToTable({{ ProjectInfo.Name }}Consts.DbTablePrefix + "{{ EntityInfo.NamePluralized }}", {{ ProjectInfo.Name }}Consts.DbSchema);
+            b.ToTable({{ ProjectInfo.Name }}Consts.DbTablePrefix + "{{ EntityInfo.NamePluralized }}", {{ ProjectInfo.Name }}Consts.DbSchema, table => table.HasComment("{{ EntityInfo.Document }}"));
             b.ConfigureByConvention(); 
             {{ configCompositeKey }}
             /* Configure more properties here */
@@ -21,7 +21,7 @@
 
         builder.Entity<{{ EntityInfo.Name }}>(b =>
         {
-            b.ToTable({{ ProjectInfo.Name }}DbProperties.DbTablePrefix + "{{ EntityInfo.NamePluralized }}", {{ ProjectInfo.Name }}DbProperties.DbSchema);
+            b.ToTable({{ ProjectInfo.Name }}DbProperties.DbTablePrefix + "{{ EntityInfo.NamePluralized }}", {{ ProjectInfo.Name }}DbProperties.DbSchema, table => table.HasComment("{{ EntityInfo.Document }}"));
             b.ConfigureByConvention(); 
             {{ configCompositeKey }}
             /* Configure more properties here */

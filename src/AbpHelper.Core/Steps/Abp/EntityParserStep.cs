@@ -95,11 +95,16 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                     primaryKey = genericNameSyntax.Descendants<TypeArgumentListSyntax>().Single().Arguments[0].ToString();
                 }
 
+                var entityDescription = root
+                    .Descendants<ClassDeclarationSyntax>()
+                    .Select(p => GetDocument(p))
+                    .JoinAsString(";");
+
                 var properties = root.Descendants<PropertyDeclarationSyntax>()
-                        .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()))
+                        .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString(), GetDocument(prop)))
                         .ToList()
                     ;
-                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
+                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory, entityDescription);
                 entityInfo.Properties.AddRange(properties);
                 if (keyNames != null)
                 {
@@ -122,6 +127,37 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                         Logger.LogError(error);
                 throw;
             }
+        }
+
+        private string GetDescription(CSharpSyntaxNode propertyDeclarationSyntax)
+        {
+            return propertyDeclarationSyntax
+                .Descendants<AttributeSyntax>()
+                .Where(p => p.Name.ToString() == "Description" || p.Name.ToString() == "DescriptionAttribute")
+                .Select(p => p.ArgumentList?.Arguments.Select(a => a.ToString().Trim('"')).JoinAsString(";"))
+                .JoinAsString(";");
+        }
+
+        private List<SyntaxKind> documentKinds = new List<SyntaxKind>
+        {
+            SyntaxKind.DocumentationCommentExteriorTrivia,
+            SyntaxKind.EndOfDocumentationCommentToken,
+            SyntaxKind.MultiLineDocumentationCommentTrivia,
+            SyntaxKind.SingleLineDocumentationCommentTrivia
+        };
+
+        private string GetDocument(CSharpSyntaxNode propertyDeclarationSyntax)
+        {
+            return propertyDeclarationSyntax.GetLeadingTrivia()
+                      .Where(p => documentKinds.Contains(p.Kind()))
+                      .Select(p => p.ToString()
+                                    .Replace("<summary>\r\n", string.Empty)
+                                    .Replace("/// </summary>\r\n", string.Empty)
+                                    .Trim()
+                                    .Replace("/// ", string.Empty)
+                                    .Replace("///", string.Empty)
+                                    .Replace("\r\n", string.Empty))
+                      .JoinAsString(";");
         }
     }
 }

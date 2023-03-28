@@ -13,6 +13,9 @@ public class {{ DtoInfo.CreateTypeName }}
     {{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
     [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
     {{~ end ~}}
+    /// <summary>
+    /// {{ prop.Document }}
+    /// </summary>
     public {{ prop.Type}} {{ prop.Name }} { get; set; }
     {{~ if !for.last ~}}
 

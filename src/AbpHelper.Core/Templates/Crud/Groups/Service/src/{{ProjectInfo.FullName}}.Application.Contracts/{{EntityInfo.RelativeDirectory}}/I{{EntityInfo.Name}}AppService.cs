@@ -13,6 +13,10 @@ namespace {{ EntityInfo.Namespace }};
     else
         TGetListInput = "PagedAndSortedResultRequestDto"
 end ~}}
+
+/// <summary>
+/// {{ EntityInfo.Document }}
+/// </summary>
 public interface I{{ EntityInfo.Name }}AppService :
     ICrudAppService< 
         {{ DtoInfo.ReadTypeName }}, 

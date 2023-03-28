@@ -6,6 +6,9 @@ using System.ComponentModel;
 
 namespace {{ EntityInfo.Namespace }}.Dtos;
 
+/// <summary>
+/// {{ EntityInfo.Document }}
+/// </summary>
 [Serializable]
 public class {{ DtoInfo.UpdateTypeName }}
 {
@@ -14,6 +17,9 @@ public class {{ DtoInfo.UpdateTypeName }}
     {{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
     [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
     {{~ end ~}}
+    /// <summary>
+    /// {{ prop.Document }}
+    /// </summary>
     public {{ prop.Type}} {{ prop.Name }} { get; set; }
     {{~ if !for.last ~}}
 
