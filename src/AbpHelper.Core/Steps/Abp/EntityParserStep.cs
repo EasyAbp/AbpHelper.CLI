@@ -140,9 +140,9 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
 
         private List<SyntaxKind> documentKinds = new List<SyntaxKind>
         {
-            SyntaxKind.DocumentationCommentExteriorTrivia,
-            SyntaxKind.EndOfDocumentationCommentToken,
-            SyntaxKind.MultiLineDocumentationCommentTrivia,
+            //SyntaxKind.DocumentationCommentExteriorTrivia,
+            //SyntaxKind.EndOfDocumentationCommentToken,
+            //SyntaxKind.MultiLineDocumentationCommentTrivia,
             SyntaxKind.SingleLineDocumentationCommentTrivia
         };
 
@@ -151,8 +151,14 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             return propertyDeclarationSyntax.GetLeadingTrivia()
                       .Where(p => documentKinds.Contains(p.Kind()))
                       .Select(p => p.ToString()
+                                    .Replace("/// <summary>\r\n", string.Empty)
+                                    .Replace("/// <summary>", string.Empty)
                                     .Replace("<summary>\r\n", string.Empty)
+                                    .Replace("<summary>", string.Empty)
                                     .Replace("/// </summary>\r\n", string.Empty)
+                                    .Replace("/// </summary>", string.Empty)
+                                    .Replace("</summary>\r\n", string.Empty)
+                                    .Replace("</summary>", string.Empty)
                                     .Trim()
                                     .Replace("/// ", string.Empty)
                                     .Replace("///", string.Empty)
