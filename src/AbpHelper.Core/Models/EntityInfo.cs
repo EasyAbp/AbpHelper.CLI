@@ -7,13 +7,14 @@ namespace EasyAbp.AbpHelper.Core.Models
 {
     public class EntityInfo
     {
-        public EntityInfo(string @namespace, string name, string? baseType, string? primaryKey, string relativeDirectory)
+        public EntityInfo(string @namespace, string name, string? baseType, string? primaryKey, string relativeDirectory, string document)
         {
             Namespace = @namespace;
             Name = name;
             BaseType = baseType;
             PrimaryKey = primaryKey;
             RelativeDirectory = relativeDirectory.NormalizePath();
+            Document = document;
         }
 
         public string Namespace { get; }
@@ -27,5 +28,6 @@ namespace EasyAbp.AbpHelper.Core.Models
         public List<PropertyInfo> Properties { get; } = new List<PropertyInfo>();
         public string? CompositeKeyName { get; set; }
         public List<PropertyInfo> CompositeKeys { get; } = new List<PropertyInfo>();
+        public string? Document { get; set; }
     }
 }

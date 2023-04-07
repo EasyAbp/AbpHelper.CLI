@@ -10,6 +10,9 @@ using Volo.Abp.Domain.Repositories;
 
 namespace {{ EntityInfo.Namespace }};
 
+/// <summary>
+/// {{ EntityInfo.Document }}
+/// </summary>
 public interface I{{ EntityInfo.Name }}Repository : {{ repository }}
 {
 }

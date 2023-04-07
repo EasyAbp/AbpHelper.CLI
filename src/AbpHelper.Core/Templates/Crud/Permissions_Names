@@ -1,4 +1,6 @@
-
+    /// <summary>
+    /// {{ EntityInfo.Document }}
+    /// </summary>
     public class {{ EntityInfo.Name }}
     {
         public const string Default = GroupName + ".{{ EntityInfo.Name }}";

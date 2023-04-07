@@ -13,6 +13,9 @@ public class {{ EntityInfo.Name }}GetListInput : PagedAndSortedResultRequestDto
     {{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
     [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
     {{~ end ~}}
+    /// <summary>
+    /// {{ prop.Document }}
+    /// </summary>
     public {{ prop.Type}}{{- if prop.Type!="string";"?";end}} {{ prop.Name }} { get; set; }
     {{~ if !for.last ~}}
 

@@ -1,1 +1,4 @@
+    /// <summary>
+    /// {{ EntityInfo.Document }}
+    /// </summary>
     DbSet<{{ EntityInfo.Name }}> {{ EntityInfo.NamePluralized }} { get; set; }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace EasyAbp.AbpHelper.Core.Extensions
@@ -41,7 +42,32 @@ namespace EasyAbp.AbpHelper.Core.Extensions
         {
             return !ContainsIgnoreWhitespace(node.ToFullString(), text);
         }
-        
+
+        public static string GetDocument(this CSharpSyntaxNode node)
+        {
+            return node.GetLeadingTrivia()
+                      .Where(p => p.Kind() == SyntaxKind.SingleLineDocumentationCommentTrivia)
+                      .Select(p => p.GetDocumentText())
+                      .JoinAsString(";");
+        }
+
+        private static string GetDocumentText(this SyntaxTrivia syntaxTrivia)
+        {
+            return syntaxTrivia.ToString()
+                .Replace("/// <summary>\r\n", string.Empty)
+                .Replace("/// <summary>", string.Empty)
+                .Replace("<summary>\r\n", string.Empty)
+                .Replace("<summary>", string.Empty)
+                .Replace("/// </summary>\r\n", string.Empty)
+                .Replace("/// </summary>", string.Empty)
+                .Replace("</summary>\r\n", string.Empty)
+                .Replace("</summary>", string.Empty)
+                .Trim()
+                .Replace("/// ", string.Empty)
+                .Replace("///", string.Empty)
+                .Replace("\r\n", string.Empty);
+        }
+
         private static string RemoveWhitespace(string text)
         {
             return Regex.Replace(text, @"\s", "");

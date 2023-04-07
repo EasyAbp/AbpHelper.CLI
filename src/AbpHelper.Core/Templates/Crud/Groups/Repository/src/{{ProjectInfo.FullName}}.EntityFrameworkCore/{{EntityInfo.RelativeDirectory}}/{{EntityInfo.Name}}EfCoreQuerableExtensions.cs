@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace {{ EntityInfo.Namespace }};
 
+/// <summary>
+/// {{ EntityInfo.Document }}
+/// </summary>
 public static class {{ EntityInfo.Name }}EfCoreQueryableExtensions
 {
     public static IQueryable<{{ EntityInfo.Name }}> IncludeDetails(this IQueryable<{{ EntityInfo.Name }}> queryable, bool include = true)

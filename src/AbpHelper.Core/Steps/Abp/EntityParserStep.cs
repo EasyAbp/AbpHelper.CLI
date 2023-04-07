@@ -95,11 +95,16 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                     primaryKey = genericNameSyntax.Descendants<TypeArgumentListSyntax>().Single().Arguments[0].ToString();
                 }
 
+                var entityDescription = root
+                    .Descendants<ClassDeclarationSyntax>()
+                    .Select(p => p.GetDocument())
+                    .JoinAsString(";");
+
                 var properties = root.Descendants<PropertyDeclarationSyntax>()
-                        .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString()))
+                        .Select(prop => new PropertyInfo(prop.Type.ToString(), prop.Identifier.ToString(), prop.GetDocument()))
                         .ToList()
                     ;
-                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory);
+                var entityInfo = new EntityInfo(@namespace, className, baseType, primaryKey, relativeDirectory, entityDescription);
                 entityInfo.Properties.AddRange(properties);
                 if (keyNames != null)
                 {
