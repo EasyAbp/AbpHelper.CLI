@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using EasyAbp.AbpHelper.Core.Models;
+﻿using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Workflow;
 using Elsa.Results;
 using Elsa.Services.Models;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyAbp.AbpHelper.Core.Steps.Abp
 {
@@ -27,6 +27,16 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 templateType = TemplateType.Module;
             }
             else if (FileExistsInDirectory(baseDirectory, "*.DbMigrator.csproj", excludeDirectories))
+            {
+                templateType = TemplateType.Application;
+            }
+            else if (FileExistsInDirectory(baseDirectory, "*.Application.csproj", excludeDirectories) &&
+                FileExistsInDirectory(baseDirectory, "*.Application.Contracts.csproj", excludeDirectories) &&
+                FileExistsInDirectory(baseDirectory, "*.Domain.csproj", excludeDirectories) &&
+                FileExistsInDirectory(baseDirectory, "*.Domain.Shared.csproj", excludeDirectories) &&
+                FileExistsInDirectory(baseDirectory, "*.EntityFrameworkCore.csproj", excludeDirectories) &&
+                FileExistsInDirectory(baseDirectory, "*.HttpApi.csproj", excludeDirectories)
+                )
             {
                 templateType = TemplateType.Application;
             }
