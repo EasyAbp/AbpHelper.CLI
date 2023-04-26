@@ -59,10 +59,12 @@
         </abp-row>
         {{~ end ~}}
         {{~ if !Option.SkipGetListInputDto ~}}
-        <abp-collapse-body id="{{ EntityInfo.Name }}Collapse">
-            <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false"/>
+        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false">
+            <abp-collapse-body id="{{ EntityInfo.Name }}Collapse">
+                <abp-form-content />
+            </abp-collapse-body>
             <hr />
-        </abp-collapse-body>
+        </abp-dynamic-form>
         {{~ end ~}}
         <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap"/>
     </abp-card-body>
