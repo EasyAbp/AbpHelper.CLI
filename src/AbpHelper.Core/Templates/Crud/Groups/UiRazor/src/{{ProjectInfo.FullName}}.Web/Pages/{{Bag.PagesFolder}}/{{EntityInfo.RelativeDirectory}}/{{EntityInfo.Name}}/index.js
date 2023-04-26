@@ -6,7 +6,7 @@ $(function () {
         dataTable.ajax.reload();
     });
 
-    $('#{{ EntityInfo.Name }}Filter div').addClass('col-sm-3').parent().addClass('row');
+    $('#{{ EntityInfo.Name }}Collapse div div').addClass('col-sm-3').parent().addClass('row');
 
     var getFilter = function () {
         var input = {};
