@@ -1,4 +1,6 @@
+{{~ if EntityInfo.Document | !string.whitespace ~}}
     /// <summary>
     /// {{ EntityInfo.Document }}
     /// </summary>
+{{~ end ~}}
     public DbSet<{{ EntityInfo.Name }}> {{ EntityInfo.NamePluralized }} { get; set; }

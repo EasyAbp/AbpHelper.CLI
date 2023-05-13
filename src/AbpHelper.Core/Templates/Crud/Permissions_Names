@@ -1,6 +1,8 @@
+{{~ if EntityInfo.Document | !string.whitespace ~}}
     /// <summary>
     /// {{ EntityInfo.Document }}
     /// </summary>
+{{~ end ~}}
     public class {{ EntityInfo.Name }}
     {
         public const string Default = GroupName + ".{{ EntityInfo.Name }}";
