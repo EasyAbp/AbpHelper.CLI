@@ -10,9 +10,11 @@ public class {{ EntityInfo.Name }}GetListInput : PagedAndSortedResultRequestDto
 {
     {{~ for prop in EntityInfo.Properties ~}}
     {{~ if prop | abp.is_ignore_property || string.starts_with prop.Type "List<"; continue; end ~}}
+    {{~ if prop.Document| !string.whitespace ~}}
     /// <summary>
     /// {{ prop.Document }}
     /// </summary>
+    {{~ end ~}} 
     {{~ if !Option.SkipLocalization && Option.SkipViewModel ~}}
     [DisplayName("{{ EntityInfo.Name + prop.Name}}")]
     {{~ end ~}}    

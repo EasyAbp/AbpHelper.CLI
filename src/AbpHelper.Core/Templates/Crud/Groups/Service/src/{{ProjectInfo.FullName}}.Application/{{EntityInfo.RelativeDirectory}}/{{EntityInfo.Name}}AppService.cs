@@ -43,9 +43,11 @@ namespace {{ EntityInfo.Namespace }};
         TGetListInput = "PagedAndSortedResultRequestDto"
 end ~}}
 
+{{~ if EntityInfo.Document | !string.whitespace ~}}
 /// <summary>
 /// {{ EntityInfo.Document }}
 /// </summary>
+{{~ end ~}}
 public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo.Name }}, {{ DtoInfo.ReadTypeName }}, {{ EntityInfo.PrimaryKey ?? EntityInfo.CompositeKeyName }}, {{TGetListInput}}, {{ DtoInfo.CreateTypeName }}, {{ DtoInfo.UpdateTypeName }}>,
     I{{ EntityInfo.Name }}AppService
 {
