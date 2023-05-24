@@ -96,6 +96,8 @@ namespace EasyAbp.AbpHelper.Core.Steps
             bool includeSubModules = false)
         {
             var matchedSln = false;
+            var results = new List<string>(); // Store matched files
+
             while (queue.TryDequeue(out var directory))
             {
                 if (!includeSubModules &&
@@ -109,14 +111,8 @@ namespace EasyAbp.AbpHelper.Core.Steps
                     matchedSln = true;
                 }
 
-                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
-                if (!result.IsNullOrWhiteSpace())
-                {
-                    if (result != null)
-                    {
-                        yield return result;
-                    }
-                }
+                var files = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
+                results.AddRange(files); // Add matched files to the collection
 
                 foreach (var d in Directory.EnumerateDirectories(directory))
                 {
@@ -128,6 +124,8 @@ namespace EasyAbp.AbpHelper.Core.Steps
                     queue.Enqueue(d);
                 }
             }
+
+            return results;
         }
 
         private static string? FindInDirectoryInQueue(Queue<string> queue, string pattern,
