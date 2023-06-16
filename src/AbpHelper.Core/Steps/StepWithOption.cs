@@ -1,10 +1,10 @@
-﻿using System;
+﻿using EasyAbp.AbpHelper.Core.Commands;
+using Elsa.Expressions;
+using Elsa.Scripting.JavaScript;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using EasyAbp.AbpHelper.Core.Commands;
-using Elsa.Expressions;
-using Elsa.Scripting.JavaScript;
 
 namespace EasyAbp.AbpHelper.Core.Steps
 {
@@ -111,9 +111,6 @@ namespace EasyAbp.AbpHelper.Core.Steps
                     matchedSln = true;
                 }
 
-                var files = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
-                results.AddRange(files); // Add matched files to the collection
-
                 foreach (var d in Directory.EnumerateDirectories(directory))
                 {
                     if (actualExcluded.Contains(d))
@@ -123,6 +120,9 @@ namespace EasyAbp.AbpHelper.Core.Steps
 
                     queue.Enqueue(d);
                 }
+
+                var files = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
+                results.AddRange(files); // Add matched files to the collection
             }
 
             return results;
