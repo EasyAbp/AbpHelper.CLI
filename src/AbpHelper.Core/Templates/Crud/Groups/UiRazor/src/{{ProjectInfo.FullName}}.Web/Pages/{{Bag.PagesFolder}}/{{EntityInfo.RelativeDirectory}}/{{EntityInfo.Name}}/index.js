@@ -6,7 +6,8 @@ $(function () {
         dataTable.ajax.reload();
     });
 
-    $('#{{ EntityInfo.Name }}Filter div').addClass('col-sm-3').parent().addClass('row');
+    //After abp v7.2 use dynamicForm 'column-size' instead of the following settings
+    //$('#{{ EntityInfo.Name }}Collapse div').addClass('col-sm-3').parent().addClass('row');
 
     var getFilter = function () {
         var input = {};
