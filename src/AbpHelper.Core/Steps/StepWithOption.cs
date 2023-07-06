@@ -110,7 +110,7 @@ namespace EasyAbp.AbpHelper.Core.Steps
                 }
 
                 var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
-                if (result.Any())
+                if (result != null)
                 {
                     foreach (var item in result)
                     {
@@ -148,10 +148,10 @@ namespace EasyAbp.AbpHelper.Core.Steps
                     matchedSln = true;
                 }
 
-                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
-                if (!result.IsNullOrWhiteSpace())
+                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
+                if (result != null && result.Any())
                 {
-                    return result;
+                    return result.FirstOrDefault();
                 }
 
                 foreach (var d in Directory.EnumerateDirectories(directory))
