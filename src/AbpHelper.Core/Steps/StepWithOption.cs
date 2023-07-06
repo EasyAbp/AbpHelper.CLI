@@ -110,12 +110,10 @@ namespace EasyAbp.AbpHelper.Core.Steps
                 }
 
                 var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
-                if (result != null)
+
+                foreach (var item in result)
                 {
-                    foreach (var item in result)
-                    {
-                        yield return item;
-                    }
+                    yield return item;
                 }
 
                 foreach (var d in Directory.EnumerateDirectories(directory))
