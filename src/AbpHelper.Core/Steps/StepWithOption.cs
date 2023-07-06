@@ -109,12 +109,12 @@ namespace EasyAbp.AbpHelper.Core.Steps
                     matchedSln = true;
                 }
 
-                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
-                if (!result.IsNullOrWhiteSpace())
+                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
+                if (result.Any())
                 {
-                    if (result != null)
+                    foreach (var item in result)
                     {
-                        yield return result;
+                        yield return item;
                     }
                 }
 
