@@ -26,12 +26,21 @@ namespace EasyAbp.AbpHelper.Core.Generator
         {
             return GenerateByTemplateName(templateDirectory, templateName, model, out _);
         }
-        
+
         public string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
         {
             string path = Path.Combine(templateDirectory, templateName).NormalizePath();
-            var templateFile = _virtualFileProvider.GetFileInfo(path);
-            var templateText = templateFile.ReadAsString();
+
+            var templateText = "";
+            if (path.Contains(":"))
+            {
+                templateText = File.ReadAllText(path);
+            }
+            else
+            {
+                var templateFile = _virtualFileProvider.GetFileInfo(path);
+                templateText = templateFile.ReadAsString();
+            }
             return GenerateByTemplateText(templateText, model, out context);
         }
 
