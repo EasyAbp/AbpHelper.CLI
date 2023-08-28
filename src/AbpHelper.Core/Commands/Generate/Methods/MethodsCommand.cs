@@ -37,6 +37,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Methods
         protected override IActivityBuilder ConfigureBuild(MethodsCommandOption option,
             IActivityBuilder activityBuilder)
         {
+            var servicePostfix = option.IntegrationService ? "IntegrationService.cs" : "AppService.cs";
             return base.ConfigureBuild(option, activityBuilder)
                 .AddOverwriteWorkflow()
                 .Then<SetVariable>(
@@ -48,7 +49,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Methods
                 .Then<FileFinderStep>(
                     step =>
                     {
-                        step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}AppService.cs`");
+                        step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}{servicePostfix}`");
                     })
                 .Then<InterfaceParserStep>()
                 .Then<SetModelVariableStep>()
@@ -78,7 +79,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Methods
                 .Then<FileFinderStep>(
                     step =>
                     {
-                        step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}AppService.cs`");
+                        step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(MethodsCommandOption.ServiceName)}}}{servicePostfix}`");
                     })
                 .Then<AppServiceClassStep>()
                 .Then<FileModifierStep>();

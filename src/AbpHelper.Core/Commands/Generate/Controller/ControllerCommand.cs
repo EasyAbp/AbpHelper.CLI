@@ -24,7 +24,9 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Controller
 
         protected override IActivityBuilder ConfigureBuild(ControllerCommandOption option, IActivityBuilder activityBuilder)
         {
-            string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
+            var servicePostfix = option.IntegrationService ? "IntegrationService.cs" : "AppService.cs";
+            var controllerPostfix = option.IntegrationService ? "IntegrationController.cs" : "Controller.cs";
+            var cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
             return base.ConfigureBuild(option, activityBuilder)
                 .AddOverwriteWorkflow()
                 .Then<SetVariable>(
@@ -49,11 +51,11 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Controller
                             ;
                     })
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
+                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`I${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}{servicePostfix}`"); }
                 ).WithName(ActivityNames.SearchServiceInterface)
                 .Then<InterfaceParserStep>()
                 .Then<FileFinderStep>(
-                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}AppService.cs`"); }
+                    step => { step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}{servicePostfix}`"); }
                 )
                 .Then<ClassParserStep>()
                 .Then<SetModelVariableStep>()
@@ -73,7 +75,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Controller
                             .Then<FileFinderStep>(
                                 step =>
                                 {
-                                    step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}Controller.cs`");
+                                    step.SearchFileName = new JavaScriptExpression<string>($"`${{{OptionVariableName}.{nameof(ControllerCommandOption.Name)}}}{controllerPostfix}`");
                                     step.ErrorIfNotFound = new JavaScriptExpression<bool>("false");
                                 }
                             ).WithName(ActivityNames.SearchController)
