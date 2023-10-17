@@ -109,13 +109,11 @@ namespace EasyAbp.AbpHelper.Core.Steps
                     matchedSln = true;
                 }
 
-                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
-                if (!result.IsNullOrWhiteSpace())
+                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
+
+                foreach (var item in result)
                 {
-                    if (result != null)
-                    {
-                        yield return result;
-                    }
+                    yield return item;
                 }
 
                 foreach (var d in Directory.EnumerateDirectories(directory))
@@ -148,10 +146,10 @@ namespace EasyAbp.AbpHelper.Core.Steps
                     matchedSln = true;
                 }
 
-                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly).FirstOrDefault();
-                if (!result.IsNullOrWhiteSpace())
+                var result = searchFunc(directory, pattern, SearchOption.TopDirectoryOnly);
+                if (result != null && result.Any())
                 {
-                    return result;
+                    return result.FirstOrDefault();
                 }
 
                 foreach (var d in Directory.EnumerateDirectories(directory))
