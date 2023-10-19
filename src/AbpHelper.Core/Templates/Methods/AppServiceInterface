@@ -12,8 +12,6 @@
     else
     parameter = name + "Input input"
     end ~}}
-    {{ return }} {{ name }}Async({{ parameter }});
-    {{~ if !for.last ~}}
 
-    {{~ end ~}}
-{{- end -}}
+    {{ return }} {{ name }}Async({{ parameter }});
+{{~ end -}}

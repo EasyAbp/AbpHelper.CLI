@@ -1,4 +1,4 @@
-{{- SKIP_GENERATE = Option.IntegrationService -}}
+{{- SKIP_GENERATE = !Option.IntegrationService -}}
 {{~ for using in InterfaceInfo.Usings ~}}
 {{~ if using != "Volo.Abp.Application.Services" && using != "System.Threading.Tasks" ~}}
 using {{ using }};
@@ -20,15 +20,15 @@ namespace {{ ProjectInfo.FullName }}.{{ InterfaceInfo.RelativeNamespace }};
 [RemoteService(Name = {{ ProjectInfo.Name }}RemoteServiceConsts.RemoteServiceName)]
 {{~ end ~}}
 {{~ if ProjectInfo.TemplateType == 'Application' ~}}
-[Route("/api/app/{{ Option.Name | abp.kebab_case }}")]
+[Route("/integration-api/app/{{ Option.Name | abp.kebab_case }}")]
 {{~ else if ProjectInfo.TemplateType == 'Module' ~}}
-[Route("/api/{{ ProjectInfo.Name | abp.kebab_case }}/{{ Option.Name | abp.kebab_case }}")]
+[Route("/integration-api/{{ ProjectInfo.Name | abp.kebab_case }}/{{ Option.Name | abp.kebab_case }}")]
 {{~ end ~}}
-public class {{ Option.Name }}Controller : {{ ProjectInfo.Name }}Controller, I{{ Option.Name }}AppService
+public class {{ Option.Name }}IntegrationController : {{ ProjectInfo.Name }}Controller, I{{ Option.Name }}IntegrationService
 {
-    private readonly I{{ Option.Name }}AppService _service;
+    private readonly I{{ Option.Name }}IntegrationService _service;
 
-    public {{ Option.Name }}Controller(I{{ Option.Name }}AppService service)
+    public {{ Option.Name }}IntegrationController(I{{ Option.Name }}IntegrationService service)
     {
         _service = service;
     }
