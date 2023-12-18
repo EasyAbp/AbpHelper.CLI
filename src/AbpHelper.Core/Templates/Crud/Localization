@@ -15,5 +15,6 @@
     "Edit{{ EntityInfo.Name }}": "Edit{{ EntityInfo.Name }}",
     "{{ EntityInfo.Name }}DeletionConfirmationMessage": "Are you sure to delete the {{ EntityInfo.Name | abp.camel_case }} {0}?",
     "SuccessfullyDeleted": "Successfully deleted",
-    "TableFilter": "TableFilter"
+    "Expand": "Expand",
+    "Collapse": "Collapse"
 }

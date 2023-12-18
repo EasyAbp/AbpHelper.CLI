@@ -36,6 +36,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Templates\Crud\Groups\UiRazor\src\{{ProjectInfo.FullName}}.Web\wwwroot\easyHelper.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Update="Fody" Version="6.6.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

@@ -2,24 +2,12 @@
 $(function () {
 {{~ if !Option.SkipGetListInputDto ~}}
 
-    $("#{{ EntityInfo.Name }}Filter :input").on('input', function () {
+    $("#{{ EntityInfo.Name }}Filter :input").on('change', function () {
         dataTable.ajax.reload();
     });
 
-    //After abp v7.2 use dynamicForm 'column-size' instead of the following settings
-    //$('#{{ EntityInfo.Name }}Collapse div').addClass('col-sm-3').parent().addClass('row');
+    easyHelper.setFilterToggle('{{ EntityInfo.Name }}Filter');
 
-    var getFilter = function () {
-        var input = {};
-        $("#{{ EntityInfo.Name }}Filter")
-            .serializeArray()
-            .forEach(function (data) {
-                if (data.value != '') {
-                    input[abp.utils.toCamelCase(data.name.replace(/{{ EntityInfo.Name }}Filter./g, ''))] = data.value;
-                }
-            })
-        return input;
-    };
 {{~ end ~}}
 
     var l = abp.localization.getResource('{{ ProjectInfo.Name }}');
@@ -36,7 +24,7 @@ $(function () {
         autoWidth: false,
         scrollCollapse: true,
         order: [[0, "asc"]],
-        ajax: abp.libs.datatables.createAjax(service.getList{{- if !Option.SkipGetListInputDto;",getFilter"; end-}}),
+        ajax: abp.libs.datatables.createAjax(service.getList{{- if !Option.SkipGetListInputDto;',easyHelper.serializeForm("' + EntityInfo.Name + 'Filter")'; end-}}),
         columnDefs: [
             {
                 rowAction: {
