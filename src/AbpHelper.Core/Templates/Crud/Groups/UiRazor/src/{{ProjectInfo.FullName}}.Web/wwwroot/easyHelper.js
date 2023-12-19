@@ -2,7 +2,7 @@
    This code is generated from AbpHelper.Cli. 
    If the code is regenerated, the manual changes to this file will be overwritten.
    CreationTime:2023/12/18
-   LastModificationTime:2023/12/18
+   LastModificationTime:2023/12/19
 */
 
 var easyHelper = easyHelper || {};
@@ -15,11 +15,11 @@ var easyHelper = easyHelper || {};
             var isClosed = e.currentTarget.classList.toggle('fa-angle-double-down');
             e.currentTarget.classList.toggle('fa-angle-double-up');
             e.currentTarget.innerText = localizer(isClosed ? 'Expand' : 'Collapse');
-            var element = document.querySelector("#" + formId + " > div > div:nth-child(" + column + ")");
+            var dynamicElement = document.querySelector("#" + formId + " > div > div:nth-child(" + column + ")");
 
-            while (element.nextElementSibling) {
-                element = element.nextElementSibling;
-                $(element).slideToggle();
+            while (dynamicElement.nextElementSibling) {
+                dynamicElement = dynamicElement.nextElementSibling;
+                $(dynamicElement).slideToggle();
             }
             
             var customerElement = document.querySelector("#" + formId + " > div");
@@ -39,16 +39,18 @@ var easyHelper = easyHelper || {};
     }
 
     easyHelper.serializeForm = function (formId) {
-        var input = {};
-        var pattern = formId + `\\.`;
-        $("#" + formId).serializeArray().forEach(function (data) {
-            var value = data.value || null;
-            var keys = data.name.replace(new RegExp(pattern, "g"), '').split('.').map(key => abp.utils.toCamelCase(key));
-            var lastKey = keys.pop();
-            if (keys.length == 0 && !value) return;
-            var lastObj = keys.reduce((obj, key) => obj[key] = obj[key] || {}, input);
-            lastObj[lastKey] = value;
-        })
-        return input;
+        return () => {
+            var input = {};
+            var pattern = formId + `\\.`;
+            $("#" + formId).serializeArray().forEach(function (data) {
+                var value = data.value || null;
+                var keys = data.name.replace(new RegExp(pattern, "g"), '').split('.').map(key => abp.utils.toCamelCase(key));
+                var lastKey = keys.pop();
+                if (keys.length == 0 && !value) return;
+                var lastObj = keys.reduce((obj, key) => obj[key] = obj[key] || {}, input);
+                lastObj[lastKey] = value;
+            })
+            return input;
+        }
     };
 })();
