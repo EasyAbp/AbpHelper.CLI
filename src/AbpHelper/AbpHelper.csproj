@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
@@ -19,10 +19,4 @@
     <ProjectReference Include="..\AbpHelper.Core\AbpHelper.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Fody" Version="6.6.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 </Project>
