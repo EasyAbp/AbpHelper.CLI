@@ -52,15 +52,17 @@
         <abp-row class="mb-3">
             <a abp-collapse-id="{{ EntityInfo.Name }}Collapse" class="text-secondary">@L["TableFilter"] </a>
         </abp-row>
+        <abp-collapse-body id="{{ EntityInfo.Name }}Collapse">
         {{~ end ~}}
         {{~ if !Option.SkipGetListInputDto ~}}
-        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false" column-size="_3">
-            <abp-collapse-body id="{{ EntityInfo.Name }}Collapse">
-                <abp-form-content />
-            </abp-collapse-body>
-        </abp-dynamic-form>
-        <hr />
+            <form id="{{ EntityInfo.Name }}Filter">
+                {{~ for prop in EntityInfo.Properties ~}}
+                    <abp-input asp-for="{{ EntityInfo.Name }}Filter.{{ prop.Name }}" />
+                {{~ end ~}}
+            </form>
+            <hr />
         {{~ end ~}}
+        </abp-collapse-body>
         <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap"/>
     </abp-card-body>
 </abp-card>

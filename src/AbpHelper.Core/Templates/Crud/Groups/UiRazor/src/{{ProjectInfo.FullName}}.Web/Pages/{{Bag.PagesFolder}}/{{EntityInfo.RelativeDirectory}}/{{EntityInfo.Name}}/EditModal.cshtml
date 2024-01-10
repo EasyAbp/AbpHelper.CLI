@@ -8,7 +8,7 @@
 @{
     Layout = null;
 }
-<abp-dynamic-form abp-model="ViewModel" data-ajaxForm="true" asp-page="EditModal">
+<form asp-page="EditModal">
     <abp-modal>
         <abp-modal-header title="@L["Edit{{ EntityInfo.Name }}"].Value"></abp-modal-header>
         <abp-modal-body>
@@ -19,8 +19,10 @@
         {{~ else ~}}
             <abp-input asp-for="Id" />
         {{~ end ~}}     
-            <abp-form-content />
+        {{~ for prop in EntityInfo.Properties ~}}
+            <abp-input asp-for="ViewModel.{{ prop.Name }}" />
+        {{~ end ~}}
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
     </abp-modal>
-</abp-dynamic-form>
+</form>
