@@ -27,7 +27,16 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
 
             if (projectInfo.TemplateType == TemplateType.Application)
             {
+                string configureMainMenuText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_ConfigureMainMenu", model);
                 string usingForAppText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_UsingForApp", model);
+                
+                builders.Add(
+                    new ReplacementBuilder<CSharpSyntaxNode>(
+                        root => MainMenu(root).GetStartLine(),
+                        root => MainMenu(root).GetStartLine(),
+                        configureMainMenuText,
+                        modifyCondition: root => root.NotContains(configureMainMenuText)
+                    ));
 
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
