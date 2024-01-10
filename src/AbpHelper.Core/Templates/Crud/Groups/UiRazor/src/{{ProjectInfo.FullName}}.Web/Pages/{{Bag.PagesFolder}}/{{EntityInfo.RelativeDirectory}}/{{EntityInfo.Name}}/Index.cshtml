@@ -31,27 +31,22 @@
     <abp-style src="/Pages/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.css"/>
 }
 
-<abp-card>
-    <abp-card-header>
-        <abp-row>
-            <abp-column size-md="_6">
-                <abp-card-title>@L["{{ EntityInfo.Name }}"]</abp-card-title>
-            </abp-column>
-            <abp-column size-md="_6" class="text-end">
+@section content_toolbar {
 {{~ if !Option.SkipPermissions ~}}
-			    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Create))
-                {
+    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Create))
+    {
 {{~ end ~}}
-                <abp-button id="New{{ EntityInfo.Name }}Button"
-                            text="@L["Create{{ EntityInfo.Name }}"].Value"
-                            icon="plus"
-                            button-type="Primary" />
+        <abp-button id="New{{ EntityInfo.Name }}Button"
+                    text="@L["Create{{ EntityInfo.Name }}"].Value"
+                    icon="plus"
+                    class="btn-sm"
+                    button-type="Primary" />
 {{~ if !Option.SkipPermissions ~}}
-                }
+    }
  {{~ end ~}}
-            </abp-column>
-        </abp-row>
-    </abp-card-header>
+}
+
+<abp-card>
     <abp-card-body>
         {{~ if !Option.SkipGetListInputDto ~}}
         <abp-row class="mb-3">
