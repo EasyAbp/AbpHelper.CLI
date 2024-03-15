@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using EasyAbp.AbpHelper.Core.Attributes;
 
 namespace EasyAbp.AbpHelper.Core.Commands
@@ -14,5 +15,20 @@ namespace EasyAbp.AbpHelper.Core.Commands
 
         [Option("exclude", Description = "Exclude directories when searching files, arguments can contain a combination of valid literal path and wildcard (* and ?) characters. Use double asterisk(**) to search all directories. Example: --exclude *Folder1 Folder2/Folder* **/*Folder? **/*Folder*")]
         public virtual string[] Exclude { get; set; } = Array.Empty<string>();
+
+        [Option("templates-path", Description = "Config templates path, Built-in templates are used by default")]
+        public string? TemplatesPath { set { _templatesPath = value; } }
+
+        private string? _templatesPath = string.Empty;
+
+        public string TemplatesPathCombine(string subPath)
+        {
+            if (_templatesPath.IsNullOrWhiteSpace())
+            {
+                return Path.Combine(new[] { AppDomain.CurrentDomain.BaseDirectory, "Templates", subPath });
+            }
+
+            return Path.Combine(_templatesPath!, subPath);
+        }
     }
 }

@@ -49,21 +49,21 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
         protected override IActivityBuilder ConfigureBuild(AddCommandOption option, IActivityBuilder activityBuilder)
         {
             var moduleIdToCustomsMapping = typeof(ModuleCommandOption).GetProperties()
-                .Where(prop => prop.PropertyType == typeof(bool) && (bool) prop.GetValue(option)!)
+                .Where(prop => prop.PropertyType == typeof(bool) && (bool)prop.GetValue(option)!)
                 .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
-                .ToDictionary(x => x, x => new List<string>(new[] {$"{x}:{x}"}));
-            
+                .ToDictionary(x => x, x => new List<string>(new[] { $"{x}:{x}" }));
+
             if (!option.Custom.IsNullOrEmpty())
             {
                 foreach (var customPart in option.Custom.Split(','))
                 {
                     var moduleId = customPart.Substring(0, customPart.IndexOf(':'));
-                    
+
                     if (!moduleIdToCustomsMapping.ContainsKey(moduleId))
                     {
                         moduleIdToCustomsMapping.Add(moduleId, new List<string>());
                     }
-                    
+
                     moduleIdToCustomsMapping[moduleId].Add(customPart);
                 }
             }
@@ -74,7 +74,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                         step =>
                         {
                             step.VariableName = VariableNames.TemplateDirectory;
-                            step.ValueExpression = new LiteralExpression<string>("/Templates/Module");
+                            step.ValueExpression = new LiteralExpression<string>(option.TemplatesPathCombine("Module"));
                         })
                     .Then<SetVariable>(
                         step =>

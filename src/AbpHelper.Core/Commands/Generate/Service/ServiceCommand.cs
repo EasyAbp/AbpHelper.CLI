@@ -38,7 +38,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Service
                     step =>
                     {
                         step.VariableName = VariableNames.TemplateDirectory;
-                        step.ValueExpression = new LiteralExpression<string>(option.GetTemplatesPath("Service"));
+                        step.ValueExpression = new LiteralExpression<string>(option.TemplatesPathCombine("Service"));
                     })
                 .Then<SetModelVariableStep>()
                 .Then<GroupGenerationStep>(

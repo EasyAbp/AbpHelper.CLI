@@ -49,10 +49,10 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
         protected override IActivityBuilder ConfigureBuild(RemoveCommandOption option, IActivityBuilder activityBuilder)
         {
             var moduleNameToAppProjectNameMapping = typeof(ModuleCommandOption).GetProperties()
-                .Where(prop => prop.PropertyType == typeof(bool) && (bool) prop.GetValue(option)!)
+                .Where(prop => prop.PropertyType == typeof(bool) && (bool)prop.GetValue(option)!)
                 .Select(prop => _packageProjectMap[prop.Name.ToKebabCase()])
                 .ToDictionary(x => x, x => x);
-            
+
             if (!option.Custom.IsNullOrEmpty())
             {
                 foreach (var customPart in option.Custom.Split(','))
@@ -61,7 +61,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                     moduleNameToAppProjectNameMapping.Add(s[0], s[1]);
                 }
             }
-            
+
             string cdOption = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? " /d" : "";
 
             return base.ConfigureBuild(option, activityBuilder)
@@ -69,7 +69,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                         step =>
                         {
                             step.VariableName = VariableNames.TemplateDirectory;
-                            step.ValueExpression = new LiteralExpression<string>("/Templates/Module");
+                            step.ValueExpression = new LiteralExpression<string>(option.TemplatesPathCombine("Module"));
                         })
                     .Then<SetVariable>(
                         step =>
@@ -137,7 +137,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                                 .Then<DependsOnStep>(step =>
                                 {
                                     step.Action = new LiteralExpression<DependsOnStep.ActionType>(((int)DependsOnStep.ActionType.Remove).ToString());
-                                })                                
+                                })
                                 .Then<FileModifierStep>()
                                 .Then<IfElse>(
                                     step => step.ConditionExpression = new JavaScriptExpression<bool>("TargetAppProjectName == 'EntityFrameworkCore'"),

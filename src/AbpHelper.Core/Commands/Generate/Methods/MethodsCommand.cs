@@ -43,7 +43,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate.Methods
                     step =>
                     {
                         step.VariableName = VariableNames.TemplateDirectory;
-                        step.ValueExpression = new LiteralExpression<string>(option.GetTemplatesPath("Methods"));
+                        step.ValueExpression = new LiteralExpression<string>(option.TemplatesPathCombine("Methods"));
                     })
                 .Then<FileFinderStep>(
                     step =>
