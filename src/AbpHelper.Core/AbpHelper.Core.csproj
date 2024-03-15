@@ -1,45 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\common.props" />
+	<Import Project="..\..\common.props" />
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <PackageId>EasyAbp.AbpHelper.Core</PackageId>
-    <AssemblyName>EasyAbp.AbpHelper.Core</AssemblyName>
-    <RootNamespace>EasyAbp.AbpHelper.Core</RootNamespace>
-    <LangVersion>10.0</LangVersion>
-    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<PackageId>EasyAbp.AbpHelper.Core</PackageId>
+		<AssemblyName>EasyAbp.AbpHelper.Core</AssemblyName>
+		<RootNamespace>EasyAbp.AbpHelper.Core</RootNamespace>
+		<LangVersion>10.0</LangVersion>
+		<GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Elsa" Version="1.2.2.29" />
-    <PackageReference Include="Humanizer.Core" Version="2.14.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.0" />
-    <PackageReference Include="Scriban" Version="5.5.2" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="$(AbpVersion)" />
-    <PackageReference Include="Volo.Abp.Core" Version="$(AbpVersion)" />
-    <PackageReference Include="Volo.Abp.Http" Version="$(AbpVersion)" />
-    <PackageReference Include="Volo.Abp.VirtualFileSystem" Version="$(AbpVersion)" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-    <PackageReference Include="NuGet.Protocol" Version="6.2.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Elsa" Version="1.2.2.29" />
+		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.0" />
+		<PackageReference Include="Scriban" Version="5.5.2" />
+		<PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+		<PackageReference Include="Volo.Abp.Autofac" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.Core" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.Http" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.VirtualFileSystem" Version="$(AbpVersion)" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+		<PackageReference Include="NuGet.Protocol" Version="6.2.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Templates\**\*.*" />
-    <Content Remove="Templates\**\*.*" />
-    <EmbeddedResource Include="Templates\**\*.*" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Templates\**\*.*" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Fody" Version="6.6.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Templates\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Update="Fody" Version="6.6.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
 </Project>

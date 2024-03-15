@@ -18,7 +18,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Generate
         {
             if (TemplatesPath.IsNullOrWhiteSpace())
             {
-                return "/Templates/" + subPath;
+                return System.AppDomain.CurrentDomain.BaseDirectory + "/Templates/" + subPath;
             }
 
             return Path.Combine(TemplatesPath!, subPath);
