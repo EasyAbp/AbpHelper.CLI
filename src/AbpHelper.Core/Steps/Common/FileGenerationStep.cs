@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Elsa.Expressions;
@@ -37,7 +38,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
                 Logger.LogInformation($"Directory {dir} created.");
             }
 
-            await File.WriteAllTextAsync(targetFile, Contents);
+            await File.WriteAllTextAsync(targetFile, Contents, Encoding.UTF8);
             Logger.LogInformation($"File {targetFile} generated.");
 
             return Done();

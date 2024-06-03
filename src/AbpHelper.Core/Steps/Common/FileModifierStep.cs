@@ -71,14 +71,14 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
                     switch (modification)
                     {
                         case Insertion insertion:
-                        {
-                            if (insertion.InsertPosition == InsertPosition.Before)
-                                beforeContents.Append(insertion.Contents);
-                            else
-                                afterContents.Append(insertion.Contents);
+                            {
+                                if (insertion.InsertPosition == InsertPosition.Before)
+                                    beforeContents.Append(insertion.Contents);
+                                else
+                                    afterContents.Append(insertion.Contents);
 
-                            break;
-                        }
+                                break;
+                            }
                         case IRange range:
                             line = range.EndLine > 0 ? range.EndLine : lines.Length + range.EndLine + 1;
                             if (range is Replacement replacement) newFile.Append(replacement.Contents);
@@ -95,7 +95,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
                 NEXT_LINE: ;
             }
 
-            await File.WriteAllTextAsync(targetFile, newFile.ToString());
+            await File.WriteAllTextAsync(targetFile, newFile.ToString(), Encoding.UTF8);
 
             return Done();
         }
@@ -139,9 +139,9 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
         {
             // Check if deletions and replacements overlap with insertion
             foreach (var range in deletionsAndReplacements)
-            foreach (var insertion in insertions)
-                if (insertion.StartLine >= range.StartLine && insertion.StartLine <= range.EndLine)
-                    yield return $"Overlap modifications: [{range}] - [{insertion}]";
+                foreach (var insertion in insertions)
+                    if (insertion.StartLine >= range.StartLine && insertion.StartLine <= range.EndLine)
+                        yield return $"Overlap modifications: [{range}] - [{insertion}]";
 
             // Check if deletions and replacements overlap with each other
             for (var i = 0; i < deletionsAndReplacements.Length; i++)

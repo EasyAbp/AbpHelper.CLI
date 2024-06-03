@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Extensions;
@@ -27,7 +28,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>(VariableNames.TemplateDirectory));
             set => SetState(value);
         }
-        
+
         public string GroupName
         {
             get => GetState<string>();
@@ -104,7 +105,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
                 var dir = Path.GetDirectoryName(targetFilePathName);
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
-                await File.WriteAllTextAsync(targetFilePathName, contents);
+                await File.WriteAllTextAsync(targetFilePathName, contents, Encoding.UTF8);
                 Logger.LogInformation($"File {targetFilePathName} successfully generated.");
             }
         }
