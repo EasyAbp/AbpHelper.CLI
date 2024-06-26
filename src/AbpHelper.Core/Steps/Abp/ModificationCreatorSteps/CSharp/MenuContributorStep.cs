@@ -28,6 +28,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             if (projectInfo.TemplateType == TemplateType.Application)
             {
                 string usingForAppText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_UsingForApp", model);
+                string configureMainMenuText = TextGenerator.GenerateByTemplateName(templateDir, "MenuContributor_ConfigureMainMenu", model);
 
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
@@ -35,6 +36,18 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
                         usingForAppText,
                         modifyCondition: root => root.NotContains(usingForAppText)
                     ));
+                builders.Add(
+                    new ReplacementBuilder<CSharpSyntaxNode>(
+                        root => MainMenu(root).GetStartLine(),
+                        root => MainMenu(root).GetStartLine(),
+                        configureMainMenuText,
+                        modifyCondition: root => root.NotContains(configureMainMenuText)
+                    ));
+                builders.Add(new DeletionBuilder<CSharpSyntaxNode>(
+                    root => MainMenu(root).GetEndLine() - 1,
+                    root => MainMenu(root).GetEndLine() - 1,
+                    modifyCondition: root => !root.NotContains("return Task.CompletedTask;")
+                ));
                 builders.Add(
                     new InsertionBuilder<CSharpSyntaxNode>(
                         root => MainMenu(root).GetEndLine(),
