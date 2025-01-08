@@ -52,11 +52,11 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
     I{{ EntityInfo.Name }}AppService
 {
     {{~ if !Option.SkipPermissions ~}}
-    protected override string GetPolicyName { get; set; } = {{ permissionNamesPrefix }}.Default;
-    protected override string GetListPolicyName { get; set; } = {{ permissionNamesPrefix }}.Default;
-    protected override string CreatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Create;
-    protected override string UpdatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Update;
-    protected override string DeletePolicyName { get; set; } = {{ permissionNamesPrefix }}.Delete;
+    protected override string? GetPolicyName { get; set; } = {{ permissionNamesPrefix }}.Default;
+    protected override string? GetListPolicyName { get; set; } = {{ permissionNamesPrefix }}.Default;
+    protected override string? CreatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Create;
+    protected override string? UpdatePolicyName { get; set; } = {{ permissionNamesPrefix }}.Update;
+    protected override string? DeletePolicyName { get; set; } = {{ permissionNamesPrefix }}.Delete;
     {{~ end ~}}
 
     {{~ if !Option.SkipCustomRepository ~}}
