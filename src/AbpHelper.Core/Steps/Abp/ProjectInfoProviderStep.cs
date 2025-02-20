@@ -22,7 +22,8 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
             LogInput(() => excludeDirectories, string.Join("; ", excludeDirectories));
 
             TemplateType templateType;
-            if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories) || FileExistsInDirectory(baseDirectory, "*.Installer.csproj", excludeDirectories))
+            if (FileExistsInDirectory(baseDirectory, "*.Host.Shared.csproj", excludeDirectories) ||
+                FileExistsInDirectory(baseDirectory, "*.Installer.csproj", excludeDirectories))
             {
                 templateType = TemplateType.Module;
             }
@@ -89,7 +90,8 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
         {
             string aspNetCoreDir = context.GetVariable<string>(VariableNames.AspNetCoreDir);
             string slnFile = Path.Combine(aspNetCoreDir, $"{projectName}.sln");
-            if (!File.Exists(slnFile))
+            string slnxFile = Path.Combine(aspNetCoreDir, $"{projectName}.slnx");
+            if (!File.Exists(slnFile) && !File.Exists(slnxFile))
             {
                 throw new FileNotFoundException(
                     $"The solution file '{projectName}.sln' is not found in '{aspNetCoreDir}'. Make sure you specific the right folder.");
