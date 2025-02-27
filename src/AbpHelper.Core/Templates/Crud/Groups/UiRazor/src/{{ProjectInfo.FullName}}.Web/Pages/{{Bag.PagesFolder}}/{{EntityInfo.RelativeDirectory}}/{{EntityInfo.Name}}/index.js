@@ -2,24 +2,20 @@
 $(function () {
 {{~ if !Option.SkipGetListInputDto ~}}
 
-    $("#{{ EntityInfo.Name }}Filter :input").on('input', function () {
-        dataTable.ajax.reload();
+    $("#{{ EntityInfo.Name }}SearchBtn").on('click', () => { dataTable.ajax.reload(); })
+
+    document.addEventListener('keydown', (event) => {
+        var div = document.getElementById('{{ EntityInfo.Name }}Filter');
+        if (event.key === 'Enter' && div.contains(event.target)) {
+            event.preventDefault();
+            dataTable.ajax.reload();
+        }
     });
 
     //After abp v7.2 use dynamicForm 'column-size' instead of the following settings
     //$('#{{ EntityInfo.Name }}Collapse div').addClass('col-sm-3').parent().addClass('row');
 
-    var getFilter = function () {
-        var input = {};
-        $("#{{ EntityInfo.Name }}Filter")
-            .serializeArray()
-            .forEach(function (data) {
-                if (data.value != '') {
-                    input[abp.utils.toCamelCase(data.name.replace(/{{ EntityInfo.Name }}Filter./g, ''))] = data.value;
-                }
-            })
-        return input;
-    };
+    easyHelper.setFilterToggle('#{{ EntityInfo.Name }}Filter');
 {{~ end ~}}
 
     var l = abp.localization.getResource('{{ ProjectInfo.Name }}');
@@ -36,7 +32,7 @@ $(function () {
         autoWidth: false,
         scrollCollapse: true,
         order: [[0, "asc"]],
-        ajax: abp.libs.datatables.createAjax(service.getList{{- if !Option.SkipGetListInputDto;",getFilter"; end-}}),
+        ajax: abp.libs.datatables.createAjax(service.getList{{- if !Option.SkipGetListInputDto;',easyHelper.serializeForm("#' + EntityInfo.Name + 'Filter")'; end-}}),
         columnDefs: [
             {
                 rowAction: {
@@ -88,10 +84,11 @@ $(function () {
             },
             {{~ for prop in EntityInfo.Properties ~}}
             {{~ if prop | abp.is_ignore_property || string.starts_with prop.Type "List<"; continue; end ~}}
-            {
-                title: l('{{ EntityInfo.Name + prop.Name }}'),
-                data: "{{ prop.Name | abp.camel_case }}"
-            },
+            { title: l('{{ EntityInfo.Name + prop.Name }}'), data: "{{ prop.Name | abp.camel_case }}"
+				{{- if string.starts_with prop.Type "DateTime"; ", dataFormat: 'datetime'"; end -}}
+				{{- if string.starts_with prop.Type "Guid"; ", visible: false"; end -}}
+				{{- if string.starts_with prop.Type "bool"; ", dataFormat: 'boolean'"; end -}}
+			},
             {{~ end ~}}
         ]
     }));
