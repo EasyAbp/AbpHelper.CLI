@@ -12,9 +12,9 @@ var easyHelper = easyHelper || {};
     easyHelper.setFilterToggle = function (formId) {
         let column = 12 / $(formId + ' >div >div')[0].classList[1].split('-')[2]
         function FilterToggleEvent(e) {
-            var isClosed = e.currentTarget.classList.toggle('fa-angle-double-down');
-            e.currentTarget.classList.toggle('fa-angle-double-up');
-            e.currentTarget.innerText = localizer(isClosed ? 'Expand' : 'Collapse');
+            var isClosed = e.currentTarget.firstChild.classList.toggle('fa-angle-double-down');
+            e.currentTarget.firstChild.classList.toggle('fa-angle-double-up');
+            e.currentTarget.lastChild.innerText = localizer(isClosed ? 'Expand' : 'Collapse');
             var dynamicElement = document.querySelector(formId + " > div > div:nth-child(" + column + ")");
 
             while (dynamicElement.nextElementSibling) {
