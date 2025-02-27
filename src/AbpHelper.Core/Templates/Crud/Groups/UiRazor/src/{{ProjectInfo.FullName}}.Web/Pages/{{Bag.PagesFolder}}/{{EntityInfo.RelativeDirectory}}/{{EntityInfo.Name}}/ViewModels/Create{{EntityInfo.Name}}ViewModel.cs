@@ -14,6 +14,9 @@ public class Create{{ EntityInfo.Name }}ViewModel
     {{~ if !Option.SkipLocalization ~}}
     [Display(Name = "{{ EntityInfo.Name + prop.Name}}")]
     {{~ end ~}}
+	{{~ if !string.ends_with prop.Type "?" ~}}
+	[Required]
+	{{~ end ~}}
     public {{ prop.Type}} {{ prop.Name }} { get; set; }
     {{~ if !for.last ~}}
 

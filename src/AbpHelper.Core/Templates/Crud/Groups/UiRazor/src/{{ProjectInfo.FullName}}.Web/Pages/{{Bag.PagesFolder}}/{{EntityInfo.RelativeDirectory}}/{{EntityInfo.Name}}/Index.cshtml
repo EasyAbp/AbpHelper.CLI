@@ -24,6 +24,9 @@
 
 @section scripts
 {
+    {{- if !Option.SkipGetListInputDto -}}
+    <abp-script src="/easyHelper.js"/>
+     {{~ end ~}}
     <abp-script src="/Pages/{{ pagesFolder }}{{ EntityInfo.RelativeDirectory }}/{{ EntityInfo.Name }}/index.js" />
 }
 @section styles
@@ -33,33 +36,31 @@
 @section content_toolbar
 {
 {{~ if !Option.SkipPermissions ~}}
-	@if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Create))
+    @if (await Authorization.IsGrantedAsync({{ ProjectInfo.Name }}Permissions.{{ EntityInfo.Name }}.Create))
     {
 {{~ end ~}}
         <abp-button id="New{{ EntityInfo.Name }}Button"
             text="@L["Create{{ EntityInfo.Name }}"].Value"
-            icon="plus"
-            button-type="Primary" />
+                    icon="plus"
+                    button-type="Primary" />
 {{~ if !Option.SkipPermissions ~}}
     }
-{{~ end ~}}
+ {{~ end ~}}
 }
 
 <abp-card>
     <abp-card-body>
         {{~ if !Option.SkipGetListInputDto ~}}
-        <abp-row class="mb-3">
-            <a abp-collapse-id="{{ EntityInfo.Name }}Collapse" class="text-secondary">@L["TableFilter"] </a>
-        </abp-row>
-        {{~ end ~}}
-        {{~ if !Option.SkipGetListInputDto ~}}
-        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false" column-size="_3">
-            <abp-collapse-body id="{{ EntityInfo.Name }}Collapse">
-                <abp-form-content />
-            </abp-collapse-body>
-        </abp-dynamic-form>
+        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false" column-size="_3"></abp-dynamic-form>
+        <div>
+            <h5 class="text-start d-inline"><i>@L["{{ EntityInfo.Name }}"].Value</i></h5>
+            <div class="btn-group" role="group" aria-label="First group" style="float:right">
+                <button id="{{ EntityInfo.Name }}Collapse" type="button" class="btn btn-sm btn-outline-secondary fa fa-angle-double-up"></button>
+                <button id="{{ EntityInfo.Name }}SearchBtn" type="button" class="btn btn-sm btn-secondary fa fa-search"> @L["Search"].Value</button>
+            </div>
+        </div>
         <hr />
         {{~ end ~}}
-        <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap"/>
+        <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap table-hover"/>
     </abp-card-body>
 </abp-card>
