@@ -1,8 +1,8 @@
 /* 
    This code is generated from AbpHelper.Cli. 
    If the code is regenerated, the manual changes to this file will be overwritten.
-   CreationTime:2023/12/18
-   LastModificationTime:2024/12/28
+   CreationTime:2025/2/27
+   LastModificationTime:2025/2/27
 */
 
 var easyHelper = easyHelper || {};
