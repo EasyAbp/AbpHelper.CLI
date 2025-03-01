@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyAbp.AbpHelper.Core.Steps.Common;
@@ -39,7 +40,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 if (jTexts[kv.Key] == null) // Prevent inserting duplicate localization
                     jTexts[kv.Key] = kv.Value;
 
-            await File.WriteAllTextAsync(targetFile, jDoc.ToString());
+            await File.WriteAllTextAsync(targetFile, jDoc.ToString(), Encoding.UTF8);
 
             return Done();
         }
