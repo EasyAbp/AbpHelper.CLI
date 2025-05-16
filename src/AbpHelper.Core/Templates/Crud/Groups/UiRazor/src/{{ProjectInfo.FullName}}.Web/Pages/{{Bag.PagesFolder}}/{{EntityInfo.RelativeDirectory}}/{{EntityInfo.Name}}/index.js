@@ -2,9 +2,19 @@
 $(function () {
 {{~ if !Option.SkipGetListInputDto ~}}
 
-    $("#{{ EntityInfo.Name }}Filter :input").on('input', function () {
+    function debounce(func, delay) {
+        let timerId;
+        return function(...args) {
+            clearTimeout(timerId);
+            timerId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
+
+    $("#{{ EntityInfo.Name }}Filter :input").on('input', debounce(function () {
         dataTable.ajax.reload();
-    });
+    }, 300));
 
     //After abp v7.2 use dynamicForm 'column-size' instead of the following settings
     //$('#{{ EntityInfo.Name }}Collapse div').addClass('col-sm-3').parent().addClass('row');
