@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using EasyAbp.AbpHelper.Core.Attributes;
+using EasyAbp.AbpHelper.Core.Extensions;
 
 namespace EasyAbp.AbpHelper.Core.Commands
 {
@@ -17,18 +18,16 @@ namespace EasyAbp.AbpHelper.Core.Commands
         public virtual string[] Exclude { get; set; } = Array.Empty<string>();
 
         [Option('t', "template-path", Description = "Prioritize loading template files in the path")]
-        public string? TemplatePath { set { _templatePath = value; } }
+        public virtual string? TemplatePath { get; set; }
 
-        private string? _templatePath = string.Empty;
-
-        public string GetTemplatePath(string subPath)
+        public virtual string MapTemplatePath(string subPath)
         {
-            if (_templatePath.IsNullOrWhiteSpace())
+            if (TemplatePath.IsNullOrWhiteSpace())
             {
-                return Path.Combine(new[] { "/Templates", subPath });
+                return Path.Combine(new[] { "/Templates", subPath }).NormalizePath();
             }
 
-            return Path.Combine(_templatePath!, subPath);
+            return Path.Combine(TemplatePath!, subPath).NormalizePath();
         }
     }
 }

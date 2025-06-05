@@ -69,7 +69,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Remove
                         step =>
                         {
                             step.VariableName = VariableNames.TemplateDirectory;
-                            step.ValueExpression = new LiteralExpression<string>(option.GetTemplatePath("Module"));
+                            step.ValueExpression = new LiteralExpression<string>(option.MapTemplatePath("Module"));
                         })
                     .Then<SetVariable>(
                         step =>

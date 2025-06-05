@@ -74,7 +74,7 @@ namespace EasyAbp.AbpHelper.Core.Commands.Module.Add
                         step =>
                         {
                             step.VariableName = VariableNames.TemplateDirectory;
-                            step.ValueExpression = new LiteralExpression<string>(option.GetTemplatePath("Module"));
+                            step.ValueExpression = new LiteralExpression<string>(option.MapTemplatePath("Module"));
                         })
                     .Then<SetVariable>(
                         step =>
