@@ -33,7 +33,7 @@ namespace EasyAbp.AbpHelper.Core.Generator
 
             var templateText = "";
 
-            if (Directory.Exists(templateDirectory))
+            if (File.Exists(path))
             {
                 templateText = File.ReadAllText(path);
             }
