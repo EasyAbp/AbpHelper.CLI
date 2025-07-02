@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.FileProviders;
+using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace EasyAbp.AbpHelper.Core.Extensions
 {
@@ -9,7 +10,10 @@ namespace EasyAbp.AbpHelper.Core.Extensions
         public static IEnumerable<(string, IFileInfo)> GetFilesRecursively(this IFileProvider fileProvider, string subpath)
         {
             subpath = subpath.EnsureEndsWith('/');
-            var contents = fileProvider.GetDirectoryContents(subpath);
+
+            var contents = Directory.Exists(subpath) ?
+                new PhysicalFileProvider(subpath).GetDirectoryContents("") : fileProvider.GetDirectoryContents(subpath);
+
             foreach (var content in contents)
             {
                 if (content.IsDirectory)
