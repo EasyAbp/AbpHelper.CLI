@@ -5,6 +5,9 @@
     "Permission:Update": "Update",
     "Permission:Delete": "Delete",
 {{~ end ~}}
+{{~ if ProjectInfo.TemplateType == 'Module' ~}}
+    "Menu:{{ ProjectInfo.Name }}": "Menu{{ ProjectInfo.Name }}",
+{{~ end ~}}
     "Menu:{{ EntityInfo.Name }}": "Menu{{ EntityInfo.Name }}",
     "{{ EntityInfo.Name }}": "{{ EntityInfo.Name }}",
 {{~ for prop in EntityInfo.Properties ~}}

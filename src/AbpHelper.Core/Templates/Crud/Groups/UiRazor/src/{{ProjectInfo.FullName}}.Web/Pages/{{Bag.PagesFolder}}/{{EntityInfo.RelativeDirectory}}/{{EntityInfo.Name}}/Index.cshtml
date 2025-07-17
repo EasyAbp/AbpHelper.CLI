@@ -18,7 +18,9 @@
 {{~ if Bag.PagesFolder; pagesFolder = Bag.PagesFolder + "/"; end ~}}
 @{
     PageLayout.Content.Title = L["{{ EntityInfo.Name }}"].Value;
-    PageLayout.Content.BreadCrumb.Add(L["Menu:{{ EntityInfo.Name }}"].Value);
+    {{~ if ProjectInfo.TemplateType == 'Module' ~}}
+    PageLayout.Content.BreadCrumb.Add(L["Menu:{{ ProjectInfo.Name }}"].Value);
+    {{~ end ~}}
     PageLayout.Content.MenuItemName = {{ ProjectInfo.Name }}Menus.{{ EntityInfo.Name }};
 }
 
