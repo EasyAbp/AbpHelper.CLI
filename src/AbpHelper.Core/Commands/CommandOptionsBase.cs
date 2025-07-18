@@ -22,12 +22,19 @@ namespace EasyAbp.AbpHelper.Core.Commands
 
         public virtual string MapTemplatePath(string subPath)
         {
+            string resourcePathPrefix = AbpHelperCoreConsts.TemplateResourcePathPrefix;
+
             if (string.IsNullOrWhiteSpace(TemplatePath))
             {
-                return Path.Combine(new[] { "/Templates", subPath }).NormalizePath();
+                return Path.Combine(new[] { resourcePathPrefix, subPath }).NormalizePath();
             }
 
-            return Path.Combine(new[] { TemplatePath!, "Templates", subPath }).NormalizePath();
+            if (AbpHelperCoreConsts.TemplateResourcePathPrefix[0] == '/' || AbpHelperCoreConsts.TemplateResourcePathPrefix[0] == '\\')
+            {
+                resourcePathPrefix = resourcePathPrefix.Substring(1);
+            }
+
+            return Path.Combine(new[] { TemplatePath!, resourcePathPrefix, subPath }).NormalizePath();
         }
     }
 }
