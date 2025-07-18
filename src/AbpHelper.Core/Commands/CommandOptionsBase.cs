@@ -29,7 +29,8 @@ namespace EasyAbp.AbpHelper.Core.Commands
                 return Path.Combine(new[] { resourcePathPrefix, subPath }).NormalizePath();
             }
 
-            if (AbpHelperCoreConsts.TemplateResourcePathPrefix[0] == '/' || AbpHelperCoreConsts.TemplateResourcePathPrefix[0] == '\\')
+            if (AbpHelperCoreConsts.TemplateResourcePathPrefix.StartsWith('/') ||
+                AbpHelperCoreConsts.TemplateResourcePathPrefix.StartsWith('\\'))
             {
                 resourcePathPrefix = resourcePathPrefix.Substring(1);
             }

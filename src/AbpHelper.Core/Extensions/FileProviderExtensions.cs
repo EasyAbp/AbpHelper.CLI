@@ -31,7 +31,7 @@ namespace EasyAbp.AbpHelper.Core.Extensions
 
         public static IEnumerable<(string, IFileInfo)> GetFilesRecursively(this IVirtualFileProvider fileProvider, string dir)
         {
-            var (virtualDirectory, physicalDirectory) = TemplateRootDirectoryMirror(dir);
+            var (virtualDirectory, physicalDirectory) = fileProvider.GetTemplateRootDirectoryMirror(dir);
             var files = GetFilesRecursively((IFileProvider)fileProvider, virtualDirectory);
             if (physicalDirectory == null)
             {
@@ -49,9 +49,6 @@ namespace EasyAbp.AbpHelper.Core.Extensions
         /// <param name="dir"></param>
         /// <returns>(virtualDirectory, physicalDirectory)</returns>
         public static (string, string?) GetTemplateRootDirectoryMirror(this IVirtualFileProvider fileProvider, string dir)
-            => TemplateRootDirectoryMirror(dir);
-
-        private static (string, string?) TemplateRootDirectoryMirror(string dir)
         {
             if (dir.StartsWith(AbpHelperCoreConsts.TemplateResourcePathPrefix)) return (dir, null);
 
