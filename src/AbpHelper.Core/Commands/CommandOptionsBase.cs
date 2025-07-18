@@ -27,7 +27,7 @@ namespace EasyAbp.AbpHelper.Core.Commands
                 return Path.Combine(new[] { "/Templates", subPath }).NormalizePath();
             }
 
-            return Path.Combine(TemplatePath!, subPath).NormalizePath();
+            return Path.Combine(new[] { TemplatePath!, "Templates", subPath }).NormalizePath();
         }
     }
 }

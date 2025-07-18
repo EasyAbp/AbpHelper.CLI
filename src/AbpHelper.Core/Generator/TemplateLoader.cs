@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using EasyAbp.AbpHelper.Core.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Scriban;
 using Scriban.Parsing;
@@ -25,22 +26,26 @@ namespace EasyAbp.AbpHelper.Core.Generator
 
         public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)
         {
-            if (File.Exists(templatePath))
+            var (v, p) = _virtualFileProvider.GetTemplatePathMirror(templatePath);
+
+            if (p != null && File.Exists(p))
             {
-                return File.ReadAllText(templatePath);
+                return File.ReadAllText(p);
             }
 
-            return _virtualFileProvider.GetFileInfo(templatePath).ReadAsString();
+            return _virtualFileProvider.GetFileInfo(v).ReadAsString();
         }
 
         public async ValueTask<string> LoadAsync(TemplateContext context, SourceSpan callerSpan, string templatePath)
         {
-            if (File.Exists(templatePath))
+            var (v, p) = _virtualFileProvider.GetTemplatePathMirror(templatePath);
+
+            if (p != null && File.Exists(p))
             {
-                return await File.ReadAllTextAsync(templatePath);
+                return await File.ReadAllTextAsync(p);
             }
 
-            return await _virtualFileProvider.GetFileInfo(templatePath).ReadAsStringAsync();
+            return await _virtualFileProvider.GetFileInfo(v).ReadAsStringAsync();
         }
     }
 }

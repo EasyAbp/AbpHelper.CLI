@@ -39,7 +39,9 @@ namespace EasyAbp.AbpHelper.Core.Generator
             }
             else
             {
-                var templateFile = _virtualFileProvider.GetFileInfo(path);
+                var (virtualPath, physicalDirectory) = _virtualFileProvider.GetTemplateRootDirectoryMirror(path);
+
+                var templateFile = _virtualFileProvider.GetFileInfo(virtualPath);
                 templateText = templateFile.ReadAsString();
             }
             return GenerateByTemplateText(templateText, model, out context);
