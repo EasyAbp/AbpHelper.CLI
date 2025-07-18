@@ -27,24 +27,20 @@ namespace EasyAbp.AbpHelper.Core.Generator
         public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)
         {
             var (v, p) = _virtualFileProvider.GetTemplatePathMirror(templatePath);
-
             if (p != null && File.Exists(p))
             {
                 return File.ReadAllText(p);
             }
-
             return _virtualFileProvider.GetFileInfo(v).ReadAsString();
         }
 
         public async ValueTask<string> LoadAsync(TemplateContext context, SourceSpan callerSpan, string templatePath)
         {
             var (v, p) = _virtualFileProvider.GetTemplatePathMirror(templatePath);
-
             if (p != null && File.Exists(p))
             {
                 return await File.ReadAllTextAsync(p);
             }
-
             return await _virtualFileProvider.GetFileInfo(v).ReadAsStringAsync();
         }
     }
