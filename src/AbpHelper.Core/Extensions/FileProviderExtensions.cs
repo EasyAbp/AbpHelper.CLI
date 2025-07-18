@@ -39,8 +39,8 @@ namespace EasyAbp.AbpHelper.Core.Extensions
             }
             var physicalFiles = new PhysicalFileProvider(physicalDirectory).GetFilesRecursively("").ToList();
             var virtualFiles = files.ToList();
-
-            return physicalFiles.Concat(virtualFiles.Where(v => !physicalFiles.Any(p => p.Item1 == v.Item1)));
+            var physicalPaths = new HashSet<string>(physicalFiles.Select(p => p.Item1));
+            return physicalFiles.Concat(virtualFiles.Where(v => !physicalPaths.Contains(v.Item1)));
         }
 
         private static readonly string virtualDirectoryPrefix = "/Templates/";
@@ -55,11 +55,12 @@ namespace EasyAbp.AbpHelper.Core.Extensions
 
         private static (string, string?) TemplateRootDirectoryMirror(string dir)
         {
-            if (dir.StartsWith(virtualDirectoryPrefix))
-            {
-                return (dir, null);
-            }
+            if (dir.StartsWith(virtualDirectoryPrefix)) return (dir, null);
+
             var index = dir.IndexOf(virtualDirectoryPrefix);
+
+            if (index == -1) return (dir, null);
+
             var virtualDirectory = dir.Substring(index);
             var physicalDirectory = dir.Substring(0, index);
 
@@ -73,11 +74,12 @@ namespace EasyAbp.AbpHelper.Core.Extensions
         /// <returns>(virtualDirectory, physicalDirectory)</returns>
         public static (string, string?) GetTemplatePathMirror(this IVirtualFileProvider fileProvider, string dir)
         {
-            if (dir.StartsWith(virtualDirectoryPrefix))
-            {
-                return (dir, null);
-            }
+            if (dir.StartsWith(virtualDirectoryPrefix)) return (dir, null);
+
             var index = dir.IndexOf(virtualDirectoryPrefix);
+
+            if (index == -1) return (dir, null);
+
             var virtualPath = dir.Substring(index);
 
             return (virtualPath, dir);

@@ -22,7 +22,7 @@ namespace EasyAbp.AbpHelper.Core.Commands
 
         public virtual string MapTemplatePath(string subPath)
         {
-            if (TemplatePath.IsNullOrWhiteSpace())
+            if (string.IsNullOrWhiteSpace(TemplatePath))
             {
                 return Path.Combine(new[] { "/Templates", subPath }).NormalizePath();
             }

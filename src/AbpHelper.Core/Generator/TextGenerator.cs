@@ -30,7 +30,7 @@ namespace EasyAbp.AbpHelper.Core.Generator
         public string GenerateByTemplateName(string templateDirectory, string templateName, object model, out TemplateContext context)
         {
             string path = Path.Combine(templateDirectory, templateName).NormalizePath();
-            var templateText = "";
+            var templateText = string.Empty;
             if (File.Exists(path))
             {
                 templateText = File.ReadAllText(path);
