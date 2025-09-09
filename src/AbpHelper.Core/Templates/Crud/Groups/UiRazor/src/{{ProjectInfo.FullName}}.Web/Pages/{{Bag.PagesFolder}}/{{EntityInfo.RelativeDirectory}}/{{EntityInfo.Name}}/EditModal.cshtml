@@ -17,7 +17,7 @@
             <abp-input type="hidden" asp-for="Id.{{ prop.Name }}" />
             {{~ end ~}}
         {{~ else ~}}
-            <abp-input asp-for="Id" />
+            <input type="hidden" asp-for="Id"/>
         {{~ end ~}}     
             <abp-form-content />
         </abp-modal-body>
