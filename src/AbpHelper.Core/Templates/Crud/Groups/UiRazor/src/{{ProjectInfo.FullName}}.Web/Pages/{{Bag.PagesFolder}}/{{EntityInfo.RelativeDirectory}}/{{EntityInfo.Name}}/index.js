@@ -3,7 +3,7 @@ $(function () {
 {{~ if !Option.SkipGetListInputDto ~}}
 
     $("#{{ EntityInfo.Name }}Filter :input").on('input', function () {
-        dataTable.ajax.reload(null, false);
+        dataTable.ajax.reload();
     });
 
     //After abp v7.2 use dynamicForm 'column-size' instead of the following settings
@@ -97,7 +97,7 @@ $(function () {
     }));
 
     createModal.onResult(function () {
-        dataTable.ajax.reload(null, false);
+        dataTable.ajax.reload();
     });
 
     editModal.onResult(function () {
