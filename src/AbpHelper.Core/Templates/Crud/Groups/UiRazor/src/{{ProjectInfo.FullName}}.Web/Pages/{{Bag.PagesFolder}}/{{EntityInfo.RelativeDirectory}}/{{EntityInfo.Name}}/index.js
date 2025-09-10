@@ -89,7 +89,7 @@ $(function () {
 {{~ end ~}}
                                         .then(function () {
                                             abp.notify.info(l('SuccessfullyDeleted'));
-                                            dataTable.ajax.reload();
+                                            dataTable.ajax.reload(null, false);
                                         });
                                 }
                             }
@@ -111,7 +111,7 @@ $(function () {
     });
 
     editModal.onResult(function () {
-        dataTable.ajax.reload();
+        dataTable.ajax.reload(null, false);
     });
 
     $('#New{{ EntityInfo.Name }}Button').click(function (e) {
