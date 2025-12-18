@@ -65,6 +65,9 @@ public class {{ EntityInfo.Name }}AppService : {{ crudClassName }}<{{ EntityInfo
     public {{ EntityInfo.Name }}AppService({{ repositoryType }} repository) : base(repository)
     {
         {{ repositoryName }} = repository;
+
+        LocalizationResource = typeof({{ ProjectInfo.Name }}Resource);
+        ObjectMapperContext = typeof({{ ProjectInfo.Name }}ApplicationModule);
     }
     {{~ else ~}}
     public {{ EntityInfo.Name }}AppService({{ repositoryType }} repository) : base(repository)
