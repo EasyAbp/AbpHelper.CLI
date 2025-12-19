@@ -2,7 +2,7 @@
 
 namespace EasyAbp.AbpHelper.Core.Commands.Generate.Service
 {
-    public class ServiceCommandOption : GenerateCommandOption
+    public class ServiceCommandOption : GenerateCommandOption // todo: supports integration services
     {
         [Argument("name", Description = "The service name(without 'AppService' postfix)")]
         public string Name { get; set; } = null!;
