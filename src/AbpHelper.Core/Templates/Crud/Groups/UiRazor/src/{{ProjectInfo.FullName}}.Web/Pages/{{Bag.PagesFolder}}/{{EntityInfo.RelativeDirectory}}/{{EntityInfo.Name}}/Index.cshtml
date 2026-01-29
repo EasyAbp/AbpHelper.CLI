@@ -47,7 +47,7 @@
 {{~ end ~}}
 }
 
-<abp-card>
+<abp-card id="{{ EntityInfo.Name }}Wrapper">
     <abp-card-body>
         {{~ if !Option.SkipGetListInputDto ~}}
         <abp-row class="mb-3">
@@ -55,13 +55,13 @@
         </abp-row>
         {{~ end ~}}
         {{~ if !Option.SkipGetListInputDto ~}}
-        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" id="{{ EntityInfo.Name }}Filter" required-symbols="false" column-size="_3">
+        <abp-dynamic-form abp-model="{{ EntityInfo.Name }}Filter" required-symbols="false" column-size="_3">
             <abp-collapse-body id="{{ EntityInfo.Name }}Collapse">
                 <abp-form-content />
             </abp-collapse-body>
         </abp-dynamic-form>
         <hr />
         {{~ end ~}}
-        <abp-table striped-rows="true" id="{{ EntityInfo.Name }}Table" class="nowrap"/>
+        <abp-table striped-rows="true" class="nowrap"/>
     </abp-card-body>
 </abp-card>
