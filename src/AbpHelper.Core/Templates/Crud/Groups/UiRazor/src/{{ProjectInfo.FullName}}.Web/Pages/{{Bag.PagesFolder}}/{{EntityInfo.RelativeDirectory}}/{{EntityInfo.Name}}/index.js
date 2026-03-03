@@ -89,6 +89,9 @@
                 {
                     title: l('{{ EntityInfo.Name + prop.Name }}'),
                     data: "{{ prop.Name | abp.camel_case }}"
+                    {{~ if prop.Type == "DateTime" || prop.Type == "DateTime?" ~}}
+                    ,dataFormat: 'datetime'
+                    {{~ end ~}}
                 },
                 {{~ end ~}}
             ]
