@@ -1,0 +1,23 @@
+[Mapper]
+[MapExtraProperties]
+public partial class {{ EntityInfo.Name }}To{{ DtoInfo.ReadTypeName }}Mapper : MapperBase<{{ EntityInfo.Name }}, {{ DtoInfo.ReadTypeName }}>
+{
+    public override partial {{ DtoInfo.ReadTypeName }} Map({{ EntityInfo.Name }} source);
+    public override partial void Map({{ EntityInfo.Name }} source, {{ DtoInfo.ReadTypeName }} destination);
+}
+
+[Mapper]
+public partial class {{ DtoInfo.CreateTypeName }}To{{ EntityInfo.Name }}Mapper : MapperBase<{{ DtoInfo.CreateTypeName }}, {{ EntityInfo.Name }}>
+{
+    public override partial {{ EntityInfo.Name }} Map({{ DtoInfo.CreateTypeName }} source);
+    public override partial void Map({{ DtoInfo.CreateTypeName }} source, {{ EntityInfo.Name }} destination);
+}
+
+{{~ if DtoInfo.CreateTypeName != DtoInfo.UpdateTypeName ~}}
+[Mapper]
+public partial class {{ DtoInfo.UpdateTypeName }}To{{ EntityInfo.Name }}Mapper : MapperBase<{{ DtoInfo.UpdateTypeName }}, {{ EntityInfo.Name }}>
+{
+    public override partial {{ EntityInfo.Name }} Map({{ DtoInfo.UpdateTypeName }} source);
+    public override partial void Map({{ DtoInfo.UpdateTypeName }} source, {{ EntityInfo.Name }} destination);
+}
+{{~ end ~}}
