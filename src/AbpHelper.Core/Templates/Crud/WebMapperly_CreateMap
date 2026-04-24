@@ -1,0 +1,64 @@
+{{~ 
+    if Option.SeparateDto 
+        if Option.SkipViewModel
+~}}
+[Mapper]
+public partial class {{ DtoInfo.ReadTypeName }}To{{ DtoInfo.UpdateTypeName }}Mapper : MapperBase<{{ DtoInfo.ReadTypeName }}, {{ DtoInfo.UpdateTypeName }}>
+{
+    public override partial {{ DtoInfo.UpdateTypeName }} Map({{ DtoInfo.ReadTypeName }} source);
+    public override partial void Map({{ DtoInfo.ReadTypeName }} source, {{ DtoInfo.UpdateTypeName }} destination);
+}
+{{~
+        else
+~}}
+[Mapper]
+public partial class {{ DtoInfo.ReadTypeName }}ToEdit{{ EntityInfo.Name }}ViewModelMapper : MapperBase<{{ DtoInfo.ReadTypeName }}, Edit{{ EntityInfo.Name }}ViewModel>
+{
+    public override partial Edit{{ EntityInfo.Name }}ViewModel Map({{ DtoInfo.ReadTypeName }} source);
+    public override partial void Map({{ DtoInfo.ReadTypeName }} source, Edit{{ EntityInfo.Name }}ViewModel destination);
+}
+
+[Mapper]
+public partial class Create{{ EntityInfo.Name }}ViewModelTo{{ DtoInfo.CreateTypeName }}Mapper : MapperBase<Create{{ EntityInfo.Name }}ViewModel, {{ DtoInfo.CreateTypeName }}>
+{
+    public override partial {{ DtoInfo.CreateTypeName }} Map(Create{{ EntityInfo.Name }}ViewModel source);
+    public override partial void Map(Create{{ EntityInfo.Name }}ViewModel source, {{ DtoInfo.CreateTypeName }} destination);
+}
+
+[Mapper]
+public partial class Edit{{ EntityInfo.Name }}ViewModelTo{{ DtoInfo.UpdateTypeName }}Mapper : MapperBase<Edit{{ EntityInfo.Name }}ViewModel, {{ DtoInfo.UpdateTypeName }}>
+{
+    public override partial {{ DtoInfo.UpdateTypeName }} Map(Edit{{ EntityInfo.Name }}ViewModel source);
+    public override partial void Map(Edit{{ EntityInfo.Name }}ViewModel source, {{ DtoInfo.UpdateTypeName }} destination);
+}
+{{~
+        end 
+    else
+        if Option.SkipViewModel
+~}}
+[Mapper]
+public partial class {{ DtoInfo.ReadTypeName }}To{{ DtoInfo.CreateTypeName }}Mapper : MapperBase<{{ DtoInfo.ReadTypeName }}, {{ DtoInfo.CreateTypeName }}>
+{
+    public override partial {{ DtoInfo.CreateTypeName }} Map({{ DtoInfo.ReadTypeName }} source);
+    public override partial void Map({{ DtoInfo.ReadTypeName }} source, {{ DtoInfo.CreateTypeName }} destination);
+}
+{{~
+        else
+~}}
+[Mapper]
+public partial class {{ DtoInfo.ReadTypeName }}ToCreateEdit{{ EntityInfo.Name }}ViewModelMapper : MapperBase<{{ DtoInfo.ReadTypeName }}, CreateEdit{{ EntityInfo.Name }}ViewModel>
+{
+    public override partial CreateEdit{{ EntityInfo.Name }}ViewModel Map({{ DtoInfo.ReadTypeName }} source);
+    public override partial void Map({{ DtoInfo.ReadTypeName }} source, CreateEdit{{ EntityInfo.Name }}ViewModel destination);
+}
+
+[Mapper]
+public partial class CreateEdit{{ EntityInfo.Name }}ViewModelTo{{ DtoInfo.CreateTypeName }}Mapper : MapperBase<CreateEdit{{ EntityInfo.Name }}ViewModel, {{ DtoInfo.CreateTypeName }}>
+{
+    public override partial {{ DtoInfo.CreateTypeName }} Map(CreateEdit{{ EntityInfo.Name }}ViewModel source);
+    public override partial void Map(CreateEdit{{ EntityInfo.Name }}ViewModel source, {{ DtoInfo.CreateTypeName }} destination);
+}
+{{~
+        end
+    end
+~}}
