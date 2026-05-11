@@ -18,7 +18,9 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
             var model = context.GetVariable<object>("Model");
             string templateDir = context.GetVariable<string>(VariableNames.TemplateDirectory);
             string protectedCtorText = TextGenerator.GenerateByTemplateName(templateDir, "Entity_ProtectedConstructor", model);
+            string publicEmptyCtorText = TextGenerator.GenerateByTemplateName(templateDir, "Entity_PublicEmptyConstructor", model);
             string publicCtorText = TextGenerator.GenerateByTemplateName(templateDir, "Entity_PublicConstructor", model);
+            bool isMapperly = context.GetVariable<ProjectInfo>("ProjectInfo").MapperType == MapperType.Mapperly;
 
             return new List<ModificationBuilder<CSharpSyntaxNode>>
             {
@@ -26,7 +28,13 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp
                     root => root.Descendants<ClassDeclarationSyntax>().Single().GetEndLine(),
                     protectedCtorText,
                     InsertPosition.Before,
-                    root => root.DescendantsNotContain<ClassDeclarationSyntax>(protectedCtorText)
+                    root => !isMapperly && root.DescendantsNotContain<ClassDeclarationSyntax>(protectedCtorText)
+                ),
+                new InsertionBuilder<CSharpSyntaxNode>(
+                    root => root.Descendants<ClassDeclarationSyntax>().Single().GetEndLine(),
+                    publicEmptyCtorText,
+                    InsertPosition.Before,
+                    root => isMapperly && root.DescendantsNotContain<ClassDeclarationSyntax>(publicEmptyCtorText)
                 ),
                 new InsertionBuilder<CSharpSyntaxNode>(
                     root => root.Descendants<ClassDeclarationSyntax>().Single().GetEndLine(),

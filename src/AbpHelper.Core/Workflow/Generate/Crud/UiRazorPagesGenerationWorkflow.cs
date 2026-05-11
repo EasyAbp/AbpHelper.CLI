@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using EasyAbp.AbpHelper.Core.Models;
 using EasyAbp.AbpHelper.Core.Steps.Abp;
 using EasyAbp.AbpHelper.Core.Steps.Abp.ModificationCreatorSteps.CSharp;
 using EasyAbp.AbpHelper.Core.Steps.Common;
@@ -7,6 +7,9 @@ using Elsa.Activities;
 using Elsa.Activities.ControlFlow.Activities;
 using Elsa.Scripting.JavaScript;
 using Elsa.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
 {
@@ -77,15 +80,32 @@ namespace EasyAbp.AbpHelper.Core.Workflow.Generate.Crud
                                 .Then<FileModifierStep>(step => step.TargetFile = new JavaScriptExpression<string>("CurrentValue"))
                                 .Then(branch)
                     )
-                    /* Add mapping */
-                    .Then<FileFinderStep>(
-                        step =>
-                        {
-                            step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src`");
-                            step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}WebAutoMapperProfile.cs`");
-                        })
-                    .Then<WebAutoMapperProfileStep>()
-                    .Then<FileModifierStep>()
+                     /* Add mapping */
+                     .Then<Switch>(@switch =>
+                     {
+                         @switch.Expression = new JavaScriptExpression<string>("ProjectInfo.MapperType");
+                         @switch.Cases = Enum.GetValues(typeof(MapperType)).Cast<int>().Select(u => u.ToString()).ToArray();
+                     },
+                     @switch =>
+                     {
+                         @switch.When(MapperType.AutoMapper.ToString("D"))
+                                .Then<FileFinderStep>(step =>
+                                {
+                                    step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src`");
+                                    step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}WebAutoMapperProfile.cs`");
+                                })
+                                .Then<WebAutoMapperProfileStep>()
+                                .Then<FileModifierStep>();
+
+                         @switch.When(MapperType.Mapperly.ToString("D"))
+                                .Then<FileFinderStep>(step =>
+                                {
+                                    step.BaseDirectory = new JavaScriptExpression<string>(@"`${AspNetCoreDir}/src`");
+                                    step.SearchFileName = new JavaScriptExpression<string>("`${ProjectInfo.Name}WebMappers.cs`");
+                                })
+                                .Then<WebMapperlyProfileStep>()
+                                .Then<FileModifierStep>();
+                     })
                 ;
         }
     }

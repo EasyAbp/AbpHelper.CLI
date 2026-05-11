@@ -77,7 +77,17 @@ namespace EasyAbp.AbpHelper.Core.Steps.Abp
                 tiered = FileExistsInDirectory(baseDirectory, "*.IdentityServer.csproj", excludeDirectories);
             }
 
-            var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered, projectName);
+            var mapperType = MapperType.None;
+            if (FileExistsInDirectory(baseDirectory, "*AutoMapperProfile.cs", excludeDirectories))
+            {
+                mapperType = MapperType.AutoMapper;
+            }
+            else if (FileExistsInDirectory(baseDirectory, "*Mappers.cs", excludeDirectories))
+            {
+                mapperType = MapperType.Mapperly;
+            }
+
+            var projectInfo = new ProjectInfo(baseDirectory, fullName, templateType, uiFramework, tiered, mapperType, projectName);
 
             context.SetLastResult(projectInfo);
             context.SetVariable("ProjectInfo", projectInfo);
