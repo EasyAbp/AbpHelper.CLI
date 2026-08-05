@@ -1,10 +1,12 @@
 using Shouldly;
 using System.Threading.Tasks;
+using Volo.Abp.Modularity;
 using Xunit;
 
 namespace {{ EntityInfo.Namespace }};
 
-public class {{ EntityInfo.Name }}AppServiceTests : {{ ProjectInfo.Name }}ApplicationTestBase
+public abstract class {{ EntityInfo.Name }}AppServiceTests<TStartupModule> : {{ ProjectInfo.Name }}ApplicationTestBase<TStartupModule>
+    where TStartupModule : IAbpModule
 {
     private readonly I{{ EntityInfo.Name }}AppService _{{ EntityInfo.Name | abp.camel_case }}AppService;
 
