@@ -27,7 +27,7 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
             get => GetState<WorkflowExpression<string>>(() => new JavaScriptExpression<string>(VariableNames.TemplateDirectory));
             set => SetState(value);
         }
-        
+
         public string GroupName
         {
             get => GetState<string>();
@@ -80,10 +80,12 @@ namespace EasyAbp.AbpHelper.Core.Steps.Common
 
         private async Task GenerateFile(string groupDirectory, string targetDirectory, object model, bool overwrite)
         {
+            var (virtualDirectory, physicalDirectory) = _virtualFileProvider.GetTemplateRootDirectoryMirror(groupDirectory);
+
             foreach (var (path, file) in _virtualFileProvider.GetFilesRecursively(groupDirectory))
             {
                 Logger.LogDebug($"Generating using template file: {path}");
-                var targetFilePathNameTemplate = path.Replace(groupDirectory, targetDirectory);
+                var targetFilePathNameTemplate = path.Replace(virtualDirectory, targetDirectory);
                 var targetFilePathName = _textGenerator.GenerateByTemplateText(targetFilePathNameTemplate, model);
                 if (File.Exists(targetFilePathName) && !overwrite)
                 {
